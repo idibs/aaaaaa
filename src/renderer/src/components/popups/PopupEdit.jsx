@@ -12,11 +12,11 @@ import { useEffect, useState } from 'react'
 import Button from '../botoes/DesignBotao'
 import { IoMdArrowRoundBack, IoMdArrowRoundForward } from 'react-icons/io'
 
-export default function PopupCriarRegistro({ showModal, onClose, insertTable }) {
-  if (!showModal) return null
+const PAGE_SIZE = 4
+let columns = []
 
-  const PAGE_SIZE = 4
-  const [columns, setColumns] = useState([])
+export default function PopupEdit({ showModal, onClose, insertTable }) {
+  if (!showModal) return null
 
   const [page, setPage] = useState(1)
 
@@ -24,14 +24,14 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
     setPage(1)
     if (insertTable === 'produto') {
       window.api.getProductsColumns().then((result) => {
-        setColumns(Object.keys(result[0]))
+        columns = Object.keys(result[0])
       })
     } else if (insertTable === 'cliente') {
       window.api.getClientColumns().then((result) => {
-        setColumns(Object.keys(result[0]))
+        columns = Object.keys(result[0])
       })
     }
-  }, [insertTable])
+  }, [])
 
   const totalPages = Math.ceil(columns.length / PAGE_SIZE)
   const startIdx = (page - 1) * PAGE_SIZE
@@ -47,7 +47,7 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
             <IoMdClose />
           </button>
         </div>
-        <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">Novo Registro</h1>
+        <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">Atualizar</h1>
         <div className="flex flex-col justify-between h-140">
           <div>
             <div className="mt-7 flex flex-col px-30 h-90 w-full">
@@ -79,6 +79,9 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
           </div>
           <div className="flex justify-center">
             <Button
+              onClick={() => {
+                insertData
+              }}
               className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60"
               text="Salvar"
             />
@@ -88,3 +91,28 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
     </>
   )
 }
+
+/*<div className="mb-2">
+          <CreateInput
+            text="Nome:"
+            placeholder="Digite o nome do produto"
+            inputName="nome"
+            inputType="text"
+          />
+        </div>
+        <div className="mb-2">
+          <CreateInput
+            text="Quantidade:"
+            placeholder="Digite a quantidade"
+            inputName="id"
+            inputType="number"
+          />
+        </div>
+        <div className="mb-2">
+          <CreateInput
+            text="Nome:"
+            placeholder="Digite o nome do produto"
+            inputName="nome"
+            inputType="text"
+          />
+        </div>*/

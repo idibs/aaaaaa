@@ -16,6 +16,7 @@ export default function Pessoas() {
   const [selected, setSelected] = useState('cliente')
   // controla a visibilidade do modal
   const [showModal, setShowModal] = useState(false)
+  const [insertTable, setInsertTable] = useState('cliente') // tabela onde vai ser inserido o novo registro
 
   useEffect(() => {
       window.api
@@ -26,6 +27,7 @@ export default function Pessoas() {
         .catch((error) => {
           console.error('Error fetching data:', error)
         })
+      setInsertTable(selected)
     }, [selected])
 
   const changeData = (type) => {
@@ -40,7 +42,7 @@ export default function Pessoas() {
     <div className="pt-10">
       <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">Controle de Pessoas</h1>
       {/* texto do input da tabela */}
-      <p className="text-black ps-30 mt-15 mb-3">Nome da Pessoa</p>
+      <p className="text-black ps-30 mt-10 mb-3">Nome da Pessoa</p>
       {/* container da tabela */}
       <div className=" w-full px-30">
         <TableContainer
@@ -50,7 +52,7 @@ export default function Pessoas() {
           onClick={openModal}
         />
         {/* escolher entre tabelas */}
-        <div className="mt-3 flex justify-between">
+        <div className="mt-4 mb-4 flex justify-between">
           <Button
             onClick={() => changeData('cliente')}
             className={`${selected === 'cliente' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
@@ -69,7 +71,7 @@ export default function Pessoas() {
         </div>
       </div>
       {/* Popup para criar Pessoa */}
-      <Popup showModal={showModal} onClose={closeModal} table={data} />
+      <Popup showModal={showModal} onClose={closeModal} table={data} insertTable={insertTable}/>
     </div>
   )
 }

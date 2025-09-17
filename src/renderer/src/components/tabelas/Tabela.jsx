@@ -1,8 +1,19 @@
 import { MdEdit } from 'react-icons/md';
 import { FaTrash } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import PopupDelete from '../popups/PopUpDelete';
+import { useState } from 'react';
+import PopupEdit from '../popups/PopupEdit';
 
 const Tabela = ({ data, setData }) => {
+  const [showModal, setShowModal] = useState(false)
+  const [showModalEdit, setShowModalEdit] = useState(false)
+
+  const openModal = () => setShowModal(true)
+  const closeModal = () => setShowModal(false)
+  const openModalEdit = () => setShowModalEdit(true)
+  const closeModalEdit = () => setShowModalEdit(false)
+
   return (
     <table className="table border-collapsed w-full">
       {data.length > 0 && (
@@ -13,7 +24,7 @@ const Tabela = ({ data, setData }) => {
                   {key}
                 </th>
             ))}
-            <th className="border border-[#1A6D12] px-1 py-1">opções</th>
+            <th className="border border-[#1A6D12] px-1 py-1">Opções</th>
           </tr>
         </thead>
       )}
@@ -28,12 +39,14 @@ const Tabela = ({ data, setData }) => {
               ))}
               <td className="border border-[#1A6D12] text-center py-1">
                 <div className="flex justify-evenly">
-                  <Link to="/">
+                  <button key={index} onClick={openModal}>
                     <FaTrash />
-                  </Link>
-                  <Link>
+                  </button>
+                  <PopupDelete showModal={showModal} onClose={closeModal} />
+                  <button key={index} onClick={openModalEdit}>
                     <MdEdit />
-                  </Link>
+                  </button>
+                  <PopupEdit showModal={showModalEdit} onClose={closeModalEdit} />
                 </div>
               </td>
             </tr>

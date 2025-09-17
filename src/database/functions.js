@@ -3,7 +3,7 @@ import connection from './connection'
 export function getProducts(category) {
   const conn = connection()
   return new Promise((resolve, reject) => {
-    conn.query(`SELECT Nome_prod as Nome, Codigo_prod as codigo, Preco_prod as preco, Peso_prod as peso, Quantidade_prod as quantidade, Ml_prod as ml, Tipo_prod as tipo FROM Produto 
+    conn.query(`SELECT Nome_prod as Nome, Codigo_prod as Código, Preco_prod as Preço, Peso_prod as Peso, Quantidade_prod as Quantidade, Ml_prod as Ml, Tipo_prod as Tipo FROM Produto 
       INNER JOIN Categoria ON Produto.Id_categ = Categoria.Id_categ 
       WHERE Nome_categ = '${category}'`, (error, results) => {
       if (error) {
@@ -19,7 +19,7 @@ export function getProducts(category) {
 export function getProductsColumns() {
   const conn = connection()
   return new Promise((resolve, reject) => {
-    conn.query(`SELECT Nome_prod as Nome, Codigo_prod as codigo, Preco_prod as preco, Peso_prod as peso, Quantidade_prod as quantidade, Ml_prod as ml, Tipo_prod as tipo, Nome_categ as Categoria FROM Produto 
+    conn.query(`SELECT Nome_prod as Nome, Codigo_prod as Código, Preco_prod as Preço, Peso_prod as Peso, Quantidade_prod as Quantidade, Ml_prod as Ml, Tipo_prod as Tipo, Nome_categ as Categoria FROM Produto 
       INNER JOIN Categoria ON Produto.Id_categ = Categoria.Id_categ`, (error, results) => {
       if (error) {
         reject(error)

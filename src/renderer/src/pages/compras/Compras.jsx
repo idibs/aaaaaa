@@ -1,4 +1,4 @@
-import TableContainer from '../../components/tabelas/TabelaComQuantiadade'
+import TableContainer from '../../components/tabelas/TabelaComFiltro'
 import { useState } from 'react'
 import Button from '../../components/botoes/DesignBotao'
 import Popup from '../../components/popups/PopupVendas'
@@ -12,7 +12,7 @@ criar opçao de editar pedido ou orçamento
 const pedidos = [
   {
     id: 1,
-    nome: 'ração poedeira triturada 20kg nutirmax',
+    Nome: 'ração poedeira triturada 20kg nutirmax',
     quantidade: 10,
     peso: 25,
     tipo: 'cereal'

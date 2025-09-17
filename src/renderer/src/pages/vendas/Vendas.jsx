@@ -1,4 +1,4 @@
-import TableContainer from '../../components/tabelas/TabelaComQuantiadade'
+import TableContainer from '../../components/tabelas/TabelaComFiltro'
 import { useState } from 'react'
 import Button from '../../components/botoes/DesignBotao'
 import Popup from '../../components/popups/PopupVendas'

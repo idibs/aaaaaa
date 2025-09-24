@@ -4,7 +4,7 @@ import Button from '../botoes/DesignBotao'
 import { useState } from 'react'
 import Input from '../inputs/Input'
 
-export default function TabelaComFiltro({data, buttonText, pathButton, onClick, secondaryButtonText}) {
+export default function TabelaComFiltro({data, buttonText, pathButton, onClick, secondaryButtonText, insertTable}) {
     const [searchTerm, setSearchTerm] = useState('')
 
     const filteredData =  data.filter(item => item.Nome.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -39,7 +39,7 @@ export default function TabelaComFiltro({data, buttonText, pathButton, onClick, 
         </div>
         {/* table */}
         <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
-          <Tabela data={filteredData ? filteredData : []}/>
+          <Tabela data={filteredData ? filteredData : []} insertTable={insertTable}/>
         </div>
       </>
     )

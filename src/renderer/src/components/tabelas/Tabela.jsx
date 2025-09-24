@@ -5,7 +5,7 @@ import PopupDelete from '../popups/PopUpDelete';
 import { useState } from 'react';
 import PopupEdit from '../popups/PopupEdit';
 
-const Tabela = ({ data, setData }) => {
+const Tabela = ({ data, insertTable }) => {
   const [showModal, setShowModal] = useState(false)
   const [showModalEdit, setShowModalEdit] = useState(false)
 
@@ -46,7 +46,7 @@ const Tabela = ({ data, setData }) => {
                   <button key={index} onClick={openModalEdit}>
                     <MdEdit />
                   </button>
-                  <PopupEdit showModal={showModalEdit} onClose={closeModalEdit} />
+                  <PopupEdit showModal={showModalEdit} onClose={closeModalEdit} insertTable={insertTable}/>
                 </div>
               </td>
             </tr>

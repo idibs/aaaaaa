@@ -62,9 +62,9 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  ipcMain.handle('get-products', async (event, category) => {
+  ipcMain.handle('get-produtos', async (event, Nome_categ) => {
     try {
-      const data = await getProducts(category)
+      const data = await getProdutos(Nome_categ)
       return data
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -72,19 +72,9 @@ app.whenReady().then(() => {
     }
   })
 
-  ipcMain.handle('insert-products', async (event, tableName, data) => {
+  ipcMain.handle('get-colunas-produtos', async (event) => {
     try {
-      const result = await insertProducts(tableName, data)
-      return result
-    } catch (error) {
-      console.error('Error inserting data:', error)
-      throw error
-    }
-  })
-
-  ipcMain.handle('get-products-columns', async (event) => {
-    try {
-      const data = await getProductsColumns()
+      const data = await getColunasProdutos()
       return data
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -92,9 +82,9 @@ app.whenReady().then(() => {
     }
   })
 
-  ipcMain.handle('get-people', async (event, tableName) => {
+  ipcMain.handle('get-pessoas', async (event, Funcao_pes) => {
     try {
-      const data = await getPeople(tableName)
+      const data = await getPessoas(Funcao_pes)
       return data
     } catch (error) {
       console.error('Error fetching data:', error)

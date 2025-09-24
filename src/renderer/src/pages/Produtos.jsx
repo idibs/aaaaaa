@@ -54,6 +54,7 @@ export default function Produtos() {
           buttonText={'Novo Produto'}
           secondaryButtonText={'Exportar'}
           onClick={openModal}
+          insertTable={insertTable}
         />
         {/* escolher entre tabelas */}
         <div className="mt-4 mb-4 flex justify-between">

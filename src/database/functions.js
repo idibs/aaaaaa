@@ -1,11 +1,12 @@
 import connection from './connection'
 
-export function getProducts(category) {
+export function getProdutos(Nome_categ) {
   const conn = connection()
-  return new Promise((resolve, reject) => {
-    conn.query(`SELECT Nome_prod as Nome, Codigo_prod as Código, Preco_prod as Preço, Peso_prod as Peso, Quantidade_prod as Quantidade, Ml_prod as Ml, Tipo_prod as Tipo FROM Produto 
+  const query = `SELECT Nome_prod as Nome, Codigo_prod as Código, Preco_prod as Preço, Peso_prod as Peso, Quantidade_prod as Quantidade, Ml_prod as Ml, Tipo_prod as Tipo FROM Produto 
       INNER JOIN Categoria ON Produto.Id_categ = Categoria.Id_categ 
-      WHERE Nome_categ = '${category}'`, (error, results) => {
+      WHERE Nome_categ = ?`
+  return new Promise((resolve, reject) => {
+    conn.query(query, [Nome_categ], (error, results) => {
       if (error) {
         reject(error)
       } else {
@@ -16,11 +17,13 @@ export function getProducts(category) {
   })
 }
 
-export function getProductsColumns() {
+export function getPessoas(Funcao_pes) {
   const conn = connection()
+  const query = `SELECT Nome_pes, Telefone_pes, Email_pes, Senha_pes, Cpf_pes, Cep_end FROM Pessoa 
+      INNER JOIN Endereco ON Produto.Id_end = Endereco.Id_end 
+      WHERE Funcao_pes = ?`
   return new Promise((resolve, reject) => {
-    conn.query(`SELECT Nome_prod as Nome, Codigo_prod as Código, Preco_prod as Preço, Peso_prod as Peso, Quantidade_prod as Quantidade, Ml_prod as Ml, Tipo_prod as Tipo, Nome_categ as Categoria FROM Produto 
-      INNER JOIN Categoria ON Produto.Id_categ = Categoria.Id_categ`, (error, results) => {
+    conn.query(query, [Funcao_pes], (error, results) => {
       if (error) {
         reject(error)
       } else {
@@ -31,11 +34,12 @@ export function getProductsColumns() {
   })
 }
 
-export function getPeople(tableName) {
+export function getColunasProdutos() {
   const conn = connection()
+  const query = `SELECT Nome_prod as Nome, Codigo_prod as Código, Preco_prod as Preço, Peso_prod as Peso, Quantidade_prod as Quantidade, Ml_prod as Ml, Tipo_prod as Tipo, Nome_categ as Categoria FROM Produto 
+      INNER JOIN Categoria ON Produto.Id_categ = Categoria.Id_categ`
   return new Promise((resolve, reject) => {
-    conn.query(`SELECT ${tableName}.*, Cep_end as CEP FROM ${tableName}
-      INNER JOIN Endereco ON ${tableName}.Id_End = Endereco.Id_End`, (error, results) => {
+    conn.query(query, (error, results) => {
       if (error) {
         reject(error)
       } else {
@@ -46,41 +50,12 @@ export function getPeople(tableName) {
   })
 }
 
-export function getClient() {
+export function getColunasPessoas() {
   const conn = connection()
+  const query = `SELECT Nome_pes, Telefone_pes, Email_pes, Senha_pes, Cpf_pes, Funcao_pes, Cep_end, Logradouro_end, Numero_end, Bairro_end, Complemento_end FROM Pessoa
+                INNER JOIN Endereco ON Endereo.Id_end = Pessoa.Id_end`
   return new Promise((resolve, reject) => {
-    conn.query(`SELECT Nome, Email_cli as Email Logradouro_end as Rua, Numero_end as Número, Bairro_end as Bairro, Cep_end as CEP, Complemento_end as Complemento FROM Cliente
-      INNER JOIN Endereco ON Cliente.Id_End = Endereco.Id_End`, (error, results) => {
-      if (error) {
-        reject(error)
-      } else {
-        resolve(results)
-      }
-    })
-    conn.end()
-  })
-}
-
-export function getClientColumns() {
-  const conn = connection()
-  return new Promise((resolve, reject) => {
-    conn.query(`SELECT Nome, Email_cli as Email Logradouro_end as Rua, Numero_end as Número, Bairro_end as Bairro, Cep_end as CEP, Complemento_end as Complemento FROM Cliente
-      INNER JOIN Endereco ON Cliente.Id_End = Endereco.Id_End`, (error, results) => {
-      if (error) {
-        reject(error)
-      } else {
-        resolve(results)
-      }
-    })
-    conn.end()
-  })
-}
-
-export function insertProducts(tableName, data) {
-  const conn = connection()
-  return new Promise((resolve, reject) => {
-    const query = `INSERT INTO ${tableName} SET ?`
-    conn.query(query, data, (error, results) => {
+    conn.query(query, (error, results) => {
       if (error) {
         reject(error)
       } else {

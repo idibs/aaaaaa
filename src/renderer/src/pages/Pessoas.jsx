@@ -13,25 +13,25 @@ export default function Pessoas() {
   // define os dados da tabela, imporviso por falta de banco de dados
   const [data, setData] = useState([])
   // define a tabela selecionada, sendo a inicial 'cereais'
-  const [selected, setSelected] = useState('cliente')
+  const [funcao, setFuncao] = useState('cliente')
   // controla a visibilidade do modal
   const [showModal, setShowModal] = useState(false)
   const [insertTable, setInsertTable] = useState('cliente') // tabela onde vai ser inserido o novo registro
 
   useEffect(() => {
       window.api
-        .getPeople(selected)
+        .getPessoas(funcao)
         .then((result) => {
           setData(result)
         })
         .catch((error) => {
           console.error('Error fetching data:', error)
         })
-      setInsertTable(selected)
-    }, [selected])
+      setInsertTable(funcao)
+    }, [funcao])
 
   const changeData = (type) => {
-    setSelected(type)
+    setFuncao(type)
   }
 
   // funções para abrir e fechar o modal
@@ -50,22 +50,23 @@ export default function Pessoas() {
           buttonText={'Nova Pessoa'}
           secondaryButtonText={'Exportar'}
           onClick={openModal}
+          insertTable={insertTable}
         />
         {/* escolher entre tabelas */}
         <div className="mt-4 mb-4 flex justify-between">
           <Button
             onClick={() => changeData('cliente')}
-            className={`${selected === 'cliente' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
+            className={`${funcao === 'cliente' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
             text="Clientes"
           />
           <Button
             onClick={() => changeData('funcionario')}
-            className={`${selected === 'funcionario' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
+            className={`${funcao === 'funcionario' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
             text="Funcionários"
           />
           <Button
             onClick={() => changeData('fornecedor')}
-            className={`${selected === 'fornecedor' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
+            className={`${funcao === 'fornecedor' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
             text="Fornecedores"
           />
         </div>

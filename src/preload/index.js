@@ -5,7 +5,8 @@ import { electronAPI } from '@electron-toolkit/preload'
 const api = {
   getProdutos: (Nome_categ) => ipcRenderer.invoke('get-produtos', Nome_categ),
   getPessoas: (Funcao_pes) => ipcRenderer.invoke('get-pessoas', Funcao_pes),
-  getColunasProdutos: () => ipcRenderer.invoke('get-colunas-produtos')
+  getColunasProdutos: () => ipcRenderer.invoke('get-colunas-produtos'),
+  getCategorias: () => ipcRenderer.invoke('get-categorias')
 }
 
 if (process.contextIsolated) {

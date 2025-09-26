@@ -13,7 +13,7 @@ export default function Pessoas() {
   const [filteredData, setFilteredData] = useState([])  // dados filtrados
   // controla a visibilidade do modal
   const [showModal, setShowModal] = useState(false)
-  const [insertTable, setInsertTable] = useState('cliente') // tabela onde vai ser inserido o novo registro
+  const insertTable = 'cliente'
 
   useEffect(() => {
     window.api
@@ -24,7 +24,6 @@ export default function Pessoas() {
       .catch((error) => {
         console.error('Error fetching data:', error)
       })
-    setInsertTable(funcao)
   }, [funcao])  // Esse useEffect executa quando 'funcao' mudar
 
   // useEffect separado para filtrar os dados sempre que 'data' ou 'term' mudarem

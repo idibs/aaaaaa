@@ -21,7 +21,6 @@ export default function Produtos() {
       .getProdutos(categoria)
       .then((result) => {
         setData(result)
-        console.log(result)
       })
       .catch((error) => {
         console.error('Error fetching data:', error)
@@ -30,10 +29,9 @@ export default function Produtos() {
 
     // useEffect separado para filtrar os dados sempre que 'data' ou 'term' mudarem
   useEffect(() => {
-    console.log(data)
     setFilteredData(
       data.filter(item =>
-        item.Nome_prod.toLowerCase().includes(term.toLowerCase())
+        item.Nome.toLowerCase().includes(term.toLowerCase())
       )
     )
   }, [term, data])  // Executa quando 'data' ou 'term' mudam
@@ -69,7 +67,7 @@ export default function Produtos() {
         <div className="flex gap-3">
           <Button
             className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-40 h-full py-2"
-            text="Nova Pessoa"
+            text="Novo Produto"
             onClick={openModal}
           />
           <Button 

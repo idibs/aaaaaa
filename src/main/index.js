@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { getProdutos, getColunasProdutos, getPessoas } from '../database/functions'
+import { getProdutos, getColunasProdutos, getPessoas, getCategorias } from '../database/functions'
 
 function createWindow() {
   // Create the browser window.
@@ -85,6 +85,16 @@ app.whenReady().then(() => {
   ipcMain.handle('get-pessoas', async (event, Funcao_pes) => {
     try {
       const data = await getPessoas(Funcao_pes)
+      return data
+    } catch (error) {
+      console.error('Error fetching data:', error)
+      throw error
+    }
+  })
+
+  ipcMain.handle('get-categorias', async (event, Funcao_pes) => {
+    try {
+      const data = await getCategorias()
       return data
     } catch (error) {
       console.error('Error fetching data:', error)

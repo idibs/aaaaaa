@@ -17,6 +17,21 @@ export function getProdutos(Nome_categ) {
   })
 }
 
+export function getCategorias() {
+  const conn = connection()
+  const query = `SELECT Nome_categ as Categoria FROM Categoria`
+  return new Promise((resolve, reject) => {
+    conn.query(query, (error, results) => {
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+    conn.end()
+  })
+}
+
 export function getPessoas(Funcao_pes) {
   const conn = connection()
   const query = `SELECT Nome_pes, Telefone_pes, Email_pes, Senha_pes, Cpf_pes, Cep_end FROM Pessoa 

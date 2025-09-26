@@ -17,17 +17,25 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
 
   const PAGE_SIZE = 4
   const [columns, setColumns] = useState([])
-
+  const [selectOptions ,setSelectOptions] = useState([])
   const [page, setPage] = useState(1)
 
   useEffect(() => {
     setPage(1)
+    window.api
+      .getCategorias()
+      .then((result) => {
+        setSelectOptions(result)
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error)
+      })
     if (insertTable === 'produto') {
-      window.api.getProductsColumns().then((result) => {
+      window.api.getColunasProdutos().then((result) => {
         setColumns(Object.keys(result[0]))
       })
     } else if (insertTable === 'cliente') {
-      window.api.getClientColumns().then((result) => {
+      window.api.getColunasProdutos().then((result) => {
         setColumns(Object.keys(result[0]))
       })
     }
@@ -37,6 +45,7 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
   const startIdx = (page - 1) * PAGE_SIZE
   const endIdx = startIdx + PAGE_SIZE
   const inputs = columns.slice(startIdx, endIdx)
+  const inputNumbers = ['ML', 'Preço', 'Peso', 'Quantidade']
 
   return (
     <>
@@ -51,16 +60,24 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
         <div className="flex flex-col justify-between h-140">
           <div>
             <div className="mt-7 flex flex-col px-30 h-90 w-full">
-              {inputs.map((key) => (
+              {inputs.map((key) => key != 'Categoria' ? (
                 <div className="mb-4">
                   <CreateInput
                     key={key}
                     text={key + ':'}
                     placeholder={`Digite o ${key}`}
                     inputName={key}
-                    inputType={'text'}
+                    inputType={inputNumbers.includes(key) ? 'number' : 'text'}
                     ref={(el) => (inputs[key] = el)}
                   />
+                </div>
+              ) : (
+                <div className="mb-4">
+                  <select>
+                    {selectOptions.map((key) => {
+                      <option>{key}</option>
+                    })}
+                  </select>
                 </div>
               ))}
             </div>

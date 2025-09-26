@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { getProducts, insertProducts, getPeople, getProductsColumns } from '../database/functions'
+import { getProdutos, getColunasProdutos, getPessoas } from '../database/functions'
 
 function createWindow() {
   // Create the browser window.

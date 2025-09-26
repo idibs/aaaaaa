@@ -1,4 +1,4 @@
-import TableContainer from '../../components/tabelas/TabelaComFiltro'
+//import TableContainer from '../../components/tabelas/TabelaComFiltro'
 import { useState } from 'react'
 import Button from '../../components/botoes/DesignBotao'
 import Popup from '../../components/popups/PopupVendas'
@@ -42,7 +42,7 @@ const orcamentos = [
 ]
 
 export default function Vendas() {
-  const [data, setData] = useState(pedidos)
+  /*const [data, setData] = useState(pedidos)
   const [selected, setSelected] = useState('pedido') // novo estado
   const [path, setPath] = useState('/novo-pedido')
   const [showModal, setShowModal] = useState(false)
@@ -54,9 +54,9 @@ export default function Vendas() {
     setData(table)
     setSelected(type)
     setPath(type === 'pedido' ? '/novo-pedido' : '/novo-orcamento')
-  }
+  }*/
 
-  return (
+  //return (
     <div className="pt-10">
       <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">Pedidos e Orçamentos</h1>
       {/* container table */}
@@ -84,5 +84,5 @@ export default function Vendas() {
       </div>
       <Popup showModal={showModal} onClose={closeModal} path={path} />
     </div>
-  )
+  //)
 }

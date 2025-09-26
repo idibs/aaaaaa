@@ -3,9 +3,9 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
 const api = {
-  getProducts: (category) => ipcRenderer.invoke('get-produtos', Nome_categ),
-  getPeople: (tableName) => ipcRenderer.invoke('get-pessoas', Funcao_pes),
-  getProductsColumns: () => ipcRenderer.invoke('get-colunas-produtos')
+  getProdutos: (Nome_categ) => ipcRenderer.invoke('get-produtos', Nome_categ),
+  getPessoas: (Funcao_pes) => ipcRenderer.invoke('get-pessoas', Funcao_pes),
+  getColunasProdutos: () => ipcRenderer.invoke('get-colunas-produtos')
 }
 
 if (process.contextIsolated) {

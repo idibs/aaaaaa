@@ -20,7 +20,7 @@ export function getProdutos(Nome_categ) {
 export function getPessoas(Funcao_pes) {
   const conn = connection()
   const query = `SELECT Nome_pes, Telefone_pes, Email_pes, Senha_pes, Cpf_pes, Cep_end FROM Pessoa 
-      INNER JOIN Endereco ON Produto.Id_end = Endereco.Id_end 
+      INNER JOIN Endereco ON Pessoa.Id_end = Endereco.Id_end 
       WHERE Funcao_pes = ?`
   return new Promise((resolve, reject) => {
     conn.query(query, [Funcao_pes], (error, results) => {

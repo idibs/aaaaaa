@@ -1,21 +1,16 @@
-/* 
-trocar o nome do arquivo
-finalizar o popup de criar produto
-adicionar o popup de editar produto baseado no de criar
-integrar com banco de dados
-*/
-
-import TableContainer from '../components/tabelas/TabelaComFiltro'
-import { useState } from 'react'
+import Tabela from '../components/tabelas/Tabela'
+import Input from '../components/inputs/Input'
+import { useState, useEffect } from 'react'
 import Button from '../components/botoes/DesignBotao'
 import Popup from '../components/popups/PopupCriarRegistro' // popup de criar produto
-import { useEffect } from 'react'
 
 export default function Produtos() {
-  // define os dados da tabela, imporviso por falta de banco de dados
+    // define os dados da tabela, improviso por falta de banco de dados
   const [data, setData] = useState([])
-  // define a tabela selecionada, sendo a inicial 'cereais'
-  const [selected, setSelected] = useState('cereal')
+  // define a tabela selecionada, sendo a inicial 'cliente'
+  const [categoria, setCategoria] = useState('Cereais')
+  const [term, setTerm] = useState('')  // termo de pesquisa
+  const [filteredData, setFilteredData] = useState([])  // dados filtrados
   // controla a visibilidade do modal
   const [showModal, setShowModal] = useState(false)
 
@@ -23,7 +18,7 @@ export default function Produtos() {
 
   useEffect(() => {
     window.api
-      .getProducts(selected)
+      .getProdutos(categoria)
       .then((result) => {
         setData(result)
         console.log(result)
@@ -31,11 +26,21 @@ export default function Produtos() {
       .catch((error) => {
         console.error('Error fetching data:', error)
       })
-  }, [selected])
+  }, [categoria])
+
+    // useEffect separado para filtrar os dados sempre que 'data' ou 'term' mudarem
+  useEffect(() => {
+    console.log(data)
+    setFilteredData(
+      data.filter(item =>
+        item.Nome_prod.toLowerCase().includes(term.toLowerCase())
+      )
+    )
+  }, [term, data])  // Executa quando 'data' ou 'term' mudam
 
   // função para alterar os dados da tabela e o tipo selecionado controlado pelos botões de baixo
-  const changeData = (type) => {
-    setSelected(type)
+  const changeData = (categoria) => {
+    setCategoria(categoria)
   }
 
   // funções para abrir e fechar o modal
@@ -49,28 +54,49 @@ export default function Produtos() {
       <p className="text-black ps-30 mt-10 mb-3">Nome do Produto:</p>
       {/* container da tabela */}
       <div className=" w-full px-30">
-        <TableContainer
-          data={data}
-          buttonText={'Novo Produto'}
-          secondaryButtonText={'Exportar'}
-          onClick={openModal}
-          insertTable={insertTable}
-        />
+        {/* table options */}
+        <div className="w-full flex justify-between">
+        {/* Name */}
+        <div className="flex flex-col w-1/3">
+            <Input
+            inputType="text"
+            placeholder="Nome"
+            inputName="nome"
+            onChange={(e) => setTerm(e.target.value)}  // altera o termo de pesquisa
+            />
+        </div>
+        {/* options */}
+        <div className="flex gap-3">
+          <Button
+            className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-40 h-full py-2"
+            text="Nova Pessoa"
+            onClick={openModal}
+          />
+          <Button 
+            className="text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec] w-40 py-2"
+            text="Exportar"
+          />
+        </div>
+        </div>
+        {/* table */}
+        <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
+          <Tabela data={filteredData ? filteredData : []} insertTable={insertTable}/>
+        </div>
         {/* escolher entre tabelas */}
         <div className="mt-4 mb-4 flex justify-between">
           <Button
-            onClick={() => changeData('cereal')}
-            className={`${selected === 'cereal' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
+            onClick={() => changeData('Cereais')}
+            className={`${categoria === 'Cereais' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
             text="Cereais"
           />
           <Button
-            onClick={() => changeData('ração')}
-            className={`${selected === 'ração' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
+            onClick={() => changeData('Rações')}
+            className={`${categoria === 'Rações' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
             text="Rações"
           />
           <Button
-            onClick={() => changeData('variedades')}
-            className={`${selected === 'variedades' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
+            onClick={() => changeData('Variedades')}
+            className={`${categoria === 'Variedades' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
             text="Variedades"
           />
         </div>

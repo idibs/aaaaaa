@@ -11,7 +11,7 @@ import Compras from '../pages/compras/Compras'
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/home" element={<Home />} />
       <Route path="/produtos" element={<Produtos />} />
       <Route path="/pessoas" element={<Pessoas />} />
       <Route path="/pagamento" element={<Pagamento />} />

@@ -80,3 +80,18 @@ export function getColunasPessoas() {
     conn.end()
   })
 }
+
+export function getUsuario_sistema() {
+  const conn = connection()
+  const query = `SELECT * FROM Usuario_sistema`
+  return new Promise((resolve, reject) => {
+    conn.query(query, (error, results) => {
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+    conn.end()
+  })
+}

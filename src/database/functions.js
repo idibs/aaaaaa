@@ -88,3 +88,54 @@ export function getPessoasByTipo(tipo) {
     })
   })
 }
+
+export function getCereaisColunas(tipo) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT 
+                  Id_pes as Id,
+                  Nome_pes as Nome,
+                  Telefone_pes as Telefone,
+                  Email_pes as Email,
+                  Tipo_pes as Tipo,
+                  Cidade_end as Cidade
+                FROM pessoa
+                INNER JOIN endereco ON endereco.Id_end = pessoa.Id_end
+                WHERE Tipo_pes LIKE '%${tipo}%';`
+    conn.query(sql, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function getPedidoProdutos(tipo) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT 
+                  Nome_pes as Cliente,
+                  Nome_out as Nome_Produto,
+                  Nome_ens as Nome_Cereal,
+                  Data_ped as Data,
+                  Quantidade_pedprod as Quantidade,
+                  Peso_total_pedprod as Peso_total,
+                  Valor_total_pedprod as Valor_total,
+                  Metodo_pagamento_pedprod as Pagamento
+                FROM pedido_produto pp
+                INNER JOIN pessoa ON pp.Id_pes = pessoa.Id_pes
+                INNER JOIN produto_ensacado ps ON pp.Id_ens = ps.Id_ens
+                INNER JOIN outros_produtos op ON pp.Id_out = op.Id_out;`
+    conn.query(sql, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}

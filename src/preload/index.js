@@ -1,13 +1,13 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-
 // Custom APIs for renderer
 const api = {
   getCereais: () => ipcRenderer.invoke('get-cereais'),
   getOutrosProdutosByCategoria: (categoria) =>
     ipcRenderer.invoke('get-outros-produtos-by-categoria', categoria),
   getProdutos: () => ipcRenderer.invoke('get-produtos'),
-  getPessoasByTipo: (tipo) => ipcRenderer.invoke('get-pessoas-by-tipo', tipo)
+  getPessoasByTipo: (tipo) => ipcRenderer.invoke('get-pessoas-by-tipo', tipo),
+  getPedidoProdutos: () => ipcRenderer.invoke('get-pedido-produtos')
 }
 
 if (process.contextIsolated) {

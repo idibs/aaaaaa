@@ -13,9 +13,7 @@ export default function Navbar() {
       <Button icon={<FaBriefcase />} text={'Funcionários'} link={'/funcionarios'} />
       <Button icon={<FaTableList />} text={'Vendas'} link={'/vendas'} />
       <Button icon={<FaCartShopping />} text={'Compras'} link={'/compras'} />
-      <Button icon={<FaMoneyCheckDollar />} text={'Pagamentos'} link={'/pagamento'} />
       <Button icon={<PiTruckFill />} text={'Cargas'} link={'/carga'} />
-
     </div>
   )
 }

@@ -37,10 +37,10 @@ export default function Produtos() {
   return (
     <div className="pt-10 h-screen">
       <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">
-        Valor dos Itens em Estoque
+        Pedidos de Produtos
       </h1>
       {/* texto do input da tabela */}
-      <p className="text-black ps-30 mt-10 mb-3">Nome do Produto:</p>
+      <p className="text-black ps-30 mt-10 mb-3">Nome do Cliente:</p>
       {/* container da tabela */}
       <div className="h-full w-full px-30">
         {/* table options */}
@@ -58,12 +58,12 @@ export default function Produtos() {
           <div className="flex gap-3">
             <Button
               className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-40 h-full py-2"
-              text="Adicionar Lote"
+              text="Adicionar Pedido"
               onClick={openModal}
             />
             <Button
               className="text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec] w-40 py-2"
-              text="Exportar"
+              text="Atribuir a Carga"
             />
           </div>
         </div>

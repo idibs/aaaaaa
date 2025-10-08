@@ -113,22 +113,23 @@ export function getCereaisColunas(tipo) {
   })
 }
 
-export function getPedidoProdutos(tipo) {
+export function getPedidoProdutos() {
   const conn = connection()
   return new Promise((resolve, reject) => {
     const sql = `SELECT 
-                  Nome_pes as Cliente,
-                  Nome_out as Nome_Produto,
-                  Nome_ens as Nome_Cereal,
-                  Data_ped as Data,
-                  Quantidade_pedprod as Quantidade,
-                  Peso_total_pedprod as Peso_total,
-                  Valor_total_pedprod as Valor_total,
-                  Metodo_pagamento_pedprod as Pagamento
+                    Id_pedprod AS Id,
+                    Nome_pes AS Cliente,
+                    Nome_out AS Nome_Produto,
+                    Nome_ens AS Nome_Cereal,
+                    Data_ped AS Data,
+                    Quantidade_pedprod AS Quantidade,
+                    Peso_total_pedprod AS Peso_total,
+                    Valor_total_pedprod AS Valor_total,
+                    Metodo_pagamento_pedprod AS Pagamento
                 FROM pedido_produto pp
                 INNER JOIN pessoa ON pp.Id_pes = pessoa.Id_pes
-                INNER JOIN produto_ensacado ps ON pp.Id_ens = ps.Id_ens
-                INNER JOIN outros_produtos op ON pp.Id_out = op.Id_out;`
+                LEFT JOIN produto_ensacado ps ON pp.Id_ens = ps.Id_ens
+                LEFT JOIN outros_produtos op ON pp.Id_out = op.Id_out;`
     conn.query(sql, (error, results) => {
       conn.end()
       if (error) {

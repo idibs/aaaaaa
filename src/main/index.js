@@ -104,9 +104,9 @@ app.whenReady().then(() => {
     }
   })
 
-  ipcMain.handle('get-pedido-produtos', async (event, tipo) => {
+  ipcMain.handle('get-pedido-produtos', async () => {
     try {
-      const data = await getPedidoProdutos(tipo)
+      const data = await getPedidoProdutos()
       return data
     } catch (error) {
       throw error

@@ -8,8 +8,7 @@ import Pessoas from './pages/Pessoas'
 import Pagamento from './pages/Pagamento'
 import Vendas from './pages/vendas/Vendas'
 import NovaVenda from './pages/vendas/NovaVenda'
-import NovaCompra from './pages/compras/NovaCompra'
-import Compras from './pages/compras/Compras'
+import Compras from './pages/Compras'
 import Home from './pages/Home'
 
 // Usando createBrowserRouter para definir as rotas
@@ -21,10 +20,6 @@ const router = createBrowserRouter([
       {
         path: 'home',
         element: <Home />
-      },
-      {
-        path: 'nova-compra',
-        element: <NovaCompra />
       },
       {
         path: 'produtos',

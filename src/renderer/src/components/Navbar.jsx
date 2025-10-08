@@ -1,4 +1,4 @@
-import { FaHome, FaBoxes } from 'react-icons/fa'
+import { FaHome, FaBoxes, FaBriefcase } from 'react-icons/fa'
 import { IoPeople } from 'react-icons/io5'
 import { FaCartShopping, FaMoneyCheckDollar, FaTableList } from 'react-icons/fa6'
 import Button from './botoes/BotaoNavbar'
@@ -9,6 +9,7 @@ export default function Navbar() {
       <Button icon={<FaHome />} text={'Home'} link={'/'} />
       <Button icon={<FaBoxes />} text={'Produtos'} link={'/produtos'} />
       <Button icon={<IoPeople />} text={'Pessoas'} link={'/pessoas'} />
+      <Button icon={<FaBriefcase />} text={'Funcionários'} link={'/funcionarios'} />
       <Button icon={<FaTableList />} text={'Vendas'} link={'/vendas'} />
       <Button icon={<FaCartShopping />} text={'Compras'} link={'/compras'} />
       <Button icon={<FaMoneyCheckDollar />} text={'Pagamentos'} link={'/pagamento'} />

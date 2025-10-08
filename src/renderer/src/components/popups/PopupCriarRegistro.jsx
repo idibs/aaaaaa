@@ -17,12 +17,12 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
 
   const PAGE_SIZE = 4
   const [columns, setColumns] = useState([])
-  const [selectOptions ,setSelectOptions] = useState([])
+  const [selectOptions, setSelectOptions] = useState([])
   const [page, setPage] = useState(1)
 
   useEffect(() => {
     setPage(1)
-    window.api
+    /*window.api
       .getCategorias()
       .then((result) => {
         setSelectOptions(result)
@@ -38,7 +38,7 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
       window.api.getColunasProdutos().then((result) => {
         setColumns(Object.keys(result[0]))
       })
-    }
+    }*/
   }, [insertTable])
 
   const totalPages = Math.ceil(columns.length / PAGE_SIZE)
@@ -60,7 +60,7 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
         <div className="flex flex-col justify-between h-140">
           <div>
             <div className="mt-7 flex flex-col px-30 h-90 w-full">
-              {inputs.map((key) => key != 'Categoria' ? (
+              {/*inputs.map((key) => key != 'Categoria' ? (
                 <div className="mb-4">
                   <CreateInput
                     key={key}
@@ -79,7 +79,7 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
                     })}
                   </select>
                 </div>
-              ))}
+              ))*/}
             </div>
             <div className="flex justify-end w-full px-30">
               <Button
@@ -95,10 +95,7 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
             </div>
           </div>
           <div className="flex justify-center">
-            <Button
-              className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60"
-              text="Salvar"
-            />
+            <Button className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60" text="Salvar" />
           </div>
         </div>
       </div>

@@ -2,7 +2,12 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { getProdutos, getColunasProdutos, getPessoas, getCategorias } from '../database/functions'
+import {
+  getProdutos,
+  getCereais,
+  getOutrosProdutosByCategoria,
+  getPessoasByTipo
+} from '../database/functions'
 
 function createWindow() {
   // Create the browser window.
@@ -62,42 +67,38 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  ipcMain.handle('get-produtos', async (event, Nome_categ) => {
+  ipcMain.handle('get-cereais', async (event) => {
     try {
-      const data = await getProdutos(Nome_categ)
+      const data = await getCereais()
       return data
     } catch (error) {
-      console.error('Error fetching data:', error)
       throw error
     }
   })
 
-  ipcMain.handle('get-colunas-produtos', async (event) => {
+  ipcMain.handle('get-outros-produtos-by-categoria', async (event, categoria) => {
     try {
-      const data = await getColunasProdutos()
+      const data = await getOutrosProdutosByCategoria(categoria)
       return data
     } catch (error) {
-      console.error('Error fetching data:', error)
       throw error
     }
   })
 
-  ipcMain.handle('get-pessoas', async (event, Funcao_pes) => {
+  ipcMain.handle('get-produtos', async (event) => {
     try {
-      const data = await getPessoas(Funcao_pes)
+      const data = await getProdutos()
       return data
     } catch (error) {
-      console.error('Error fetching data:', error)
       throw error
     }
   })
 
-  ipcMain.handle('get-categorias', async (event, Funcao_pes) => {
+  ipcMain.handle('get-pessoas-by-tipo', async (event, tipo) => {
     try {
-      const data = await getCategorias()
+      const data = await getPessoasByTipo(tipo)
       return data
     } catch (error) {
-      console.error('Error fetching data:', error)
       throw error
     }
   })

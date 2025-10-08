@@ -1,97 +1,90 @@
 import connection from './connection'
 
-export function getProdutos(Nome_categ) {
+export function getCereais() {
   const conn = connection()
-  const query = `SELECT Nome_prod as Nome, Codigo_prod as Código, Preco_prod as Preço, Peso_prod as Peso, Quantidade_prod as Quantidade, Ml_prod as Ml, Tipo_prod as Tipo FROM Produto 
-      INNER JOIN Categoria ON Produto.Id_categ = Categoria.Id_categ 
-      WHERE Nome_categ = ?`
   return new Promise((resolve, reject) => {
-    conn.query(query, [Nome_categ], (error, results) => {
+    const sql = `SELECT 
+                  Id_ens as Id, 
+                  Nome_ens as Nome,  
+                  Peso_ens as Peso, 
+                  Quantidade_ens as Quantidade, 
+                  Codigo_ens as Codigo
+                FROM produto_ensacado;`
+    conn.query(sql, (error, results) => {
+      conn.end()
       if (error) {
         reject(error)
       } else {
         resolve(results)
       }
     })
-    conn.end()
   })
 }
 
-export function getCategorias() {
+export function getOutrosProdutosByCategoria(categoria) {
   const conn = connection()
-  const query = `SELECT Nome_categ as Categoria FROM Categoria`
   return new Promise((resolve, reject) => {
-    conn.query(query, (error, results) => {
+    const sql = `SELECT 
+                  Id_out as Id, 
+                  Nome_out as Nome, 
+                  Quantidade_out as Quantidade, 
+                  Peso_out as Peso, 
+                  Codigo_out as Codigo
+                FROM outros_produtos p
+                INNER JOIN categoria c ON p.Id_categ = c.Id_categ
+                WHERE Nome_categ = ?;`
+    conn.query(sql, categoria, (error, results) => {
+      conn.end()
       if (error) {
         reject(error)
       } else {
         resolve(results)
       }
     })
-    conn.end()
   })
 }
 
-export function getPessoas(Funcao_pes) {
+export function getProdutos() {
   const conn = connection()
-  const query = `SELECT Nome_pes, Telefone_pes, Email_pes, Senha_pes, Cpf_pes, Cep_end FROM Pessoa 
-      INNER JOIN Endereco ON Pessoa.Id_end = Endereco.Id_end 
-      WHERE Funcao_pes = ?`
   return new Promise((resolve, reject) => {
-    conn.query(query, [Funcao_pes], (error, results) => {
+    const sql = `SELECT 
+                  Id_prod as Id, 
+                  Nome_prod as Nome, 
+                  Preco_med_prod as Preço_medio,
+                  Quantidade_prod as Quantidade,
+                  Codigo_prod as Codigo
+                  FROM produto;`
+    conn.query(sql, (error, results) => {
+      conn.end()
       if (error) {
         reject(error)
       } else {
         resolve(results)
       }
     })
-    conn.end()
   })
 }
 
-export function getColunasProdutos() {
+export function getPessoasByTipo(tipo) {
   const conn = connection()
-  const query = `SELECT Nome_prod as Nome, Codigo_prod as Código, Preco_prod as Preço, Peso_prod as Peso, Quantidade_prod as Quantidade, Ml_prod as Ml, Tipo_prod as Tipo, Nome_categ as Categoria FROM Produto 
-      INNER JOIN Categoria ON Produto.Id_categ = Categoria.Id_categ`
   return new Promise((resolve, reject) => {
-    conn.query(query, (error, results) => {
+    const sql = `SELECT 
+                  Id_pes as Id,
+                  Nome_pes as Nome,
+                  Telefone_pes as Telefone,
+                  Email_pes as Email,
+                  Tipo_pes as Tipo,
+                  Cidade_end as Cidade
+                FROM pessoa
+                INNER JOIN endereco ON endereco.Id_end = pessoa.Id_end
+                WHERE Tipo_pes LIKE '%${tipo}%';`
+    conn.query(sql, (error, results) => {
+      conn.end()
       if (error) {
         reject(error)
       } else {
         resolve(results)
       }
     })
-    conn.end()
-  })
-}
-
-export function getColunasPessoas() {
-  const conn = connection()
-  const query = `SELECT Nome_pes, Telefone_pes, Email_pes, Senha_pes, Cpf_pes, Funcao_pes, Cep_end, Logradouro_end, Numero_end, Bairro_end, Complemento_end FROM Pessoa
-                INNER JOIN Endereco ON Endereo.Id_end = Pessoa.Id_end`
-  return new Promise((resolve, reject) => {
-    conn.query(query, (error, results) => {
-      if (error) {
-        reject(error)
-      } else {
-        resolve(results)
-      }
-    })
-    conn.end()
-  })
-}
-
-export function getUsuario_sistema() {
-  const conn = connection()
-  const query = `SELECT * FROM Usuario_sistema`
-  return new Promise((resolve, reject) => {
-    conn.query(query, (error, results) => {
-      if (error) {
-        reject(error)
-      } else {
-        resolve(results)
-      }
-    })
-    conn.end()
   })
 }

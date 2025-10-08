@@ -3,10 +3,11 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
 const api = {
-  getProdutos: (Nome_categ) => ipcRenderer.invoke('get-produtos', Nome_categ),
-  getPessoas: (Funcao_pes) => ipcRenderer.invoke('get-pessoas', Funcao_pes),
-  getColunasProdutos: () => ipcRenderer.invoke('get-colunas-produtos'),
-  getCategorias: () => ipcRenderer.invoke('get-categorias')
+  getCereais: () => ipcRenderer.invoke('get-cereais'),
+  getOutrosProdutosByCategoria: (categoria) =>
+    ipcRenderer.invoke('get-outros-produtos-by-categoria', categoria),
+  getProdutos: () => ipcRenderer.invoke('get-produtos'),
+  getPessoasByTipo: (tipo) => ipcRenderer.invoke('get-pessoas-by-tipo', tipo)
 }
 
 if (process.contextIsolated) {

@@ -5,36 +5,43 @@ import Button from '../components/botoes/DesignBotao'
 import Popup from '../components/popups/PopupCriarRegistro' // popup de criar produto
 
 export default function Produtos() {
-    // define os dados da tabela, improviso por falta de banco de dados
+  // define os dados da tabela, improviso por falta de banco de dados
   const [data, setData] = useState([])
   // define a tabela selecionada, sendo a inicial 'cliente'
-  const [categoria, setCategoria] = useState('Cereais')
-  const [term, setTerm] = useState('')  // termo de pesquisa
-  const [filteredData, setFilteredData] = useState([])  // dados filtrados
+  const [categoria, setCategoria] = useState('Cereal')
+  const [term, setTerm] = useState('') // termo de pesquisa
+  const [filteredData, setFilteredData] = useState([]) // dados filtrados
   // controla a visibilidade do modal
   const [showModal, setShowModal] = useState(false)
 
   const insertTable = 'produto'
 
   useEffect(() => {
-    window.api
-      .getProdutos(categoria)
-      .then((result) => {
-        setData(result)
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error)
-      })
+    if (categoria === 'Cereal') {
+      window.api
+        .getCereais()
+        .then((result) => {
+          setData(result)
+        })
+        .catch((error) => {
+          console.error('Error fetching data:', error)
+        })
+    } else if (categoria === 'Ração' || categoria === 'Variedade') {
+      window.api
+        .getOutrosProdutosByCategoria(categoria)
+        .then((result) => {
+          setData(result)
+        })
+        .catch((error) => {
+          console.error('Error fetching data:', error)
+        })
+    }
   }, [categoria])
 
-    // useEffect separado para filtrar os dados sempre que 'data' ou 'term' mudarem
+  // useEffect separado para filtrar os dados sempre que 'data' ou 'term' mudarem
   useEffect(() => {
-    setFilteredData(
-      data.filter(item =>
-        item.Nome.toLowerCase().includes(term.toLowerCase())
-      )
-    )
-  }, [term, data])  // Executa quando 'data' ou 'term' mudam
+    setFilteredData(data.filter((item) => item.Nome.toLowerCase().includes(term.toLowerCase())))
+  }, [term, data]) // Executa quando 'data' ou 'term' mudam
 
   // função para alterar os dados da tabela e o tipo selecionado controlado pelos botões de baixo
   const changeData = (categoria) => {
@@ -54,53 +61,53 @@ export default function Produtos() {
       <div className=" w-full px-30">
         {/* table options */}
         <div className="w-full flex justify-between">
-        {/* Name */}
-        <div className="flex flex-col w-1/3">
+          {/* Name */}
+          <div className="flex flex-col w-1/3">
             <Input
-            inputType="text"
-            placeholder="Nome"
-            inputName="nome"
-            onChange={(e) => setTerm(e.target.value)}  // altera o termo de pesquisa
+              inputType="text"
+              placeholder="Nome"
+              inputName="nome"
+              onChange={(e) => setTerm(e.target.value)} // altera o termo de pesquisa
             />
-        </div>
-        {/* options */}
-        <div className="flex gap-3">
-          <Button
-            className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-40 h-full py-2"
-            text="Novo Produto"
-            onClick={openModal}
-          />
-          <Button 
-            className="text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec] w-40 py-2"
-            text="Exportar"
-          />
-        </div>
+          </div>
+          {/* options */}
+          <div className="flex gap-3">
+            <Button
+              className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-40 h-full py-2"
+              text="Novo Produto"
+              onClick={openModal}
+            />
+            <Button
+              className="text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec] w-40 py-2"
+              text="Exportar"
+            />
+          </div>
         </div>
         {/* table */}
         <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
-          <Tabela data={filteredData ? filteredData : []} insertTable={insertTable}/>
+          <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} />
         </div>
         {/* escolher entre tabelas */}
         <div className="mt-4 mb-4 flex justify-between">
           <Button
-            onClick={() => changeData('Cereais')}
-            className={`${categoria === 'Cereais' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
+            onClick={() => changeData('Cereal')}
+            className={`${categoria === 'Cereal' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
             text="Cereais"
           />
           <Button
-            onClick={() => changeData('Rações')}
-            className={`${categoria === 'Rações' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
+            onClick={() => changeData('Ração')}
+            className={`${categoria === 'Ração' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
             text="Rações"
           />
           <Button
-            onClick={() => changeData('Variedades')}
-            className={`${categoria === 'Variedades' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
+            onClick={() => changeData('Variedade')}
+            className={`${categoria === 'Variedade' ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'} w-60`}
             text="Variedades"
           />
         </div>
       </div>
       {/* Popup para criar produto */}
-      <Popup showModal={showModal} onClose={closeModal} table={data} insertTable={insertTable}/>
+      <Popup showModal={showModal} onClose={closeModal} table={data} insertTable={insertTable} />
     </div>
   )
 }

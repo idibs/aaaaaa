@@ -65,6 +65,28 @@ export function getProdutos() {
   })
 }
 
+export function getFuncionariosByTipo(tipo) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT 
+                  Id_func as Id, 
+                  Nome_func as Nome, 
+                  Telefone_func as Telefone,
+                  cpf_func as CPF,
+                  Tipo_func as Tipo
+                FROM funcionario
+                WHERE Tipo_func = ?;`
+    conn.query(sql, tipo, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
 export function getPessoasByTipo(tipo) {
   const conn = connection()
   return new Promise((resolve, reject) => {

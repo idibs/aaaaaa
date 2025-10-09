@@ -7,7 +7,8 @@ import {
   getCereais,
   getOutrosProdutosByCategoria,
   getPessoasByTipo,
-  getPedidoProdutos
+  getPedidoProdutos,
+  getFuncionariosByTipo
 } from '../database/functions'
 
 function createWindow() {
@@ -107,6 +108,15 @@ app.whenReady().then(() => {
   ipcMain.handle('get-pedido-produtos', async () => {
     try {
       const data = await getPedidoProdutos()
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('get-funcionarios-by-tipo', async (event, tipo) => {
+    try {
+      const data = await getFuncionariosByTipo(tipo)
       return data
     } catch (error) {
       throw error

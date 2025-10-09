@@ -6,7 +6,8 @@ import Pagamento from '../pages/Pagamento'
 import Vendas from '../pages/vendas/Vendas'
 import NovaVenda from '../pages/vendas/NovaVenda'
 import Compras from '../pages/Compras'
-import Carga from "../pages/Cargas"
+import Carga from '../pages/Cargas'
+import Funcionarios from '../pages/Funcionarios'
 
 export default function AppRoutes() {
   return (
@@ -19,6 +20,7 @@ export default function AppRoutes() {
       <Route path="/nova-venda" element={<NovaVenda />} />
       <Route path="/compras" element={<Compras />} />
       <Route path="/carga" element={<Carga />} />
+      <Route path="/funcionarios" element={<Funcionarios />} />
     </Routes>
   )
 }

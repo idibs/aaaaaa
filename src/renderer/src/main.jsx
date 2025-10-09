@@ -11,6 +11,7 @@ import NovaVenda from './pages/vendas/NovaVenda'
 import Compras from './pages/Compras'
 import Home from './pages/Home'
 import Carga from './pages/Cargas'
+import Funcionarios from './pages/Funcionarios'
 
 // Usando createBrowserRouter para definir as rotas
 const router = createBrowserRouter([
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: 'compras',
         element: <Compras />
+      },
+      {
+        path: 'funcionarios',
+        element: <Funcionarios />
       }
     ]
   }

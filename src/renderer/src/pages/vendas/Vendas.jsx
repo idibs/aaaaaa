@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Button from '../../components/botoes/DesignBotao'
 import Popup from '../../components/popups/PopupCriarRegistro' // popup de criar produto
 
-export default function Produtos() {
+export default function Vendas() {
   // define os dados da tabela, improviso por falta de banco de dados
   const [data, setData] = useState([])
   const [term, setTerm] = useState('') // termo de pesquisa
@@ -36,9 +36,7 @@ export default function Produtos() {
 
   return (
     <div className="pt-10 h-screen">
-      <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">
-        Pedidos de Produtos
-      </h1>
+      <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">Pedidos de Produtos</h1>
       {/* texto do input da tabela */}
       <p className="text-black ps-30 mt-10 mb-3">Nome do Cliente:</p>
       {/* container da tabela */}

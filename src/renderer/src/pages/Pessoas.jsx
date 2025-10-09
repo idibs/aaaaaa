@@ -65,10 +65,6 @@ export default function Pessoas() {
               text="Nova Pessoa"
               onClick={openModal}
             />
-            <Button
-              className="text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec] w-40 py-2"
-              text="Exportar"
-            />
           </div>
         </div>
         {/* table */}

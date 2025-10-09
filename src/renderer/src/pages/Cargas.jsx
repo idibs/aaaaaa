@@ -16,7 +16,7 @@ export default function Carga() {
 
   useEffect(() => {
     window.api
-      .getProdutos()
+      .getPedidos()
       .then((result) => {
         setData(result)
       })
@@ -27,7 +27,7 @@ export default function Carga() {
 
   // useEffect separado para filtrar os dados sempre que 'data' ou 'term' mudarem
   useEffect(() => {
-    setFilteredData(data.filter((item) => item.Nome.toLowerCase().includes(term.toLowerCase())))
+    setFilteredData(data.filter((item) => item.Valor_total.toLowerCase().includes(term.toLowerCase())))
   }, [term, data]) // Executa quando 'data' ou 'term' mudam
 
   // funções para abrir e fechar o modal
@@ -60,10 +60,6 @@ export default function Carga() {
               className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-40 h-full py-2"
               text="Adicionar Lote"
               onClick={openModal}
-            />
-            <Button
-              className="text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec] w-40 py-2"
-              text="Exportar"
             />
           </div>
         </div>

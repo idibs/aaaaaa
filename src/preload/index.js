@@ -8,8 +8,9 @@ const api = {
     ipcRenderer.invoke('get-outros-produtos-by-categoria', categoria),
   getProdutos: () => ipcRenderer.invoke('get-produtos'),
   getPessoasByTipo: (tipo) => ipcRenderer.invoke('get-pessoas-by-tipo', tipo),
-  getPedidoProdutos: () => ipcRenderer.invoke('get-pedido-produtos'),
-  getFuncionariosByTipo: (tipo) => ipcRenderer.invoke('get-funcionarios-by-tipo', tipo)
+  getPedidoProdutosByStatus: (status) => ipcRenderer.invoke('get-pedido-produtos-by-status', status),
+  getFuncionariosByTipo: (tipo) => ipcRenderer.invoke('get-funcionarios-by-tipo', tipo),
+  getPedidos: () => ipcRenderer.invoke('get-pedidos')
 }
 
 if (process.contextIsolated) {

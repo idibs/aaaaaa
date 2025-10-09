@@ -7,8 +7,9 @@ import {
   getCereais,
   getOutrosProdutosByCategoria,
   getPessoasByTipo,
-  getPedidoProdutos,
-  getFuncionariosByTipo
+  getPedidoProdutosByStatus,
+  getFuncionariosByTipo,
+  getPedidos
 } from '../database/functions'
 
 function createWindow() {
@@ -105,9 +106,9 @@ app.whenReady().then(() => {
     }
   })
 
-  ipcMain.handle('get-pedido-produtos', async () => {
+  ipcMain.handle('get-pedido-produtos-by-status', async (event, status) => {
     try {
-      const data = await getPedidoProdutos()
+      const data = await getPedidoProdutosByStatus(status)
       return data
     } catch (error) {
       throw error
@@ -122,6 +123,16 @@ app.whenReady().then(() => {
       throw error
     }
   })
+  
+  ipcMain.handle('get-pedidos', async (event) => {
+    try {
+      const data = await getPedidos()
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
 
   createWindow()
 

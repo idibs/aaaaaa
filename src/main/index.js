@@ -9,7 +9,8 @@ import {
   getPessoasByTipo,
   getPedidoProdutosByStatus,
   getFuncionariosByTipo,
-  getPedidos
+  getPedidos,
+  getCereaisNomes
 } from '../database/functions'
 
 function createWindow() {
@@ -127,6 +128,15 @@ app.whenReady().then(() => {
   ipcMain.handle('get-pedidos', async (event) => {
     try {
       const data = await getPedidos()
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('get-cereais-nomes', async (event) => {
+    try {
+      const data = await getCereaisNomes()
       return data
     } catch (error) {
       throw error

@@ -110,19 +110,37 @@ export function getPessoasByTipo(tipo) {
   })
 }
 
-export function getCereaisColunas(tipo) {
+export function getEnsacadosColunas(tipo) {
   const conn = connection()
   return new Promise((resolve, reject) => {
     const sql = `SELECT 
-                  Id_pes as Id,
-                  Nome_pes as Nome,
-                  Telefone_pes as Telefone,
-                  Email_pes as Email,
-                  Tipo_pes as Tipo,
-                  Cidade_end as Cidade
+                  Id_ens as Id, 
+                  Nome_ens as Nome,  
+                  Peso_ens as Peso, 
+                  Preco_ens as Preco,
+                  Quantidade_ens as Quantidade, 
+                  Codigo_ens as Codigo, 
+                  Foto_ens as Foto
                 FROM pessoa
                 INNER JOIN endereco ON endereco.Id_end = pessoa.Id_end
                 WHERE Tipo_pes LIKE '%${tipo}%';`
+    conn.query(sql, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function getCereaisNomes() {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT 
+                  Nome_prod as Nome
+                FROM produto;`
     conn.query(sql, (error, results) => {
       conn.end()
       if (error) {

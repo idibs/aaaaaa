@@ -13,8 +13,7 @@ export default function Produtos() {
   const [filteredData, setFilteredData] = useState([]) // dados filtrados
   // controla a visibilidade do modal
   const [showModal, setShowModal] = useState(false)
-
-  const insertTable = 'produto'
+  const [insertTable, setInsertTable] = useState(categoria)
 
   useEffect(() => {
     if (categoria === 'Cereal') {
@@ -46,6 +45,7 @@ export default function Produtos() {
   // função para alterar os dados da tabela e o tipo selecionado controlado pelos botões de baixo
   const changeData = (categoria) => {
     setCategoria(categoria)
+    setInsertTable(categoria)
   }
 
   // funções para abrir e fechar o modal

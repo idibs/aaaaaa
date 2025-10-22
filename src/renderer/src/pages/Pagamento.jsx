@@ -1,75 +1,106 @@
-// n faço ideia do q vou fazer aq ainda, mas é aquela ideia
-// de calcular o valor a ser pago a um funcionario baseado
-// na quantidade de horas trabalhadas e ao seu cargo
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Tabela from '../components/tabelas/Tabela'
 import Input from '../components/inputs/Input'
-
-const exemplo = [
-  {
-    nome: 'ração poedeira triturada 20kg nutirmax',
-    valor: 10,
-  },
-  { nome: 'produto b', valor: 50 },
-  { nome: 'produto etwetwtewtwtc', valor: 7  },
-  { nome: 'produto d', valor: 90  },
-  { nome: 'produto e', valor: 56  },
-  { nome: 'produto f', valor: 12  },
-  { nome: 'produto g', valor: 59  },
-  { nome: 'produto h', valor: 69  },
-  { nome: 'produto i', valor: 222  },
-  { nome: 'produto j', valor: 14  }
-]
+import Button from '../components/botoes/DesignBotao'
 
 export default function Pagamento() {
-  const [data, setData] = useState(exemplo)
-  const total = data.reduce((acc, item) => acc + item.valor, 0)
+  const [data, setData] = useState([]) // dados do banco
+  const [filteredData, setFilteredData] = useState([]) // dados filtrados
+  const [term, setTerm] = useState('') // termo de pesquisa
+  const [tipo, setTipo] = useState('Registrado') // tipo selecionado
+
+  // Busca os dados do banco sempre que o tipo mudar
+  useEffect(() => {
+    window.api
+      .getFuncionariosByTipo(tipo)
+      .then((result) => {
+        setData(result)
+      })
+      .catch((error) => console.error('Erro ao buscar funcionários:', error))
+  }, [tipo])
+
+  // Filtra os dados pelo nome sempre que data ou term mudarem
+  useEffect(() => {
+    setFilteredData(
+      data.filter(f => f.Nome.toLowerCase().includes(term.toLowerCase()))
+    )
+  }, [data, term])
+
+  const changeData = (novoTipo) => setTipo(novoTipo)
+
+  // Calcula valor a pagar baseado no cargo e nos dias registrados
+  const calcularValor = (func) => {
+    const valorDia = func.Cargo === 'Horista' ? 30 : 50
+    return (func.DiasRegistrados?.length || 0) * valorDia
+  }
+
+  // Prepara os dados para a tabela (apenas visualização)
+  const tabelaFormatada = filteredData.map((f) => ({
+    id: f.id,
+    nome: f.Nome,
+    cargo: f.Cargo,
+    calendario: f.DiasRegistrados?.join(', ') || '-', // mostra os dias já registrados
+    valor: `R$ ${calcularValor(f)}`,
+    observacoes: f.Observacoes || '',
+    dataPagamento: f.DataPagamento || '',
+  }))
 
   return (
-    <div className="pt-10">
-      <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">Pagar Funcionários</h1>
-    <div className="mt-20 grid px-30 grid-cols-5 gap-6 w-full">
-        <div className="col-span-3">
-          <p>Itens:</p>
-          <div className="border border-[#1A6D12] w-full h-125">
-            <Tabela data={data} />
+    <div className="pt-10 flex flex-col items-center">
+      <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">
+        Pagar Funcionários
+      </h1>
+
+      <div className="w-full max-w-5xl mt-10">
+        <p className="text-black mb-2 text-lg font-medium">Funcionários:</p>
+
+        {/* Barra de pesquisa e botão */}
+        <div className="w-full flex items-center justify-between mb-4">
+          <div className="flex w-1/3">
+            <Input
+              inputType="text"
+              placeholder="Buscar..."
+              inputName="nome"
+              onChange={(e) => setTerm(e.target.value)}
+            />
+          </div>
+          <div className="flex gap-3">
+            <Button
+              className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-40 py-2"
+              text="Adicionar"
+              onClick={() => console.log('Abrir formulário para registrar dias')}
+            />
           </div>
         </div>
-        <div className="col-span-2">
-          <p>Produtos:</p>
-          <Input
-            inputType="text"
-            placeholder="Nome"
-            inputName="nome"
+
+        {/* Tabela */}
+        <div className="border border-[#1A6D12] h-120 overflow-auto w-full rounded-lg mx-auto">
+          <Tabela
+            data={tabelaFormatada}
+            columns={['Nome', 'Cargo', 'Calendário', 'Valor a Pagar', 'Observações', 'Data do Pagamento']}
           />
-          <div className="flex justify-between">
-            <button className="text-white bg-[#1A6D12] hover:bg-[#145A0C] rounded-xl w-32 py-2 mt-4 cursor-pointer" >
-              Adicionar
-            </button>
-            <button className="text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec] rounded-xl w-32 py-2 mt-4 cursor-pointer">
-              limpar
-            </button>
-          </div>
+        </div>
+
+        {/* Escolher entre tabelas */}
+        <div className="mt-4 mb-4 flex justify-around">
+          <Button
+            onClick={() => changeData('Registrado')}
+            className={`${tipo === 'Registrado'
+              ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]'
+              : 'text-[#1A6D12] border border-[#1A6D12] hover:bg-[#ececec]'
+            } w-60`}
+            text="Registrado"
+          />
+          <Button
+            onClick={() => changeData('Não Registrado')}
+            className={`${tipo === 'Não Registrado'
+              ? 'text-white bg-[#1A6D12] hover:bg-[#145A0C]'
+              : 'text-[#1A6D12] border border-[#1A6D12] hover:bg-[#ececec]'
+            } w-60`}
+            text="Não Registrado"
+          />
         </div>
       </div>
     </div>
   )
 }
-
-
-      /*<div className="mb-4">
-        <CreateInput 
-          placeholder="Escolha o Funcionário" 
-          inputName="nome_func" 
-          inputType="text"
-          text="Funcionário"
-        />
-        </div>
-        <div className="mb-4">
-        <CreateInput 
-          placeholder="Escolha o Cargo" 
-          inputName="nome_car" 
-          inputType="text"
-          text="Cargo"
-        />
-        </div>*/

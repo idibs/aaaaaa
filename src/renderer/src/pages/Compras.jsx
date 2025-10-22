@@ -49,7 +49,7 @@ export default function Compras() {
           <div className="flex flex-col w-1/3">
             <Input
               inputType="text"
-              placeholder="Nome"
+              placeholder="Buscar..."
               inputName="nome"
               onChange={(e) => setTerm(e.target.value)} // altera o termo de pesquisa
             />

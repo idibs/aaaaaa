@@ -11,6 +11,7 @@ export default function Navbar() {
       <Button icon={<FaBoxes />} text={'Produtos'} link={'/produtos'} />
       <Button icon={<IoPeople />} text={'Pessoas'} link={'/pessoas'} />
       <Button icon={<FaBriefcase />} text={'Funcionários'} link={'/funcionarios'} />
+      <Button icon={<FaMoneyCheckDollar />} text={'Pagamento'} link={'/pagamento'} />
       <Button icon={<FaTableList />} text={'Vendas'} link={'/vendas'} />
       <Button icon={<FaCartShopping />} text={'Compras'} link={'/compras'} />
       <Button icon={<PiTruckFill />} text={'Cargas'} link={'/carga'} />

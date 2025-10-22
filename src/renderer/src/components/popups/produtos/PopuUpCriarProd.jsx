@@ -1,13 +1,4 @@
-/*
-esqueleto de popup pra criaçao de pessoas e estoque
-vai pegar uma array de valores e o nome da tabela passads por porps 
-ai vai da um map pra fazer os inputs
-e guardar o codigo sql
-trabalho do krl
-*/
-
 import { IoMdClose } from 'react-icons/io'
-import CreateInput from '../inputs/InputComTitulo'
 import { useEffect, useState, useRef } from 'react'
 import Button from '../botoes/DesignBotao'
 import { IoMdArrowRoundBack, IoMdArrowRoundForward, IoIosArrowDown } from 'react-icons/io'
@@ -26,31 +17,6 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
 
   useEffect(() => {
     setPage(1)
-    window.api
-      .getCereaisNomes()
-      .then((result) => {
-        setProdutosBase(result)
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error)
-      })
-    /*window.api
-      .getCategorias()
-      .then((result) => {
-        setSelectOptions(result)
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error)
-      })
-    if (insertTable === 'Cereal') {
-      window.api.getColunasProdutos().then((result) => {
-        setColumns(Object.keys(result[0]))
-      })
-    } else if (insertTable === 'cliente') {
-      window.api.getColunasProdutos().then((result) => {
-        setColumns(Object.keys(result[0]))
-      })
-    }*/
   }, [insertTable])
 
   const totalPages = Math.ceil(columns.length / PAGE_SIZE)
@@ -93,26 +59,6 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
               </div>
             )}
           </div>
-              {/*inputs.map((key) => key != 'Categoria' ? (
-                <div className="mb-4">
-                  <CreateInput
-                    key={key}
-                    text={key + ':'}
-                    placeholder={`Digite o ${key}`}
-                    inputName={key}
-                    inputType={inputNumbers.includes(key) ? 'number' : 'text'}
-                    ref={(el) => (inputs[key] = el)}
-                  />
-                </div>
-              ) : (
-                <div className="mb-4">
-                  <select>
-                    {selectOptions.map((key) => {
-                      <option>{key}</option>
-                    })}
-                  </select>
-                </div>
-              ))*/}
             </div>
             {totalPages > 1 && (
             <div className="flex justify-end w-full px-30">

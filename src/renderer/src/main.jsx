@@ -7,7 +7,6 @@ import Produtos from './pages/Produtos'
 import Pessoas from './pages/Pessoas'
 import Pagamento from './pages/Pagamento'
 import Vendas from './pages/vendas/Vendas'
-import NovaVenda from './pages/vendas/NovaVenda'
 import Compras from './pages/Compras'
 import Home from './pages/Home'
 import Carga from './pages/Cargas'
@@ -42,10 +41,6 @@ const router = createBrowserRouter([
       {
         path: 'vendas',
         element: <Vendas />
-      },
-      {
-        path: 'nova-venda',
-        element: <NovaVenda />
       },
       {
         path: 'compras',

@@ -1,7 +1,7 @@
 import Tabela from '../components/tabelas/Tabela'
 import { useState, useEffect } from 'react'
 import Button from '../components/botoes/DesignBotao'
-import Popup from '../components/popups/PopupCriarRegistro' // popup de criar Pessoa
+import Popup from '../components/popups/pessoas/PopUpCriarPes' // popup de criar Pessoa
 import Input from '../components/inputs/Input'
 
 export default function Pessoas() {

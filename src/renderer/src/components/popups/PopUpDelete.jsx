@@ -1,5 +1,4 @@
 import Button from '../botoes/DesignBotao'
-import Input from '../inputs/InputComTitulo'
 import { IoMdClose } from 'react-icons/io'
 import { Link } from 'react-router-dom'
 

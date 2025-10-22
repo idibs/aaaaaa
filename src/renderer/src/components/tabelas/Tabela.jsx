@@ -2,7 +2,6 @@ import { MdEdit } from 'react-icons/md'
 import { FaTrash } from 'react-icons/fa'
 import { useState } from 'react'
 import PopupDelete from '../popups/PopUpDelete'
-import PopupEdit from '../popups/PopupEdit'
 
 const Tabela = ({ data, insertTable }) => {
   const [showModal, setShowModal] = useState(false)

@@ -2,7 +2,7 @@ import Tabela from '../components/tabelas/Tabela'
 import Input from '../components/inputs/Input'
 import { useState, useEffect } from 'react'
 import Button from '../components/botoes/DesignBotao'
-import Popup from '../components/popups/PopupCriarRegistro' // popup de criar produto
+import Popup from '../components/popups/produtos/PopUpCriarProd'// popup de criar produto
 
 export default function Compras() {
   // define os dados da tabela, improviso por falta de banco de dados

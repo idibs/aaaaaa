@@ -1,6 +1,6 @@
 import { IoMdClose } from 'react-icons/io'
 import { useEffect, useState, useRef } from 'react'
-import Button from '../botoes/DesignBotao'
+import Button from '../../botoes/DesignBotao'
 import { IoMdArrowRoundBack, IoMdArrowRoundForward, IoIosArrowDown } from 'react-icons/io'
 
 export default function PopupCriarRegistro({ showModal, onClose, insertTable }) {

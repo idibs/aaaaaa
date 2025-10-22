@@ -7,6 +7,7 @@ import Vendas from '../pages/vendas/Vendas'
 import Compras from '../pages/Compras'
 import Carga from '../pages/Cargas'
 import Funcionarios from '../pages/Funcionarios'
+import ViewCarga from '../pages/views/ViewCarga'
 
 export default function AppRoutes() {
   return (
@@ -19,6 +20,7 @@ export default function AppRoutes() {
       <Route path="/compras" element={<Compras />} />
       <Route path="/carga" element={<Carga />} />
       <Route path="/funcionarios" element={<Funcionarios />} />
+      <Route path="/view/carga" element={<ViewCarga />} />
     </Routes>
   )
 }

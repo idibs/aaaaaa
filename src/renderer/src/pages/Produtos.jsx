@@ -18,7 +18,7 @@ export default function Produtos() {
   useEffect(() => {
     if (categoria === 'Cereal') {
       window.api
-        .getCereais()
+        .getEnsacados()
         .then((result) => {
           setData(result)
         })

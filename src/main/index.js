@@ -4,13 +4,13 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import {
   getProdutos,
-  getCereais,
+  getEnsacados,
   getOutrosProdutosByCategoria,
   getPessoasByTipo,
   getPedidoProdutosByStatus,
   getFuncionariosByTipo,
   getPedidos,
-  getCereaisNomes
+  getProdutosNomes
 } from '../database/functions'
 
 function createWindow() {
@@ -71,9 +71,9 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  ipcMain.handle('get-cereais', async (event) => {
+  ipcMain.handle('get-ensacados', async (event) => {
     try {
-      const data = await getCereais()
+      const data = await getEnsacados()
       return data
     } catch (error) {
       throw error
@@ -124,7 +124,7 @@ app.whenReady().then(() => {
       throw error
     }
   })
-  
+
   ipcMain.handle('get-pedidos', async (event) => {
     try {
       const data = await getPedidos()
@@ -134,15 +134,14 @@ app.whenReady().then(() => {
     }
   })
 
-  ipcMain.handle('get-cereais-nomes', async (event) => {
+  ipcMain.handle('get-produtos-nomes', async (event) => {
     try {
-      const data = await getCereaisNomes()
+      const data = await getProdutosNomes()
       return data
     } catch (error) {
       throw error
     }
   })
-
 
   createWindow()
 

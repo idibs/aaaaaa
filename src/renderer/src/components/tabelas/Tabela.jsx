@@ -2,6 +2,7 @@ import { MdEdit } from 'react-icons/md'
 import { FaTrash } from 'react-icons/fa'
 import { useState } from 'react'
 import PopupDelete from '../popups/PopUpDelete'
+import PopupEdit from '../popups/produtos/PopUpEditProd'
 
 const Tabela = ({ data, insertTable }) => {
   const [showModal, setShowModal] = useState(false)
@@ -16,9 +17,7 @@ const Tabela = ({ data, insertTable }) => {
   // Toggle checkbox
   const handleCheckboxChange = (id) => {
     setSelectedItems((prevSelected) =>
-      prevSelected.includes(id)
-        ? prevSelected.filter((item) => item !== id)
-        : [...prevSelected, id]
+      prevSelected.includes(id) ? prevSelected.filter((item) => item !== id) : [...prevSelected, id]
     )
   }
 
@@ -94,7 +93,7 @@ const Tabela = ({ data, insertTable }) => {
           <tr>
             <td
               colSpan={
-                (Object.keys(data[0] || { id: 1, nome: '', quantidade: '', peso: '' }).length + 1) + 1 // +1 do checkbox
+                Object.keys(data[0] || { id: 1, nome: '', quantidade: '', peso: '' }).length + 1 + 1 // +1 do checkbox
               }
               className="text-center py-4"
             >

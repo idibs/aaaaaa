@@ -1,6 +1,6 @@
 import connection from './connection'
 
-export function getCereais() {
+export function getEnsacados() {
   const conn = connection()
   return new Promise((resolve, reject) => {
     const sql = `SELECT 
@@ -135,7 +135,7 @@ export function getEnsacadosColunas(tipo) {
   })
 }
 
-export function getCereaisNomes() {
+export function getProdutosNomes() {
   const conn = connection()
   return new Promise((resolve, reject) => {
     const sql = `SELECT 

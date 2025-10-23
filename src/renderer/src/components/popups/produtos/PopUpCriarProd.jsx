@@ -10,13 +10,20 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
   const [columns, setColumns] = useState([])
   const [selectOptions, setSelectOptions] = useState([])
   const [page, setPage] = useState(1)
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [produtosBase, setProdutosBase] = useState([]);
-  const userDropdownRef = useRef(null);
-
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false)
+  const [produtosBase, setProdutosBase] = useState([])
+  const userDropdownRef = useRef(null)
 
   useEffect(() => {
     setPage(1)
+    window.api
+      .getProdutosNomes()
+      .then((result) => {
+        setProdutosBase(result)
+      })
+      .catch((error) => {
+        console.error('Error fetching product names:', error)
+      })
   }, [insertTable])
 
   const totalPages = Math.ceil(columns.length / PAGE_SIZE)
@@ -38,43 +45,46 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
         <div className="flex flex-col justify-between h-140">
           <div>
             <div className="mt-7 flex flex-col px-30 h-90 w-full">
-               <div className="relative" ref={userDropdownRef}>
-            <button
-              onClick={() => setUserDropdownOpen(v => !v)}
-              className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl"
-              aria-haspopup="true"
-              aria-expanded={userDropdownOpen}
-              type="button"
-            >
-              Produtos Base
-              <span className=" text-sm"><IoIosArrowDown /></span>
-            </button>
-            {userDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
-                {produtosBase.map((produto) => (
-                <button className="block px-4 py-2 hover:bg-green-900"
-                onClick={() => setUserDropdownOpen(false)}>
-                  {produto.Nome}
-                </button>))}
+              <div className="relative" ref={userDropdownRef}>
+                <button
+                  onClick={() => setUserDropdownOpen((v) => !v)}
+                  className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl"
+                  aria-haspopup="true"
+                  aria-expanded={userDropdownOpen}
+                  type="button"
+                >
+                  Produtos Base
+                  <span className=" text-sm">
+                    <IoIosArrowDown />
+                  </span>
+                </button>
+                {userDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-40 bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                    {produtosBase.map((produto) => (
+                      <button
+                        className="block px-4 py-2 hover:bg-green-900"
+                        onClick={() => setUserDropdownOpen(false)}
+                      >
+                        {produto.Nome}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
             </div>
             {totalPages > 1 && (
-            <div className="flex justify-end w-full px-30">
-              
-              <Button
-                onClick={() => setPage(page - 1)}
-                className={`${page === 1 ? 'hidden' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'}`}
-                text={<IoMdArrowRoundBack />}
-              />
-              <Button
-                onClick={() => setPage(page + 1)}
-                className={`${page === totalPages ? 'hidden' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'}`}
-                text={<IoMdArrowRoundForward />}
-              />
-              
-            </div>
+              <div className="flex justify-end w-full px-30">
+                <Button
+                  onClick={() => setPage(page - 1)}
+                  className={`${page === 1 ? 'hidden' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'}`}
+                  text={<IoMdArrowRoundBack />}
+                />
+                <Button
+                  onClick={() => setPage(page + 1)}
+                  className={`${page === totalPages ? 'hidden' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'}`}
+                  text={<IoMdArrowRoundForward />}
+                />
+              </div>
             )}
           </div>
           <div className="flex justify-center">

@@ -2,7 +2,7 @@ import Tabela from '../../components/tabelas/Tabela'
 import Input from '../../components/inputs/Input'
 import { useState, useEffect } from 'react'
 import Button from '../../components/botoes/DesignBotao'
-import Popup from '../../components/popups/produtos/PopUpCriarProd' // popup de criar produto
+import Popup from '../../components/popups/venda/PopUpCriarVenda' // popup de criar produto
 
 export default function Produtos() {
   // define os dados da tabela, improviso por falta de banco de dados
@@ -69,6 +69,10 @@ export default function Produtos() {
             <Button
               className="text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec] w-50 py-2"
               text="Adicionar a Carga"
+            />
+             <Button
+              className="text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec] w-50 py-2"
+              text="Gerar PDF"
             />
           </div>
         </div>

@@ -12,6 +12,7 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
   const [page, setPage] = useState(1)
   const [userDropdownOpen, setUserDropdownOpen] = useState(false)
   const [produtosBase, setProdutosBase] = useState([])
+  const [baseValue, setBaseValue] = useState('')
   const userDropdownRef = useRef(null)
 
   useEffect(() => {
@@ -41,29 +42,34 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
             <IoMdClose />
           </button>
         </div>
+
         <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">Novo Registro</h1>
+
         <div className="flex flex-col justify-between h-140">
           <div>
             <div className="mt-7 flex flex-col px-30 h-90 w-full">
-              <div className="relative" ref={userDropdownRef}>
+              {/* Dropdown de produtos base */}
+              <div className="relative mb-6" ref={userDropdownRef}>
                 <button
                   onClick={() => setUserDropdownOpen((v) => !v)}
-                  className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl"
+                  className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
                   aria-haspopup="true"
                   aria-expanded={userDropdownOpen}
                   type="button"
                 >
                   Produtos Base
-                  <span className=" text-sm">
-                    <IoIosArrowDown />
-                  </span>
+                  <IoIosArrowDown className="text-sm" />
                 </button>
                 {userDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-40 bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                  <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
                     {produtosBase.map((produto) => (
                       <button
-                        className="block px-4 py-2 hover:bg-green-900"
-                        onClick={() => setUserDropdownOpen(false)}
+                        key={produto.Nome}
+                        className="block w-full text-left px-4 py-2 hover:bg-green-900"
+                        onClick={() => {
+                          setBaseValue(produto.Nome)
+                          setUserDropdownOpen(false)
+                        }}
                       >
                         {produto.Nome}
                       </button>
@@ -71,9 +77,29 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
                   </div>
                 )}
               </div>
+
+              {/* Input base estilizado */}
+              <input
+                type="text"
+                placeholder="Input base"
+                value={baseValue}
+                onChange={(e) => setBaseValue(e.target.value)}
+                className="border border-[#1A6D12] px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+              />
+
+              {/* Aqui no futuro entram os inputs puxados do banco */}
+              {inputs.map((coluna, index) => (
+                <input
+                  key={index}
+                  type={inputNumbers.includes(coluna) ? 'number' : 'text'}
+                  placeholder={coluna}
+                  className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+                />
+              ))}
             </div>
+
             {totalPages > 1 && (
-              <div className="flex justify-end w-full px-30">
+              <div className="flex justify-end w-full px-30 mt-2">
                 <Button
                   onClick={() => setPage(page - 1)}
                   className={`${page === 1 ? 'hidden' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'}`}
@@ -87,6 +113,7 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
               </div>
             )}
           </div>
+
           <div className="flex justify-center">
             <Button className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60" text="Salvar" />
           </div>

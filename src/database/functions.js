@@ -181,7 +181,7 @@ export function getPedidoProdutosByStatus(status) {
   })
 }
 
-export function getPedidoProdutosByStatus(status) {
+export function getPedidoProdutosByCarga(id_car) {
   const conn = connection()
   return new Promise((resolve, reject) => {
     const sql = `SELECT 

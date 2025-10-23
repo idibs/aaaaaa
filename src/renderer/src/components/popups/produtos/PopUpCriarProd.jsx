@@ -6,7 +6,7 @@ import { IoMdArrowRoundBack, IoMdArrowRoundForward, IoIosArrowDown } from 'react
 export default function PopupCriarRegistro({ showModal, onClose, insertTable }) {
   if (!showModal) return null
 
-  const PAGE_SIZE = 6
+  const PAGE_SIZE = 5
   const [columns, setColumns] = useState([])
   const [selectOptions, setSelectOptions] = useState([])
   const [page, setPage] = useState(1)
@@ -26,7 +26,7 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
         console.error('Error fetching product names:', error)
       })
     window.api
-      .getEnsacados(insertTable)
+      .getPedidoProdutosByStatus('Em analise')
       .then((cols) => {
         setColumns(Object.keys(cols[0]).filter((col) => col !== 'Id'))
       })

@@ -6,7 +6,7 @@ import { IoMdArrowRoundBack, IoMdArrowRoundForward, IoIosArrowDown } from 'react
 export default function PopupCriarRegistro({ showModal, onClose, insertTable }) {
   if (!showModal) return null
 
-  const PAGE_SIZE = 4
+  const PAGE_SIZE = 6
   const [columns, setColumns] = useState([])
   const [selectOptions, setSelectOptions] = useState([])
   const [page, setPage] = useState(1)
@@ -24,6 +24,14 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
       })
       .catch((error) => {
         console.error('Error fetching product names:', error)
+      })
+    window.api
+      .getEnsacados(insertTable)
+      .then((cols) => {
+        setColumns(Object.keys(cols[0]).filter((col) => col !== 'Id'))
+      })
+      .catch((error) => {
+        console.error('Error fetching table columns:', error)
       })
   }, [insertTable])
 
@@ -77,15 +85,6 @@ export default function PopupCriarRegistro({ showModal, onClose, insertTable }) 
                   </div>
                 )}
               </div>
-
-              {/* Input base estilizado */}
-              <input
-                type="text"
-                placeholder="Input base"
-                value={baseValue}
-                onChange={(e) => setBaseValue(e.target.value)}
-                className="border border-[#1A6D12] px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
-              />
 
               {/* Aqui no futuro entram os inputs puxados do banco */}
               {inputs.map((coluna, index) => (

@@ -1,4 +1,4 @@
-import Tabela from '../components/tabelas/Tabela'
+import Tabela from '../components/tabelas/TabelaComView'
 import Input from '../components/inputs/Input'
 import { useState, useEffect } from 'react'
 import Button from '../components/botoes/DesignBotao'
@@ -27,7 +27,9 @@ export default function Carga() {
 
   // useEffect separado para filtrar os dados sempre que 'data' ou 'term' mudarem
   useEffect(() => {
-    setFilteredData(data.filter((item) => item.Valor_total.toLowerCase().includes(term.toLowerCase())))
+    setFilteredData(
+      data.filter((item) => item.Valor_total.toLowerCase().includes(term.toLowerCase()))
+    )
   }, [term, data]) // Executa quando 'data' ou 'term' mudam
 
   // funções para abrir e fechar o modal

@@ -181,6 +181,35 @@ export function getPedidoProdutosByStatus(status) {
   })
 }
 
+export function getPedidoProdutosByStatus(status) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT 
+                    Id_pedprod AS Id,
+                    Nome_pes AS Cliente,
+                    Nome_out AS Nome_Produto,
+                    Nome_ens AS Nome_Cereal,
+                    Data_pedprod AS Data,
+                    Quantidade_pedprod AS Quantidade,
+                    Peso_total_pedprod AS Peso_total,
+                    Valor_total_pedprod AS Valor_total,
+                    Metodo_pagamento_pedprod AS Pagamento
+                FROM pedido_produto pp
+                INNER JOIN pessoa ON pp.Id_pes = pessoa.Id_pes
+                LEFT JOIN produto_ensacado ps ON pp.Id_ens = ps.Id_ens
+                LEFT JOIN outros_produtos op ON pp.Id_out = op.Id_out
+                WHERE Status_pedprod = ?;`
+    conn.query(sql, [status], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
 export function getPedidos() {
   const conn = connection()
   return new Promise((resolve, reject) => {

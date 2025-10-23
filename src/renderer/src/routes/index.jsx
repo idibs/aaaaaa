@@ -20,7 +20,7 @@ export default function AppRoutes() {
       <Route path="/compras" element={<Compras />} />
       <Route path="/carga" element={<Carga />} />
       <Route path="/funcionarios" element={<Funcionarios />} />
-      <Route path="/view/carga" element={<ViewCarga />} />
+      <Route path="/view/carga/:id" element={<ViewCarga />} />
     </Routes>
   )
 }

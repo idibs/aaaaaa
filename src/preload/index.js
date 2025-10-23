@@ -12,7 +12,8 @@ const api = {
     ipcRenderer.invoke('get-pedido-produtos-by-status', status),
   getFuncionariosByTipo: (tipo) => ipcRenderer.invoke('get-funcionarios-by-tipo', tipo),
   getPedidos: () => ipcRenderer.invoke('get-pedidos'),
-  getProdutosNomes: () => ipcRenderer.invoke('get-produtos-nomes')
+  getProdutosNomes: () => ipcRenderer.invoke('get-produtos-nomes'),
+  getPedidoProdutosByCarga: (Id_ped) => ipcRenderer.invoke('get-pedido-produtos-by-carga', Id_ped)
 }
 
 if (process.contextIsolated) {

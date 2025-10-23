@@ -181,7 +181,7 @@ export function getPedidoProdutosByStatus(status) {
   })
 }
 
-export function getPedidoProdutosByCarga(id_car) {
+export function getPedidoProdutosByCarga(id_ped) {
   const conn = connection()
   return new Promise((resolve, reject) => {
     const sql = `SELECT 
@@ -198,8 +198,8 @@ export function getPedidoProdutosByCarga(id_car) {
                 INNER JOIN pessoa ON pp.Id_pes = pessoa.Id_pes
                 LEFT JOIN produto_ensacado ps ON pp.Id_ens = ps.Id_ens
                 LEFT JOIN outros_produtos op ON pp.Id_out = op.Id_out
-                WHERE Status_pedprod = ?;`
-    conn.query(sql, [status], (error, results) => {
+                WHERE Id_ped = ?;`
+    conn.query(sql, [id_ped], (error, results) => {
       conn.end()
       if (error) {
         reject(error)

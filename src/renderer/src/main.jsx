@@ -52,7 +52,7 @@ const router = createBrowserRouter([
         element: <Funcionarios />
       },
       {
-        path: 'view/carga',
+        path: 'view/carga/:id',
         element: <ViewCarga />
       }
     ]

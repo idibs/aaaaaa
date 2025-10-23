@@ -9,19 +9,11 @@ import PopupEdit from '../popups/produtos/PopUpEditProd'
 const TabelaComView = ({ data, insertTable }) => {
   const [showModal, setShowModal] = useState(false)
   const [showModalEdit, setShowModalEdit] = useState(false)
-  const [selectedItems, setSelectedItems] = useState([]) // ids selecionados
 
   const openModal = () => setShowModal(true)
   const closeModal = () => setShowModal(false)
   const openModalEdit = () => setShowModalEdit(true)
   const closeModalEdit = () => setShowModalEdit(false)
-
-  // Toggle checkbox
-  const handleCheckboxChange = (id) => {
-    setSelectedItems((prevSelected) =>
-      prevSelected.includes(id) ? prevSelected.filter((item) => item !== id) : [...prevSelected, id]
-    )
-  }
 
   return (
     <table className="table border-collapsed w-full">
@@ -65,7 +57,7 @@ const TabelaComView = ({ data, insertTable }) => {
                       insertTable={insertTable}
                     />
                     <button className="cursor-pointer">
-                      <Link to="view/carga">
+                      <Link to={`/view/carga/${id}`}>
                         <IoEyeSharp />
                       </Link>
                     </button>

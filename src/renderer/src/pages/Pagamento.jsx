@@ -10,7 +10,7 @@ export default function Pagamento() {
   const [term, setTerm] = useState('') // termo de pesquisa
   const [tipo, setTipo] = useState('Registrado') // tipo selecionado
   const [showModal, setShowModal] = useState(false)
-  
+
   const insertTable = 'pagamento'
 
   // Busca os dados do banco sempre que o tipo mudar
@@ -25,9 +25,7 @@ export default function Pagamento() {
 
   // Filtra os dados pelo nome sempre que data ou term mudarem
   useEffect(() => {
-    setFilteredData(
-      data.filter(f => f.Nome.toLowerCase().includes(term.toLowerCase()))
-    )
+    setFilteredData(data.filter((f) => f.Nome.toLowerCase().includes(term.toLowerCase())))
   }, [data, term])
 
   const openModal = () => setShowModal(true)
@@ -44,19 +42,18 @@ export default function Pagamento() {
   // Prepara os dados para a tabela (apenas visualização)
   const tabelaFormatada = filteredData.map((f) => ({
     id: f.id,
-    nome: f.Nome,
-    cargo: f.Cargo,
-    calendario: f.DiasRegistrados?.join(', ') || '-', // mostra os dias já registrados
-    valor: `R$ ${calcularValor(f)}`,
-    observacoes: f.Observacoes || '',
-    dataPagamento: f.DataPagamento || '',
+    status: f.Status || '',
+    nome: f.Nome || '',
+    cargo: f.Cargo || '',
+    horas_trabalhadas: f.DiasRegistrados?.length || 0,
+    período: f.DiasRegistrados?.join(', ') || '-', // mostra os dias já registrados
+    data_pagamento: f.DataPagamento || '',
+    observações: f.Observacoes || ''
   }))
 
   return (
     <div className="pt-10">
-      <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">
-        Pagar Funcionários
-      </h1>
+      <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">Pagar Funcionários</h1>
       {/* texto do input da tabela */}
       <p className="text-black ps-30 mt-10 mb-3">Nome do Funcionário:</p>
       {/* container da tabela */}
@@ -85,7 +82,15 @@ export default function Pagamento() {
         <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
           <Tabela
             data={tabelaFormatada}
-            columns={["Nome", "Cargo", "Calendário", "Valor a Pagar", "Observações", "Data do Pagamento"]}
+            columns={[
+              'status',
+              'nome',
+              'cargo',
+              'horas_trabalhadas',
+              'período',
+              'data_pagamento',
+              'observações'
+            ]}
             insertTable={insertTable}
           />
         </div>

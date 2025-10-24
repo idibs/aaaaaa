@@ -60,7 +60,7 @@ export default function Carga() {
           <div className="flex gap-3">
             <Button
               className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-40 h-full py-2"
-              text="Adicionar Lote"
+              text="Criar carga"
               onClick={openModal}
             />
           </div>

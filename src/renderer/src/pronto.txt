@@ -1,1 +1,3 @@
 produtos -- design pronto
+pessoas -- design pronto
+funcionarios -- design pronto

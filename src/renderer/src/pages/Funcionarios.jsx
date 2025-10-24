@@ -14,7 +14,7 @@ export default function Funcionarios() {
   // controla a visibilidade do modal
   const [showModal, setShowModal] = useState(false)
 
-  const insertTable = 'produto'
+  const insertTable = 'funcionario'
 
   useEffect(() => {
     window.api

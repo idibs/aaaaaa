@@ -2,6 +2,7 @@ import { MdEdit } from 'react-icons/md'
 import { FaTrash } from 'react-icons/fa'
 import { useState } from 'react'
 import PopupDelete from '../popups/PopUpDelete'
+import PopupEditFunc from '../popups/funcionario/PopUpEditFunc'
 import PopupEditProd from '../popups/produtos/PopUpEditProd'
 import PopupEditPes from '../popups/pessoas/PopUpEditPes'
 
@@ -89,6 +90,19 @@ const Tabela = ({ data, insertTable, onSave }) => {
                     </button>
                     {insertTable === 'cliente' ? (
                       <PopupEditPes
+                        showModal={showModalEdit}
+                        onClose={() => {
+                          closeModalEdit()
+                          setSelectedProduct(null)
+                        }}
+                        insertTable={insertTable}
+                        initialData={selectedProduct}
+                        onSave={(payload) => {
+                          if (onSave) onSave(payload, selectedProduct)
+                        }}
+                      />
+                    ) : insertTable === 'funcionario' ? (
+                      <PopupEditFunc
                         showModal={showModalEdit}
                         onClose={() => {
                           closeModalEdit()

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import Tabela from '../components/tabelas/Tabela'
+import Tabela from '../components/tabelas/TabelaComValidacao'
 import Input from '../components/inputs/Input'
 import Button from '../components/botoes/DesignBotao'
 import Popup from '../components/popups/pagamento/PopUpCriarPag'

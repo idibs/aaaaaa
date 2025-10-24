@@ -1,4 +1,4 @@
-import Tabela from '../../components/tabelas/Tabela'
+import Tabela from '../../components/tabelas/TabelaComValidacao'
 import Input from '../../components/inputs/Input'
 import { useState, useEffect } from 'react'
 import Button from '../../components/botoes/DesignBotao'

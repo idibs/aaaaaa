@@ -2,11 +2,13 @@ import { MdEdit } from 'react-icons/md'
 import { FaTrash } from 'react-icons/fa'
 import { useState } from 'react'
 import PopupDelete from '../popups/PopUpDelete'
-import PopupEdit from '../popups/produtos/PopUpEditProd'
+import PopupEditProd from '../popups/produtos/PopUpEditProd'
+import PopupEditPes from '../popups/pessoas/PopUpEditPes'
 
-const Tabela = ({ data, insertTable }) => {
+const Tabela = ({ data, insertTable, onSave }) => {
   const [showModal, setShowModal] = useState(false)
   const [showModalEdit, setShowModalEdit] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState(null)
   const [selectedItems, setSelectedItems] = useState([]) // ids selecionados
 
   const openModal = () => setShowModal(true)
@@ -76,14 +78,42 @@ const Tabela = ({ data, insertTable }) => {
                       <FaTrash />
                     </button>
                     <PopupDelete showModal={showModal} onClose={closeModal} />
-                    <button onClick={openModalEdit} className="cursor-pointer">
+                    <button
+                      onClick={() => {
+                        setSelectedProduct(item)
+                        openModalEdit()
+                      }}
+                      className="cursor-pointer"
+                    >
                       <MdEdit />
                     </button>
-                    <PopupEdit
-                      showModal={showModalEdit}
-                      onClose={closeModalEdit}
-                      insertTable={insertTable}
-                    />
+                    {insertTable === 'cliente' ? (
+                      <PopupEditPes
+                        showModal={showModalEdit}
+                        onClose={() => {
+                          closeModalEdit()
+                          setSelectedProduct(null)
+                        }}
+                        insertTable={insertTable}
+                        initialData={selectedProduct}
+                        onSave={(payload) => {
+                          if (onSave) onSave(payload, selectedProduct)
+                        }}
+                      />
+                    ) : (
+                      <PopupEditProd
+                        showModal={showModalEdit}
+                        onClose={() => {
+                          closeModalEdit()
+                          setSelectedProduct(null)
+                        }}
+                        insertTable={insertTable}
+                        initialData={selectedProduct}
+                        onSave={(payload) => {
+                          if (onSave) onSave(payload, selectedProduct)
+                        }}
+                      />
+                    )}
                   </div>
                 </td>
               </tr>

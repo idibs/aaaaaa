@@ -52,6 +52,28 @@ export default function Produtos() {
   const openModal = () => setShowModal(true)
   const closeModal = () => setShowModal(false)
 
+  // callback para quando um produto for salvo no popup de edição
+  async function handleProdutoSave(payload, original) {
+    try {
+      // tenta atualizar no backend (se existir)
+      if (window.api && window.api.updateProduto) {
+        await window.api.updateProduto(payload)
+      }
+
+      // atualiza o estado local `data` (mantém Id se não foi enviado)
+      const id = original?.Id ?? original?.id
+      setData((prev) =>
+        prev.map((item) => {
+          const itemId = item.Id ?? item.id
+          if (itemId === id) return { ...item, ...payload, Id: itemId }
+          return item
+        })
+      )
+    } catch (err) {
+      console.error('Erro ao salvar produto:', err)
+    }
+  }
+
   return (
     <div className="pt-10">
       <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">Produtos em Estoque</h1>
@@ -81,7 +103,7 @@ export default function Produtos() {
         </div>
         {/* table */}
         <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
-          <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} />
+          <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} onSave={handleProdutoSave} />
         </div>
         {/* escolher entre tabelas */}
         <div className="mt-4 mb-4 flex justify-between">

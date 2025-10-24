@@ -40,6 +40,28 @@ export default function Pessoas() {
   const openModal = () => setShowModal(true)
   const closeModal = () => setShowModal(false)
 
+  // callback para quando um item for salvo no popup de edição
+  async function handlePessoaSave(payload, original) {
+    try {
+      // tenta atualizar no backend (se existir)
+      if (window.api && window.api.updatePessoa) {
+        await window.api.updatePessoa(payload)
+      }
+
+      // atualiza o estado local `data` (mantém Id se não foi enviado)
+      const id = original?.Id ?? original?.id
+      setData((prev) =>
+        prev.map((item) => {
+          const itemId = item.Id ?? item.id
+          if (itemId === id) return { ...item, ...payload, Id: itemId }
+          return item
+        })
+      )
+    } catch (err) {
+      console.error('Erro ao salvar pessoa:', err)
+    }
+  }
+
   return (
     <div className="pt-10">
       <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">Controle de Pessoas</h1>
@@ -68,8 +90,8 @@ export default function Pessoas() {
           </div>
         </div>
         {/* table */}
-        <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
-          <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} />
+          <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
+          <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} onSave={handlePessoaSave} />
         </div>
         {/* escolher entre tabelas */}
         <div className="mt-4 mb-4 flex justify-between">

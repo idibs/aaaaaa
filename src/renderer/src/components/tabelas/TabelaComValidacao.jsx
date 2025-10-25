@@ -1,15 +1,14 @@
 import { MdEdit } from 'react-icons/md'
-import { FaTrash, FaCheck } from 'react-icons/fa' // ⬅️ Importamos o FaCheck
+import { FaTrash, FaCheck } from 'react-icons/fa'
 import { useState } from 'react'
 import PopupDelete from '../popups/PopUpDelete'
-import PopupEditFunc from '../popups/funcionario/PopUpEditFunc'
-import PopupEditProd from '../popups/produtos/PopUpEditProd'
-import PopupEditPes from '../popups/pessoas/PopUpEditPes'
+import PopupEditPag from '../popups/pagamento/PopUpEditPag'
+import PopupEditVenda from '../popups/venda/PopUpEditVenda'
 
-const Tabela = ({ data, insertTable, onSave, columns }) => {
+const Tabela = ({ data, insertTable, onSave }) => {
   const [showModal, setShowModal] = useState(false)
   const [showModalEdit, setShowModalEdit] = useState(false)
-  const [selectedProduct, setSelectedProduct] = useState(null)
+  const [selectedItem, setSelectedItem] = useState(null)
   const [selectedItems, setSelectedItems] = useState([])
 
   const openModal = () => setShowModal(true)
@@ -19,98 +18,127 @@ const Tabela = ({ data, insertTable, onSave, columns }) => {
 
   const handleCheckboxChange = (id) => {
     setSelectedItems((prevSelected) =>
-      prevSelected.includes(id) ? prevSelected.filter((item) => item !== id) : [...prevSelected, id]
+      prevSelected.includes(id)
+        ? prevSelected.filter((item) => item !== id)
+        : [...prevSelected, id]
     )
   }
 
-  // Função para obter o valor da célula a partir do objeto row usando o nome da coluna.
-  // Tenta várias formas: nome exato, sem espaços, snake_case, camelCase e nomes legados comuns.
-  const getCellValue = (row, col) => {
-    if (!row) return ''
-    // se existir exatamente a chave, retorna direto
-    if (Object.prototype.hasOwnProperty.call(row, col)) return row[col]
-
-    const normalize = (s) =>
-      s
-        ?.toString()
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, '')
-
-    const candidates = new Set()
-    candidates.add(col)
-
-    // sem espaços
-    const noSpace = col?.toString().replace(/\s+/g, '')
-    if (noSpace) candidates.add(noSpace)
-    candidates.add(noSpace?.toLowerCase())
-
-    // snake_case
-    const snake = col?.toString().replace(/\s+/g, '_')
-    if (snake) candidates.add(snake)
-
-    // camelCase
-    const words = col
-      ?.toString()
-      .split(/\s+/)
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join('')
-    if (words) candidates.add(words.charAt(0).toLowerCase() + words.slice(1))
-
-    // versão normalizada para mapear nomes legados
-    const norm = normalize(col)
-
-    const legacyMap = {
-      datadopagamento: 'data_pagamento',
-      datapagamento: 'data_Pagamento',
-      periodo: '',
-      horastrabalhadas: 'horas_trabalhadas',
-      observacoes: 'Observacoes',
-      observações: 'Observacoes',
-      valor: 'val',
-      calendario: 'calendario'
-    }
-
-    if (legacyMap[norm]) candidates.add(legacyMap[norm])
-
-    // tenta todas as chaves candidatas
-    for (const k of candidates) {
-      if (!k) continue
-      if (Object.prototype.hasOwnProperty.call(row, k)) return row[k]
-      // também tenta com primeira letra minúscula/maiúscula
-      const alt = k.charAt(0).toLowerCase() + k.slice(1)
-      if (Object.prototype.hasOwnProperty.call(row, alt)) return row[alt]
-      const alt2 = k.charAt(0).toUpperCase() + k.slice(1)
-      if (Object.prototype.hasOwnProperty.call(row, alt2)) return row[alt2]
-    }
-
-    return ''
-  }
-
   return (
-    <table className="min-w-full divide-y divide-gray-200">
-      <thead className="bg-gray-50">
-        <tr>
-          {columns.map((col, idx) => (
-            <th
-              key={idx}
-              scope="col"
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              {col}
+    <table className="table border-collapsed w-full">
+      {data.length > 0 && (
+        <thead>
+          <tr>
+            <th className="border border-[#1A6D12] px-1 py-1">
+              <input
+                type="checkbox"
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedItems(data.map((item) => item.Id || item.id))
+                  } else {
+                    setSelectedItems([])
+                  }
+                }}
+                checked={selectedItems.length === data.length}
+              />
             </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody className="bg-white divide-y divide-gray-200">
-        {data.map((row) => (
-          <tr key={row.id}>
-            {columns.map((col, i) => (
-              <td key={i} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {getCellValue(row, col) ?? ''}
-              </td>
+            {Object.keys(data[0]).map((key) => (
+              <th key={key} className="border border-[#1A6D12] px-1 py-1">
+                {key}
+              </th>
             ))}
+            <th className="border border-[#1A6D12] px-1 py-1">Opções</th>
           </tr>
-        ))}
+        </thead>
+      )}
+      <tbody>
+        {data.length > 0 ? (
+          data.map((item, index) => {
+            const id = item.Id || item.id || index
+            return (
+              <tr key={index} className="hover:bg-[#ececec]">
+                <td className="border border-[#1A6D12] text-center py-1">
+                  <input
+                    type="checkbox"
+                    checked={selectedItems.includes(id)}
+                    onChange={() => handleCheckboxChange(id)}
+                  />
+                </td>
+                {Object.entries(item).map(([key, value], idx) => (
+                  <td key={idx} className="border border-[#1A6D12] text-center py-1">
+                    {key.toLowerCase().includes('data') && value
+                      ? new Date(value).toLocaleDateString()
+                      : value}
+                  </td>
+                ))}
+                <td className="border border-[#1A6D12] text-center py-1">
+                  <div className="flex justify-evenly items-center">
+                    {/* Ícone de confirmação */}
+                    <button
+                      onClick={() => alert(`Item ${id} confirmado!`)}
+                      className="cursor-pointer text-green-600 hover:text-green-800"
+                    >
+                      <FaCheck />
+                    </button>
+
+                    {/* Ícone de exclusão */}
+                    <button onClick={openModal} className="cursor-pointer text-red-600 hover:text-red-800">
+                      <FaTrash />
+                    </button>
+                    <PopupDelete showModal={showModal} onClose={closeModal} />
+
+                    {/* Ícone de edição */}
+                    <button
+                      onClick={() => {
+                        setSelectedItem(item)
+                        openModalEdit()
+                      }}
+                      className="cursor-pointer text-blue-600 hover:text-blue-800"
+                    >
+                      <MdEdit />
+                    </button>
+
+                    {/* Popups de edição específicos */}
+                    {insertTable === 'pagamento' ? (
+                      <PopupEditPag
+                        showModal={showModalEdit}
+                        onClose={() => {
+                          closeModalEdit()
+                          setSelectedItem(null)
+                        }}
+                        initialData={selectedItem}
+                        onSave={(payload) => {
+                          if (onSave) onSave(payload, selectedItem)
+                        }}
+                      />
+                    ) : insertTable === 'pedido_produto' ? (
+                      <PopupEditVenda
+                        showModal={showModalEdit}
+                        onClose={() => {
+                          closeModalEdit()
+                          setSelectedItem(null)
+                        }}
+                        initialData={selectedItem}
+                        onSave={(payload) => {
+                          if (onSave) onSave(payload, selectedItem)
+                        }}
+                      />
+                    ) : null}
+                  </div>
+                </td>
+              </tr>
+            )
+          })
+        ) : (
+          <tr>
+            <td
+              colSpan={Object.keys(data[0] || { id: 1 }).length + 2}
+              className="text-center py-4"
+            >
+              Nenhum resultado encontrado.
+            </td>
+          </tr>
+        )}
       </tbody>
     </table>
   )

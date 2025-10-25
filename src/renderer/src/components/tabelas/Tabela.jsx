@@ -123,7 +123,7 @@ const Tabela = ({ data, insertTable, onSave }) => {
                         initialData={selectedProduct}
                         onSave={(payload) => onSave && onSave(payload, selectedProduct)}
                       />
-                    ) : (
+                    ) : insertTable === 'produto_ensacado' ? (
                       <PopupEditProd
                         showModal={showModalEdit}
                         onClose={() => {
@@ -134,7 +134,7 @@ const Tabela = ({ data, insertTable, onSave }) => {
                         initialData={selectedProduct}
                         onSave={(payload) => onSave && onSave(payload, selectedProduct)}
                       />
-                    )}
+                    ): null}
                   </div>
                 </td>
               </tr>

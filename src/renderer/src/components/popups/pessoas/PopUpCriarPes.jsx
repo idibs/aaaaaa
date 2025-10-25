@@ -57,7 +57,7 @@ export default function PopupCriarPes({ showModal, onClose, insertTable }) {
         </div>
 
         <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">
-          Nova Pessoa
+          Novo Registro
         </h1>
 
         {/* Container principal com justify-between */}

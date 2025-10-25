@@ -5,6 +5,7 @@ import PopupDelete from '../popups/PopUpDelete'
 import PopupEditFunc from '../popups/funcionario/PopUpEditFunc'
 import PopupEditProd from '../popups/produtos/PopUpEditProd'
 import PopupEditPes from '../popups/pessoas/PopUpEditPes'
+import PopupEditLote from '../popups/produto_base/PopUpEditLote' // ✅ import adicionado
 
 const Tabela = ({ data, insertTable, onSave }) => {
   const [showModal, setShowModal] = useState(false)
@@ -33,7 +34,6 @@ const Tabela = ({ data, insertTable, onSave }) => {
               {/* Cabeçalho checkbox */}
               <input
                 type="checkbox"
-                // Select all (opcional)
                 onChange={(e) => {
                   if (e.target.checked) {
                     setSelectedItems(data.map((item) => item.Id || item.id))
@@ -56,7 +56,7 @@ const Tabela = ({ data, insertTable, onSave }) => {
       <tbody>
         {data.length > 0 ? (
           data.map((item, index) => {
-            const id = item.Id || item.id || index // pega o id, se não usar index como fallback
+            const id = item.Id || item.id || index
             return (
               <tr key={index} className="hover:bg-[#ececec]">
                 <td className="border border-[#1A6D12] text-center py-1">
@@ -88,6 +88,8 @@ const Tabela = ({ data, insertTable, onSave }) => {
                     >
                       <MdEdit />
                     </button>
+
+                    {/* Seleção de qual popup abrir */}
                     {insertTable === 'cliente' ? (
                       <PopupEditPes
                         showModal={showModalEdit}
@@ -97,9 +99,7 @@ const Tabela = ({ data, insertTable, onSave }) => {
                         }}
                         insertTable={insertTable}
                         initialData={selectedProduct}
-                        onSave={(payload) => {
-                          if (onSave) onSave(payload, selectedProduct)
-                        }}
+                        onSave={(payload) => onSave && onSave(payload, selectedProduct)}
                       />
                     ) : insertTable === 'funcionario' ? (
                       <PopupEditFunc
@@ -110,9 +110,18 @@ const Tabela = ({ data, insertTable, onSave }) => {
                         }}
                         insertTable={insertTable}
                         initialData={selectedProduct}
-                        onSave={(payload) => {
-                          if (onSave) onSave(payload, selectedProduct)
+                        onSave={(payload) => onSave && onSave(payload, selectedProduct)}
+                      />
+                    ) : insertTable === 'produto' ? (
+                      <PopupEditLote
+                        showModal={showModalEdit}
+                        onClose={() => {
+                          closeModalEdit()
+                          setSelectedProduct(null)
                         }}
+                        insertTable={insertTable}
+                        initialData={selectedProduct}
+                        onSave={(payload) => onSave && onSave(payload, selectedProduct)}
                       />
                     ) : (
                       <PopupEditProd
@@ -123,9 +132,7 @@ const Tabela = ({ data, insertTable, onSave }) => {
                         }}
                         insertTable={insertTable}
                         initialData={selectedProduct}
-                        onSave={(payload) => {
-                          if (onSave) onSave(payload, selectedProduct)
-                        }}
+                        onSave={(payload) => onSave && onSave(payload, selectedProduct)}
                       />
                     )}
                   </div>
@@ -136,9 +143,7 @@ const Tabela = ({ data, insertTable, onSave }) => {
         ) : (
           <tr>
             <td
-              colSpan={
-                Object.keys(data[0] || { id: 1, nome: '', quantidade: '', peso: '' }).length + 1 + 1 // +1 do checkbox
-              }
+              colSpan={Object.keys(data[0] || { id: 1, nome: '', quantidade: '', peso: '' }).length + 1 + 1}
               className="text-center py-4"
             >
               Nenhum resultado encontrado.

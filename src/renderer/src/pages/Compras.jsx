@@ -2,74 +2,85 @@ import Tabela from '../components/tabelas/Tabela'
 import Input from '../components/inputs/Input'
 import { useState, useEffect } from 'react'
 import Button from '../components/botoes/DesignBotao'
-import Popup from '../components/popups/produtos/PopUpCriarProd'// popup de criar produto
+import PopupAddLote from '../components/popups/produto_base/PopUpAddLote' // popup de adicionar lote
+import PopupCriarProduto from '../components/popups/produtos/PopUpCriarProd' // popup de criar produto
 
 export default function Compras() {
-  // define os dados da tabela, improviso por falta de banco de dados
   const [data, setData] = useState([])
   const [term, setTerm] = useState('') // termo de pesquisa
   const [filteredData, setFilteredData] = useState([]) // dados filtrados
-  // controla a visibilidade do modal
-  const [showModal, setShowModal] = useState(false)
+  const [showAddLote, setShowAddLote] = useState(false)
+  const [showCriarProduto, setShowCriarProduto] = useState(false)
 
   const insertTable = 'produto'
 
   useEffect(() => {
     window.api
       .getProdutos()
-      .then((result) => {
-        setData(result)
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error)
-      })
+      .then((result) => setData(result))
+      .catch((error) => console.error('Error fetching data:', error))
   }, [])
 
-  // useEffect separado para filtrar os dados sempre que 'data' ou 'term' mudarem
   useEffect(() => {
-    setFilteredData(data.filter((item) => item.Nome.toLowerCase().includes(term.toLowerCase())))
-  }, [term, data]) // Executa quando 'data' ou 'term' mudam
-
-  // funções para abrir e fechar o modal
-  const openModal = () => setShowModal(true)
-  const closeModal = () => setShowModal(false)
+    setFilteredData(
+      data.filter((item) => item.Nome.toLowerCase().includes(term.toLowerCase()))
+    )
+  }, [term, data])
 
   return (
     <div className="pt-10 h-screen">
       <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">
         Valor dos Itens em Estoque
       </h1>
-      {/* texto do input da tabela */}
+
       <p className="text-black ps-30 mt-10 mb-3">Nome do Produto:</p>
-      {/* container da tabela */}
+
       <div className="h-full w-full px-30">
-        {/* table options */}
         <div className="w-full flex justify-between">
-          {/* Name */}
+          {/* Campo de busca */}
           <div className="flex flex-col w-1/3">
             <Input
               inputType="text"
               placeholder="Buscar..."
               inputName="nome"
-              onChange={(e) => setTerm(e.target.value)} // altera o termo de pesquisa
+              onChange={(e) => setTerm(e.target.value)}
             />
           </div>
-          {/* options */}
+
+          {/* Botões de ação */}
           <div className="flex gap-3">
             <Button
               className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-40 h-full py-2"
               text="Adicionar Lote"
-              onClick={openModal}
+              onClick={() => setShowAddLote(true)}
+            />
+            <Button
+              className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-40 h-full py-2"
+              text="Criar Lote"
+              onClick={() => setShowCriarProduto(true)}
             />
           </div>
         </div>
-        {/* table */}
+
+        {/* Table */}
         <div className="border border-[#1A6D12] h-6/10 overflow-auto w-full mt-3">
           <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} />
         </div>
       </div>
-      {/* Popup para criar produto */}
-      <Popup showModal={showModal} onClose={closeModal} table={data} insertTable={insertTable} />
+
+      {/* Popups */}
+      <PopupAddLote
+        showModal={showAddLote}
+        onClose={() => setShowAddLote(false)}
+        table={data}
+        insertTable={insertTable}
+      />
+      <PopupCriarProduto
+        showModal={showCriarProduto}
+        onClose={() => setShowCriarProduto(false)}
+        table={data}
+        insertTable={insertTable}
+      />
     </div>
   )
 }

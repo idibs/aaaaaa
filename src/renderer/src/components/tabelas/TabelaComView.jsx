@@ -4,11 +4,12 @@ import { useState } from 'react'
 import { IoEyeSharp } from 'react-icons/io5'
 import { Link } from 'react-router-dom'
 import PopupDelete from '../popups/PopUpDelete'
-import PopupEdit from '../popups/produtos/PopUpEditProd'
+import PopupEditCarga from '../popups/carga/PopUpEditCarga'
 
 const TabelaComView = ({ data, insertTable }) => {
   const [showModal, setShowModal] = useState(false)
   const [showModalEdit, setShowModalEdit] = useState(false)
+  const [selectedItem, setSelectedItem] = useState(null)
 
   const openModal = () => setShowModal(true)
   const closeModal = () => setShowModal(false)
@@ -32,7 +33,7 @@ const TabelaComView = ({ data, insertTable }) => {
       <tbody>
         {data.length > 0 ? (
           data.map((item, index) => {
-            const id = item.Id || item.id || index // pega o id, se não usar index como fallback
+            const id = item.Id || item.id || index
             return (
               <tr key={index} className="hover:bg-[#ececec]">
                 {Object.entries(item).map(([key, value], idx) => (
@@ -44,18 +45,35 @@ const TabelaComView = ({ data, insertTable }) => {
                 ))}
                 <td className="border border-[#1A6D12] text-center py-1">
                   <div className="flex justify-evenly">
+                    {/* Botão de deletar */}
                     <button onClick={openModal} className="cursor-pointer">
                       <FaTrash />
                     </button>
                     <PopupDelete showModal={showModal} onClose={closeModal} />
-                    <button onClick={openModalEdit} className="cursor-pointer">
+
+                    {/* Botão de editar */}
+                    <button
+                      onClick={() => {
+                        setSelectedItem(item)
+                        openModalEdit()
+                      }}
+                      className="cursor-pointer"
+                    >
                       <MdEdit />
                     </button>
-                    <PopupEdit
+
+                    {/* Popup de edição de carga */}
+                    <PopupEditCarga
                       showModal={showModalEdit}
-                      onClose={closeModalEdit}
+                      onClose={() => {
+                        closeModalEdit()
+                        setSelectedItem(null)
+                      }}
                       insertTable={insertTable}
+                      initialData={selectedItem}
                     />
+
+                    {/* Botão de visualizar */}
                     <button className="cursor-pointer">
                       <Link to={`/view/carga/${id}`}>
                         <IoEyeSharp />
@@ -70,7 +88,7 @@ const TabelaComView = ({ data, insertTable }) => {
           <tr>
             <td
               colSpan={
-                Object.keys(data[0] || { id: 1, nome: '', quantidade: '', peso: '' }).length + 1 + 1 // +1 do checkbox
+                Object.keys(data[0] || { id: 1, nome: '', quantidade: '', peso: '' }).length + 1
               }
               className="text-center py-4"
             >

@@ -15,8 +15,9 @@ export default function PopupCriarPag({ showModal, onClose, insertTable }) {
   const [baseValue, setBaseValue] = useState('')
   const userDropdownRef = useRef(null)
 
-  {/* 
-  useEffect(() => {
+  {
+    /* 
+  useEffect((status, nome, cargo, horas_trabalhadas, período, data_pagamento, observações) => {
     setPage(1)
     window.api
       .getProdutosNomes()
@@ -35,7 +36,8 @@ export default function PopupCriarPag({ showModal, onClose, insertTable }) {
         console.error('Error fetching table columns:', error)
       })
   }, [insertTable])
-*/}
+*/
+  }
   const totalPages = Math.ceil(columns.length / PAGE_SIZE)
   const startIdx = (page - 1) * PAGE_SIZE
   const endIdx = startIdx + PAGE_SIZE
@@ -57,7 +59,6 @@ export default function PopupCriarPag({ showModal, onClose, insertTable }) {
         <div className="flex flex-col justify-between h-140">
           <div>
             <div className="mt-7 flex flex-col px-30 h-90 w-full">
-
               {/* Aqui no futuro entram os inputs puxados do banco */}
               {inputs.map((coluna, index) => (
                 <input

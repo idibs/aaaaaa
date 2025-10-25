@@ -1,5 +1,6 @@
 produtos -- design pronto
 pessoas -- design pronto
+pagamentos -- design pronto
 funcionarios -- design pronto
 cargas -- design pronto
 compras -- design pronto

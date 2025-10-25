@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { MdEdit } from 'react-icons/md'
 import { FaTrash, FaCheck } from 'react-icons/fa'
 import { useState } from 'react'
@@ -145,3 +146,5 @@ const Tabela = ({ data, insertTable, onSave }) => {
 }
 
 export default Tabela
+=======
+>>>>>>> 660cc5e185a3b78f532bb31ee77d1eb97058ca82

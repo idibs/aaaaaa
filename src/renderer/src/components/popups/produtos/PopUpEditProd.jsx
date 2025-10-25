@@ -30,33 +30,44 @@ export default function PopUpEditProd({ showModal, onClose, initialData = {}, on
   useEffect(() => {
     // reset page and load auxiliary data
     setPage(1)
-    window.api
-      .getProdutosNomes()
-      .then((result) => setProdutosBase(result))
-      .catch((err) => console.error('Erro ao buscar produtos base:', err))
+
+    // proteger chamadas a window.api (evita exceptions quando função não existe)
+    if (window?.api?.getProdutosNomes) {
+      window.api
+        .getProdutosNomes()
+        .then((result) => setProdutosBase(result || []))
+        .catch((err) => console.error('Erro ao buscar produtos base:', err))
+    } else {
+      setProdutosBase([])
+    }
+
     // Se initialData vier com chaves, use-as como colunas (puxar campos da tabela)
     if (initialData && Object.keys(initialData).length > 0) {
-      setColumns(Object.keys(initialData).filter((col) => col !== 'Id'))
+      setColumns(Object.keys(initialData).filter((col) => col !== 'Id' && col !== 'id'))
       return
     }
 
-    // tentar recuperar colunas relevantes (fallback simples)
-    window.api
-      .getPedidoProdutosByStatus?.('Em analise')
-      .then((cols) => {
-        if (Array.isArray(cols) && cols.length > 0) {
-          setColumns(Object.keys(cols[0]).filter((col) => col !== 'Id'))
-        }
-      })
-      .catch((err) => console.warn('Não foi possível obter colunas via getPedidoProdutosByStatus:', err))
+    // chamar getPedidoProdutosByStatus apenas se existir
+    const fn = window?.api?.getPedidoProdutosByStatus
+    if (typeof fn === 'function') {
+      fn('Em analise')
+        .then((cols) => {
+          if (Array.isArray(cols) && cols.length > 0) {
+            setColumns(Object.keys(cols[0]).filter((col) => col !== 'Id' && col !== 'id'))
+          }
+        })
+        .catch((err) =>
+          console.warn('Não foi possível obter colunas via getPedidoProdutosByStatus:', err)
+        )
+    }
   }, [])
 
   // quando `initialData` mudar, atualiza os valores e o produto base selecionado
   useEffect(() => {
     setValues({ ...initialData })
-    if (initialData && initialData.Base) setBaseValue(initialData.Base)
+    setBaseValue(initialData?.Base ?? '')
     if (initialData && Object.keys(initialData).length > 0) {
-      setColumns(Object.keys(initialData).filter((col) => col !== 'Id'))
+      setColumns(Object.keys(initialData).filter((col) => col !== 'Id' && col !== 'id'))
     }
   }, [initialData])
 
@@ -65,7 +76,8 @@ export default function PopUpEditProd({ showModal, onClose, initialData = {}, on
   const endIdx = startIdx + PAGE_SIZE
   const inputs = columns.slice(startIdx, endIdx)
 
-  const inputNumbers = ['ML', 'Preço', 'Peso', 'Quantidade']
+  // agora em lowercase para comparar sem case-sensitivity
+  const inputNumbers = ['ml', 'preço', 'preco', 'peso', 'quantidade']
 
   function handleChange(col, v) {
     setValues((prev) => ({ ...prev, [col]: v }))
@@ -76,15 +88,15 @@ export default function PopUpEditProd({ showModal, onClose, initialData = {}, on
     if (baseValue) payload.Base = baseValue
     if (onSave) {
       onSave(payload)
-      onClose()
+      onClose && onClose()
       return
     }
 
-    // fallback: chamar API exposta no preload
+    // fallback: chamar API exposta no preload (só se existir)
     try {
-      if (window.api && window.api.updateProduto) {
+      if (window?.api && window.api.updateProduto) {
         await window.api.updateProduto(payload)
-        onClose()
+        onClose && onClose()
       } else {
         console.warn('Nenhuma função onSave fornecida e window.api.updateProduto não existe')
       }
@@ -142,7 +154,7 @@ export default function PopUpEditProd({ showModal, onClose, initialData = {}, on
               {inputs.map((coluna, index) => (
                 <input
                   key={index}
-                  type={inputNumbers.includes(coluna) ? 'number' : 'text'}
+                  type={inputNumbers.includes(String(coluna).toLowerCase()) ? 'number' : 'text'}
                   placeholder={coluna}
                   value={values[coluna] ?? ''}
                   onChange={(e) => handleChange(coluna, e.target.value)}
@@ -154,12 +166,12 @@ export default function PopUpEditProd({ showModal, onClose, initialData = {}, on
             {totalPages > 1 && (
               <div className="flex justify-end w-full px-30 mt-2">
                 <Button
-                  onClick={() => setPage(page - 1)}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className={`${page === 1 ? 'hidden' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'}`}
                   text={<IoMdArrowRoundBack />}
                 />
                 <Button
-                  onClick={() => setPage(page + 1)}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   className={`${page === totalPages ? 'hidden' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'}`}
                   text={<IoMdArrowRoundForward />}
                 />
@@ -168,7 +180,11 @@ export default function PopUpEditProd({ showModal, onClose, initialData = {}, on
           </div>
 
           <div className="flex justify-center">
-            <Button onClick={handleSave} className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60" text="Salvar" />
+            <Button
+              onClick={handleSave}
+              className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60"
+              text="Salvar"
+            />
           </div>
         </div>
       </div>

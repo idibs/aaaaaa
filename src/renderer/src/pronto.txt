@@ -4,3 +4,4 @@ pagamentos -- design pronto
 funcionarios -- design pronto
 cargas -- design pronto
 compras -- design pronto
+vendas -- design pronto

@@ -6,19 +6,16 @@ import PopupEditPag from '../popups/pagamento/PopUpEditPag'
 import PopupEditVenda from '../popups/venda/PopUpEditVenda'
 
 const Tabela = ({ data, insertTable, onSave }) => {
-  const [showModal, setShowModal] = useState(false)
+  const [showModalDelete, setShowModalDelete] = useState(false)
   const [showModalEdit, setShowModalEdit] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [selectedItems, setSelectedItems] = useState([])
 
-  const openModal = () => setShowModal(true)
-  const closeModal = () => setShowModal(false)
-  const openModalEdit = () => setShowModalEdit(true)
-  const closeModalEdit = () => setShowModalEdit(false)
-
   const handleCheckboxChange = (id) => {
     setSelectedItems((prevSelected) =>
-      prevSelected.includes(id) ? prevSelected.filter((item) => item !== id) : [...prevSelected, id]
+      prevSelected.includes(id)
+        ? prevSelected.filter((item) => item !== id)
+        : [...prevSelected, id]
     )
   }
 
@@ -72,6 +69,7 @@ const Tabela = ({ data, insertTable, onSave }) => {
                   ))}
                   <td className="border border-[#1A6D12] text-center py-1">
                     <div className="flex justify-evenly items-center">
+                      {/* Confirmação */}
                       <button
                         onClick={() => alert(`Item ${id} confirmado!`)}
                         className="cursor-pointer text-green-600 hover:text-green-800"
@@ -79,20 +77,22 @@ const Tabela = ({ data, insertTable, onSave }) => {
                         <FaCheck />
                       </button>
 
+                      {/* Exclusão */}
                       <button
                         onClick={() => {
                           setSelectedItem(item)
-                          openModal()
+                          setShowModalDelete(true)
                         }}
-                        className="cursor-pointer text-black "
+                        className="cursor-pointer text-black"
                       >
                         <FaTrash />
                       </button>
 
+                      {/* Edição */}
                       <button
                         onClick={() => {
                           setSelectedItem(item)
-                          openModalEdit()
+                          setShowModalEdit(true)
                         }}
                         className="cursor-pointer text-black"
                       >
@@ -106,11 +106,7 @@ const Tabela = ({ data, insertTable, onSave }) => {
           ) : (
             <tr>
               <td
-                colSpan={
-                  Object.keys(data[0] || { id: 1, nome: '', quantidade: '', peso: '' }).length +
-                  1 +
-                  1
-                }
+                colSpan={Object.keys(data[0] || { id: 1 }).length + 2}
                 className="text-center py-4"
               >
                 Nenhum resultado encontrado.
@@ -120,40 +116,42 @@ const Tabela = ({ data, insertTable, onSave }) => {
         </tbody>
       </table>
 
-      <PopupDelete
-        showModal={showModal}
-        onClose={() => {
-          closeModal()
-          setSelectedItem(null)
-        }}
-        initialData={selectedItem}
-      />
+      {/* Modal de exclusão */}
+      {selectedItem && (
+        <PopupDelete
+          showModal={showModalDelete}
+          onClose={() => {
+            setShowModalDelete(false)
+            setSelectedItem(null)
+          }}
+          initialData={selectedItem}
+        />
+      )}
 
-      {insertTable === 'pagamento' ? (
+      {/* Modal de edição */}
+      {selectedItem && insertTable === 'pagamento' && (
         <PopupEditPag
           showModal={showModalEdit}
           onClose={() => {
-            closeModalEdit()
+            setShowModalEdit(false)
             setSelectedItem(null)
           }}
           initialData={selectedItem}
-          onSave={(payload) => {
-            if (onSave) onSave(payload, selectedItem)
-          }}
+          onSave={(payload) => onSave && onSave(payload, selectedItem)}
         />
-      ) : insertTable === 'pedido_produto' ? (
+      )}
+
+        {selectedItem && (insertTable === 'pedido_produto' || insertTable === 'produto') &&  (
         <PopupEditVenda
           showModal={showModalEdit}
           onClose={() => {
-            closeModalEdit()
+            setShowModalEdit(false)
             setSelectedItem(null)
           }}
-          initialData={selectedItem}
-          onSave={(payload) => {
-            if (onSave) onSave(payload, selectedItem)
-          }}
+          vendaSelecionada={selectedItem}  // ✅ corrigido aqui
+          onSalvar={(payload) => onSave && onSave(payload, selectedItem)}
         />
-      ) : null}
+      )}
     </>
   )
 }

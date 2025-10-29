@@ -13,7 +13,6 @@ export default function Produtos() {
   const [filteredData, setFilteredData] = useState([]) // dados filtrados
   // controla a visibilidade do modal
   const [showModal, setShowModal] = useState(false)
-  const [insertTable, setInsertTable] = useState(categoria)
 
   useEffect(() => {
     if (categoria === 'Cereal') {
@@ -35,7 +34,7 @@ export default function Produtos() {
           console.error('Error fetching data:', error)
         })
     }
-  }, [categoria])
+  }, [categoria, showModal])
 
   // useEffect separado para filtrar os dados sempre que 'data' ou 'term' mudarem
   useEffect(() => {
@@ -45,7 +44,6 @@ export default function Produtos() {
   // função para alterar os dados da tabela e o tipo selecionado controlado pelos botões de baixo
   const changeData = (categoria) => {
     setCategoria(categoria)
-    setInsertTable(categoria)
   }
 
   // funções para abrir e fechar o modal
@@ -103,7 +101,7 @@ export default function Produtos() {
         </div>
         {/* table */}
         <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
-          <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} onSave={handleProdutoSave} />
+          <Tabela data={filteredData ? filteredData : []} onSave={handleProdutoSave} />
         </div>
         {/* escolher entre tabelas */}
         <div className="mt-4 mb-4 flex justify-between">
@@ -125,7 +123,7 @@ export default function Produtos() {
         </div>
       </div>
       {/* Popup para criar produto */}
-      <Popup showModal={showModal} onClose={closeModal} table={data} insertTable={insertTable} />
+      <Popup showModal={showModal} onClose={closeModal} table={data} categoria={categoria} />
     </div>
   )
 }

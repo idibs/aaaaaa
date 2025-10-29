@@ -1,7 +1,7 @@
 import Tabela from '../../components/tabelas/Tabela.jsx'
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import Button from '../../components/botoes/DesignBotao.jsx'
+import Button from '../../components/botoes/BotaoVoltar.jsx'
 
 export default function ViewCarga() {
   const [data, setData] = useState([])
@@ -24,12 +24,8 @@ export default function ViewCarga() {
       </h1>
 
       {/* Botão Voltar */}
-      <div className="flex justify-end w-4/5 mb-4">
-        <Button
-          text="Voltar"
-          className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-32 h-full py-2"
-          onClick={() => navigate('/carga')}
-        />
+      <div className="flex justify-start w-4/5 mb-4">
+        <Button path={'/carga'} />
       </div>
 
       {/* Container da Tabela */}

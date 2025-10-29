@@ -11,7 +11,9 @@ import {
   getFuncionariosByTipo,
   getPedidos,
   getProdutosNomes,
-  getPedidoProdutosByCarga
+  getPedidoProdutosByCarga,
+  getEnsacadosColunas,
+  createEnsacado
 } from '../database/functions'
 
 function createWindow() {
@@ -147,6 +149,14 @@ app.whenReady().then(() => {
   ipcMain.handle('get-pedido-produtos-by-carga', async (event, id_ped) => {
     try {
       const data = await getPedidoProdutosByCarga(id_ped)
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+  ipcMain.handle('create-ensacado', async (event, produto) => {
+    try {
+      const data = await createEnsacado(produto)
       return data
     } catch (error) {
       throw error

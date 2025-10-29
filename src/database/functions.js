@@ -7,6 +7,7 @@ export function getEnsacados() {
                   Id_ens as Id, 
                   Nome_ens as Nome,  
                   Peso_ens as Peso, 
+                  Preco_ens as Preço,
                   Quantidade_ens as Quantidade, 
                   Codigo_ens as Codigo
                 FROM produto_ensacado;`
@@ -110,20 +111,14 @@ export function getPessoasByTipo(tipo) {
   })
 }
 
-export function getEnsacadosColunas(tipo) {
+export function getProdutosNomes() {
   const conn = connection()
   return new Promise((resolve, reject) => {
     const sql = `SELECT 
-                  Id_ens as Id, 
-                  Nome_ens as Nome,  
-                  Peso_ens as Peso, 
-                  Preco_ens as Preco,
-                  Quantidade_ens as Quantidade, 
-                  Codigo_ens as Codigo, 
-                  Foto_ens as Foto
-                FROM pessoa
-                INNER JOIN endereco ON endereco.Id_end = pessoa.Id_end
-                WHERE Tipo_pes LIKE '%${tipo}%';`
+                  Nome_prod as Nome,
+                  Preco_med_prod as Preço,
+                  Id_prod as Id
+                FROM produto;`
     conn.query(sql, (error, results) => {
       conn.end()
       if (error) {
@@ -135,13 +130,12 @@ export function getEnsacadosColunas(tipo) {
   })
 }
 
-export function getProdutosNomes() {
+export function createEnsacado(produto) {
   const conn = connection()
   return new Promise((resolve, reject) => {
-    const sql = `SELECT 
-                  Nome_prod as Nome
-                FROM produto;`
-    conn.query(sql, (error, results) => {
+    const sql = `INSERT INTO produto_ensacado (Codigo_ens, Nome_ens, Peso_ens, Preco_ens, Quantidade_ens, Id_prod) 
+    VALUES (?, ?, ?, ?, ?, ?);`
+    conn.query(sql, produto, (error, results) => {
       conn.end()
       if (error) {
         reject(error)

@@ -22,6 +22,21 @@ export function getEnsacados() {
   })
 }
 
+export function deleteEnsacado(id) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `DELETE FROM produto_ensacado WHERE Id_ens = ?;`
+    conn.query(sql, [id], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
 export function getOutrosProdutosByCategoria(categoria) {
   const conn = connection()
   return new Promise((resolve, reject) => {

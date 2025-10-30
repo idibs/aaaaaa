@@ -13,7 +13,8 @@ import {
   getProdutosNomes,
   getPedidoProdutosByCarga,
   getEnsacadosColunas,
-  createEnsacado
+  createEnsacado,
+  deleteEnsacado
 } from '../database/functions'
 
 function createWindow() {
@@ -77,6 +78,15 @@ app.whenReady().then(() => {
   ipcMain.handle('get-ensacados', async (event) => {
     try {
       const data = await getEnsacados()
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+    ipcMain.handle('delete-ensacado', async (event, id) => {
+    try {
+      const data = await deleteEnsacado(id)
       return data
     } catch (error) {
       throw error

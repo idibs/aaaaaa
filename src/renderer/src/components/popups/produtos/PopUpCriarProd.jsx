@@ -209,8 +209,10 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
                       formValues.Quantidade,
                       id
                     ])
+                    .catch((err) => alert('Erro ao criar ensacado'))
                   : null
-                onClose()
+                  onclose()
+                
                 // TODO: enviar formValues para a API / banco
               }}
             />

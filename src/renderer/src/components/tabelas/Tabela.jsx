@@ -92,7 +92,7 @@ const Tabela = ({ data, insertTable, onSave }) => {
         <tbody>
           {data.length > 0 ? (
             data.map((item, index) => {
-              const id = item.Id || item.id || index
+              const id = item.Id || index
               return (
                 <tr key={index} className="hover:bg-[#ececec]">
                   <td className="border border-[#1A6D12] text-center py-1">
@@ -162,6 +162,7 @@ const Tabela = ({ data, insertTable, onSave }) => {
             setSelectedProduct(null)
           }}
           initialData={selectedProduct}
+          insertTable={insertTable.toLowerCase()}
         />
       )}
 

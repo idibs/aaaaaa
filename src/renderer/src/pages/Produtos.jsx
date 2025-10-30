@@ -13,6 +13,7 @@ export default function Produtos() {
   const [filteredData, setFilteredData] = useState([]) // dados filtrados
   // controla a visibilidade do modal
   const [showModal, setShowModal] = useState(false)
+  const insertTable = "cereal"
 
   useEffect(() => {
     if (categoria === 'Cereal') {
@@ -34,7 +35,7 @@ export default function Produtos() {
           console.error('Error fetching data:', error)
         })
     }
-  }, [categoria, showModal])
+  }, [categoria, showModal, data])
 
   // useEffect separado para filtrar os dados sempre que 'data' ou 'term' mudarem
   useEffect(() => {
@@ -101,7 +102,7 @@ export default function Produtos() {
         </div>
         {/* table */}
         <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
-          <Tabela data={filteredData ? filteredData : []} onSave={handleProdutoSave} />
+          <Tabela data={filteredData ? filteredData : []} onSave={handleProdutoSave} insertTable={insertTable}/>
         </div>
         {/* escolher entre tabelas */}
         <div className="mt-4 mb-4 flex justify-between">

@@ -209,10 +209,18 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
                       formValues.Quantidade,
                       id
                     ])
-                    .catch((err) => alert('Erro ao criar ensacado'))
-                  : null
-                  onclose()
-                
+                    .then(onClose)
+                    .catch(onClose)
+                  : window.api.createOutroProduto([
+                      formValues.Código,
+                      formValues.Nome,
+                      formValues.Peso,
+                      formValues.Preço,
+                      formValues.Quantidade,
+                      id
+                    ])
+                    .then(onClose)
+                    .catch(onClose)
                 // TODO: enviar formValues para a API / banco
               }}
             />

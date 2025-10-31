@@ -16,6 +16,7 @@ const api = {
   getProdutosNomes: () => ipcRenderer.invoke('get-produtos-nomes'),
   getPedidoProdutosByCarga: (Id_ped) => ipcRenderer.invoke('get-pedido-produtos-by-carga', Id_ped),
   createEnsacado: (produto) => ipcRenderer.invoke('create-ensacado', produto),
+  createOutroProduto: (produto) => ipcRenderer.invoke('create-outro-produto', produto),
   deleteEnsacado: (id) => ipcRenderer.invoke('delete-ensacado', id)
 }
 

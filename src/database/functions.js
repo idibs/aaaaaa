@@ -37,6 +37,22 @@ export function deleteEnsacado(id) {
   })
 }
 
+export function createOutroProduto(produto) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `INSERT INTO outros_produtos (Nome_out, Preco_med_out, Quantidade_out, Peso_out, Codigo_out, Id_categ, Descricao_out) 
+    VALUES (?, ?, ?, ?, ?, ?, ?);`
+    conn.query(sql, produto, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
 export function getOutrosProdutosByCategoria(categoria) {
   const conn = connection()
   return new Promise((resolve, reject) => {

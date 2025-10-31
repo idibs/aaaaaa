@@ -13,8 +13,6 @@ export default function PopupDelete({ showModal, onClose, initialData, insertTab
         await window.api.deleteEnsacado(id)
         // fechar modal e opcionalmente atualizar a UI
         onClose()
-        // alternativa simples para garantir atualização (pode trocar por callback/refresh mais elegante)
-        window.location.reload()
       }
     } catch (err) {
       console.error('Erro ao deletar:', err)

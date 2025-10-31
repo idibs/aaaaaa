@@ -14,7 +14,8 @@ import {
   getPedidoProdutosByCarga,
   getEnsacadosColunas,
   createEnsacado,
-  deleteEnsacado
+  deleteEnsacado,
+  createOutroProduto
 } from '../database/functions'
 
 function createWindow() {
@@ -164,9 +165,19 @@ app.whenReady().then(() => {
       throw error
     }
   })
+  
   ipcMain.handle('create-ensacado', async (event, produto) => {
     try {
       const data = await createEnsacado(produto)
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+    ipcMain.handle('create-outro-produto', async (event, produto) => {
+    try {
+      const data = await createOutroProduto(produto)
       return data
     } catch (error) {
       throw error

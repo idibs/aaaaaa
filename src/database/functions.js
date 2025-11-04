@@ -40,7 +40,7 @@ export function deleteEnsacado(id) {
 export function createOutroProduto(produto) {
   const conn = connection()
   return new Promise((resolve, reject) => {
-    const sql = `INSERT INTO outros_produtos (Nome_out, Preco_med_out, Quantidade_out, Peso_out, Codigo_out, Id_categ, Descricao_out) 
+    const sql = `INSERT INTO outros_produtos (Nome_out, Preco_med_out, Quantidade_out, Peso_out, Codigo_out, Descricao_out, Id_categ) 
     VALUES (?, ?, ?, ?, ?, ?, ?);`
     conn.query(sql, produto, (error, results) => {
       conn.end()
@@ -64,6 +64,23 @@ export function getOutrosProdutosByCategoria(categoria) {
                   Codigo_out as Codigo
                 FROM outros_produtos p
                 INNER JOIN categoria c ON p.Id_categ = c.Id_categ
+                WHERE Nome_categ = ?;`
+    conn.query(sql, categoria, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function getCategoriasIdByNome(categoria) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT 
+                  Id_categ as Id
                 WHERE Nome_categ = ?;`
     conn.query(sql, categoria, (error, results) => {
       conn.end()

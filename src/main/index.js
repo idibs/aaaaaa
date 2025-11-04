@@ -15,7 +15,8 @@ import {
   getEnsacadosColunas,
   createEnsacado,
   deleteEnsacado,
-  createOutroProduto
+  createOutroProduto,
+  getCategoriasIdByNome
 } from '../database/functions'
 
 function createWindow() {
@@ -85,7 +86,7 @@ app.whenReady().then(() => {
     }
   })
 
-    ipcMain.handle('delete-ensacado', async (event, id) => {
+  ipcMain.handle('delete-ensacado', async (event, id) => {
     try {
       const data = await deleteEnsacado(id)
       return data
@@ -165,7 +166,7 @@ app.whenReady().then(() => {
       throw error
     }
   })
-  
+
   ipcMain.handle('create-ensacado', async (event, produto) => {
     try {
       const data = await createEnsacado(produto)
@@ -175,9 +176,10 @@ app.whenReady().then(() => {
     }
   })
 
-    ipcMain.handle('create-outro-produto', async (event, produto) => {
+  ipcMain.handle('create-outro-produto', async (event, produto) => {
     try {
-      const data = await createOutroProduto(produto)
+      const id_categoria = await getCategoriasIdByNome(produto[6])
+      const data = await createOutroProduto([produto.slice(0, 6), id_categoria])
       return data
     } catch (error) {
       throw error

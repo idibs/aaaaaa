@@ -12,9 +12,11 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
   const [selectedProduct, setSelectedProduct] = useState(null) // <-- novo estado para o produto selecionado
   const [page, setPage] = useState(1)
   const [userDropdownOpen, setUserDropdownOpen] = useState(false)
+  const [userDropdownOpen2, setUserDropdownOpen2] = useState(false)
   const [produtosBase, setProdutosBase] = useState([{}])
   const [formValues, setFormValues] = useState({}) // <-- persist valores por coluna
   const userDropdownRef = useRef(null)
+  const userDropdownRef2 = useRef(null)
 
   useEffect(() => {
     // reset ao abrir/modal ou trocar categoria
@@ -47,6 +49,7 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
   const endIdx = startIdx + PAGE_SIZE
   const inputs = columns.slice(startIdx, endIdx)
   const inputNumbers = ['Preço', 'Peso', 'Quantidade']
+  const categorias = ['Ração', 'Variedade']
 
   return (
     <>
@@ -73,7 +76,7 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
                     aria-expanded={userDropdownOpen}
                     type="button"
                   >
-                    Produtos Base
+                    {formValues.Nome || 'Produtos Base'}
                     <IoIosArrowDown className="text-sm" />
                   </button>
                   {userDropdownOpen && (
@@ -108,6 +111,52 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
                           }}
                         >
                           {produto.Nome}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Dropdown de produtos base */}
+              {page === 1 && categoria !== 'Cereal' && (
+                <div className="relative" ref={userDropdownRef2}>
+                  <button
+                    onClick={() => setUserDropdownOpen2((v) => !v)}
+                    className="rounded-xl flex justify-between items-center w-full py-2 px-4 cursor-pointer text-white bg-[#145A0C] h-full"
+                    aria-haspopup="true"
+                    aria-expanded={userDropdownOpen2}
+                    type="button"
+                  >
+                    {formValues.Categoria || 'Categoria'}
+                    <IoIosArrowDown className="text-sm" />
+                  </button>
+                  {userDropdownOpen2 && (
+                    <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                      {/* Botão Limpar */}
+                      <button
+                        className="block w-full text-left px-4 py-2 bg-red-800 hover:bg-red-900 border-b border-white/20"
+                        onClick={() => {
+                          setUserDropdownOpen2(false)
+                          setFormValues((prev) => ({ ...prev, Categoria: '' }))
+                        }}
+                      >
+                        Limpar seleção
+                      </button>
+                      {/* Lista de produtos */}
+                      {categorias.map((c) => (
+                        <button
+                          key={c}
+                          className="block w-full text-left px-4 py-2 hover:bg-green-900"
+                          onClick={() => {
+                            setUserDropdownOpen2(false) // Corrigido: era setUserDropdownOpen
+                            setFormValues((prev) => ({
+                              ...prev,
+                              Categoria: c
+                            }))
+                          }}
+                        >
+                          {c}
                         </button>
                       ))}
                     </div>
@@ -201,26 +250,29 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
                 let id
                 isProductSelected ? (id = selectedProduct.Id) : (id = null)
                 categoria === 'Cereal'
-                  ? window.api.createEnsacado([
-                      formValues.Código,
-                      formValues.Nome,
-                      formValues.Peso,
-                      formValues.Preço,
-                      formValues.Quantidade,
-                      id
-                    ])
-                    .then(onClose)
-                    .catch(onClose)
-                  : window.api.createOutroProduto([
-                      formValues.Código,
-                      formValues.Nome,
-                      formValues.Peso,
-                      formValues.Preço,
-                      formValues.Quantidade,
-                      id
-                    ])
-                    .then(onClose)
-                    .catch(onClose)
+                  ? window.api
+                      .createEnsacado([
+                        formValues.Código,
+                        formValues.Nome,
+                        formValues.Peso,
+                        formValues.Preço,
+                        formValues.Quantidade,
+                        id
+                      ])
+                      .then(onClose)
+                      .catch(onClose)
+                  : window.api
+                      .createOutroProduto([
+                        formValues.Nome,
+                        formValues.Preço,
+                        formValues.Quantidade,
+                        formValues.Peso,
+                        formValues.Código,
+                        formValues.Descrição,
+                        formValues.Categoria
+                      ])
+                      .then(onClose)
+                      .catch(onClose)
                 // TODO: enviar formValues para a API / banco
               }}
             />

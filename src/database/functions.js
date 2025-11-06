@@ -53,6 +53,53 @@ export function createOutroProduto(produto) {
   })
 }
 
+export function createPessoa(pessoa) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `INSERT INTO pessoa (Nome_pes, Telefone_pes, Tipo_pes, Id_end) 
+    VALUES (?, ?, ?, ?);`
+    conn.query(sql, pessoa, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function createEndereco(endereco) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `INSERT INTO endereco (Cidade_end, Rua_end, Numero_end, Bairro_end, Cep_end, Complemento_end) 
+    VALUES (?, ?, ?, ?, ?, ?);`
+    conn.query(sql, endereco, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function getEndereco(cep, numero) {
+  const conn = connection()
+  const query = `select Id_end from endereco WHERE Cep_end = ? and Numero_end = ?`
+  return new Promise((resolve, reject) => {
+    conn.query(query, [cep, numero], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
 export function getOutrosProdutosByCategoria(categoria) {
   const conn = connection()
   return new Promise((resolve, reject) => {

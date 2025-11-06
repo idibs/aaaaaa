@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { getEnsacados } from '../database/functions'
+import { createPessoa } from '../database/functions'
 
 // Custom APIs for renderer
 const api = {
@@ -17,6 +17,7 @@ const api = {
   getPedidoProdutosByCarga: (Id_ped) => ipcRenderer.invoke('get-pedido-produtos-by-carga', Id_ped),
   createEnsacado: (produto) => ipcRenderer.invoke('create-ensacado', produto),
   createOutroProduto: (produto) => ipcRenderer.invoke('create-outro-produto', produto),
+  createPessoa: (pessoa) => ipcRenderer.invoke('create-pessoa', pessoa),
   deleteEnsacado: (id) => ipcRenderer.invoke('delete-ensacado', id)
 }
 

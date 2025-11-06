@@ -6,11 +6,11 @@ import Button from '../../botoes/DesignBotao'
 export default function PopupCriarPes({ showModal, onClose, insertTable }) {
   if (!showModal) return null
 
-  const PAGE_SIZE = 4
-  const [columns, setColumns] = useState([])
+  const PAGE_SIZE = 5
+  const columns = ['Nome', 'Telefone', 'Cep', 'Cidade', 'Bairro', 'Rua', 'Numero', 'Complemento']
   const [page, setPage] = useState(1)
-  const [tipoPessoa, setTipoPessoa] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [formValues, setFormValues] = useState({}) // <-- persist valores por coluna
   const dropdownRef = useRef(null)
 
   const tiposPessoa = ['Cliente', 'Fornecedor', 'Vendedor', 'Cliente/Fornecedor']
@@ -26,22 +26,17 @@ export default function PopupCriarPes({ showModal, onClose, insertTable }) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  /* 
   useEffect(() => {
     setPage(1)
-    window.api
-      .getPessoasColunas()
-      .then((result) => setColumns(result))
-      .catch((error) => console.error('Erro ao buscar colunas de pessoas:', error))
-  }, [insertTable])
-  */
+    setFormValues({})
+  }, [])
 
   const totalPages = Math.ceil(columns.length / PAGE_SIZE)
   const startIdx = (page - 1) * PAGE_SIZE
   const endIdx = startIdx + PAGE_SIZE
   const inputs = columns.slice(startIdx, endIdx)
 
-  const inputNumbers = ['Telefone', 'Idade', 'CPF']
+  const inputNumbers = ['Telefone', 'Número', 'Cep']
 
   return (
     <>
@@ -56,47 +51,49 @@ export default function PopupCriarPes({ showModal, onClose, insertTable }) {
           </button>
         </div>
 
-        <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">
-          Novo Registro
-        </h1>
+        <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">Novo Registro</h1>
 
         {/* Container principal com justify-between */}
         <div className="flex flex-col justify-between h-140">
           {/* Dropdown de tipo da pessoa */}
           <div className="mt-7 flex flex-col px-30 w-full">
-            <div className="relative mb-5" ref={dropdownRef}>
-              <button
-                onClick={() => setDropdownOpen((v) => !v)}
-                className="border border-[#1A6D12] px-4 py-2 w-full rounded-xl flex justify-between items-center focus:outline-none"
-              >
-                {tipoPessoa || 'Selecione o tipo de pessoa'}
-                <IoIosArrowDown className="text-sm" />
-              </button>
+            {page === 1 && (
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setDropdownOpen((v) => !v)}
+                  className="border border-[#1A6D12] px-4 py-2 w-full rounded-xl flex justify-between items-center focus:outline-none"
+                >
+                  {formValues.Tipo || 'Selecione o Tipo'}
+                  <IoIosArrowDown className="text-sm" />
+                </button>
 
-              {dropdownOpen && (
-                <div className="absolute left-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
-                  {tiposPessoa.map((tipo) => (
-                    <button
-                      key={tipo}
-                      className="block w-full text-left px-4 py-2 hover:bg-green-900"
-                      onClick={() => {
-                        setTipoPessoa(tipo)
-                        setDropdownOpen(false)
-                      }}
-                    >
-                      {tipo}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+                {dropdownOpen && (
+                  <div className="absolute left-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                    {tiposPessoa.map((tipo) => (
+                      <button
+                        key={tipo}
+                        className="block w-full text-left px-4 py-2 hover:bg-green-900"
+                        onClick={() => {
+                          setDropdownOpen(false)
+                          setFormValues((prev) => ({ ...prev, Tipo: tipo }))
+                        }}
+                      >
+                        {tipo}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Campos dinâmicos */}
-            {inputs.map((coluna, index) => (
+            {inputs.map((coluna) => (
               <input
-                key={index}
+                key={coluna}
                 type={inputNumbers.includes(coluna) ? 'number' : 'text'}
                 placeholder={coluna}
+                value={formValues[coluna] ?? ''} // <-- valor persistido
+                onChange={(e) => setFormValues((prev) => ({ ...prev, [coluna]: e.target.value }))} // <-- atualiza o estado
                 className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
               />
             ))}
@@ -131,6 +128,9 @@ export default function PopupCriarPes({ showModal, onClose, insertTable }) {
             <Button
               className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60"
               text="Salvar"
+              onClick={() => {
+                window.api.createPessoa(formValues).then(onClose).catch(onClose)
+              }}
             />
           </div>
         </div>

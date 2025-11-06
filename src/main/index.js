@@ -12,11 +12,13 @@ import {
   getPedidos,
   getProdutosNomes,
   getPedidoProdutosByCarga,
-  getEnsacadosColunas,
   createEnsacado,
   deleteEnsacado,
   createOutroProduto,
-  getCategoriasIdByNome
+  getCategoriasIdByNome,
+  getEndereco,
+  createEndereco,
+  createPessoa
 } from '../database/functions'
 
 function createWindow() {
@@ -75,6 +77,37 @@ app.whenReady().then(() => {
   // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
+  })
+
+  ipcMain.handle('create-pessoa', async (event, pessoa) => {
+    try {
+      const endereco = [
+        pessoa.Cidade,
+        pessoa.Rua,
+        pessoa.Numero,
+        pessoa.Bairro,
+        pessoa.Cep,
+        pessoa.Complemento
+      ]
+
+      // usar as mesmas chaves usadas no formulário (Cep, Numero)
+      let Id_end = await getEndereco(pessoa.Cep, pessoa.Numero)
+
+      if (!Id_end || Id_end.length === 0) {
+        await createEndereco(endereco)
+        Id_end = await getEndereco(pessoa.Cep, pessoa.Numero)
+        if (!Id_end || Id_end.length === 0) {
+          throw new Error('Erro ao criar endereço')
+        }
+      }
+
+      const cliente = [pessoa.Nome, pessoa.Telefone, pessoa.Tipo, Id_end[0].Id_end]
+
+      const data = await createPessoa(cliente)
+      return data
+    } catch (error) {
+      throw error
+    }
   })
 
   ipcMain.handle('get-ensacados', async (event) => {

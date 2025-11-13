@@ -18,6 +18,9 @@ const api = {
   createEnsacado: (produto) => ipcRenderer.invoke('create-ensacado', produto),
   createOutroProduto: (produto) => ipcRenderer.invoke('create-outro-produto', produto),
   createPessoa: (pessoa) => ipcRenderer.invoke('create-pessoa', pessoa),
+  updateCereal: (produto) => ipcRenderer.invoke('update-cereal', produto),
+  updateOutroProduto: (produto) => ipcRenderer.invoke('update-outro-produto', produto),
+  deleteOutroProduto: (id) => ipcRenderer.invoke('delete-outro-produto', id),
   deleteEnsacado: (id) => ipcRenderer.invoke('delete-ensacado', id)
 }
 

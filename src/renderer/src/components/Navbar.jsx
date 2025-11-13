@@ -1,6 +1,6 @@
 import { FaHome, FaBoxes, FaBriefcase } from 'react-icons/fa'
 import { IoPeople } from 'react-icons/io5'
-import { PiTruckFill } from "react-icons/pi";
+import { PiTruckFill } from 'react-icons/pi'
 import { FaCartShopping, FaMoneyCheckDollar, FaTableList } from 'react-icons/fa6'
 import Button from './botoes/BotaoNavbar'
 
@@ -11,7 +11,7 @@ export default function Navbar() {
       <Button icon={<FaBoxes />} text={'Produtos'} link={'/produtos'} />
       <Button icon={<IoPeople />} text={'Pessoas'} link={'/pessoas'} />
       <Button icon={<FaBriefcase />} text={'Funcionários'} link={'/funcionarios'} />
-      <Button icon={<FaMoneyCheckDollar />} text={'Pagamento'} link={'/pagamento'} />
+      {/*<Button icon={<FaMoneyCheckDollar />} text={'Pagamento'} link={'/pagamento'} />*/}
       <Button icon={<FaTableList />} text={'Vendas'} link={'/vendas'} />
       <Button icon={<FaCartShopping />} text={'Compras'} link={'/compras'} />
       <Button icon={<PiTruckFill />} text={'Cargas'} link={'/carga'} />

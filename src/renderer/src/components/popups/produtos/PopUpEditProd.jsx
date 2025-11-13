@@ -11,99 +11,53 @@ import { useEffect, useState, useRef } from 'react'
 import Button from '../../botoes/DesignBotao'
 import { IoMdArrowRoundBack, IoMdArrowRoundForward, IoIosArrowDown } from 'react-icons/io'
 
-// Popup para editar um produto. Baseado no PopUpCriarProd.jsx,
-// recebe `initialData` (objeto com os campos do produto) e um `onSave` opcional.
-export default function PopUpEditProd({ showModal, onClose, initialData = {}, onSave }) {
+export default function PopUpEditProd({ showModal, onClose, insertTable }) {
   if (!showModal) return null
 
   const PAGE_SIZE = 5
   const [columns, setColumns] = useState([])
-  const [produtosBase, setProdutosBase] = useState([])
+  const [isProductSelected, setIsProductSelected] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState(null) // <-- novo estado para o produto selecionado
   const [page, setPage] = useState(1)
   const [userDropdownOpen, setUserDropdownOpen] = useState(false)
+  const [userDropdownOpen2, setUserDropdownOpen2] = useState(false)
+  const [produtosBase, setProdutosBase] = useState([{}])
+  const [formValues, setFormValues] = useState({}) // <-- persist valores por coluna
   const userDropdownRef = useRef(null)
-  const [baseValue, setBaseValue] = useState('')
-
-  // valores controlados para os inputs
-  const [values, setValues] = useState(() => ({ ...initialData }))
+  const userDropdownRef2 = useRef(null)
 
   useEffect(() => {
-    // reset page and load auxiliary data
+    // reset ao abrir/modal ou trocar categoria
     setPage(1)
+    setFormValues({})
+    window.api
+      .getProdutosNomes()
+      .then((result) => {
+        setProdutosBase(result)
+      })
+      .catch((error) => {
+        console.error('Error fetching product names:', error)
+      })
+    categoria === 'Cereal'
+      ? setColumns(['Nome', 'Preço', 'Peso', 'Quantidade', 'Código'])
+      : setColumns([
+          'Nome',
+          'Preço',
+          'Quantidade',
+          'Peso',
+          'Código',
+          'Foto',
+          'Descrição',
+          'Categoria'
+        ])
+  }, [insertTable, showModal]) // <- inclui showModal para resetar ao abrir
 
-    // proteger chamadas a window.api (evita exceptions quando função não existe)
-    if (window?.api?.getProdutosNomes) {
-      window.api
-        .getProdutosNomes()
-        .then((result) => setProdutosBase(result || []))
-        .catch((err) => console.error('Erro ao buscar produtos base:', err))
-    } else {
-      setProdutosBase([])
-    }
-
-    // Se initialData vier com chaves, use-as como colunas (puxar campos da tabela)
-    if (initialData && Object.keys(initialData).length > 0) {
-      setColumns(Object.keys(initialData).filter((col) => col !== 'Id' && col !== 'id'))
-      return
-    }
-
-    // chamar getPedidoProdutosByStatus apenas se existir
-    const fn = window?.api?.getPedidoProdutosByStatus
-    if (typeof fn === 'function') {
-      fn('Em analise')
-        .then((cols) => {
-          if (Array.isArray(cols) && cols.length > 0) {
-            setColumns(Object.keys(cols[0]).filter((col) => col !== 'Id' && col !== 'id'))
-          }
-        })
-        .catch((err) =>
-          console.warn('Não foi possível obter colunas via getPedidoProdutosByStatus:', err)
-        )
-    }
-  }, [])
-
-  // quando `initialData` mudar, atualiza os valores e o produto base selecionado
-  useEffect(() => {
-    setValues({ ...initialData })
-    setBaseValue(initialData?.Base ?? '')
-    if (initialData && Object.keys(initialData).length > 0) {
-      setColumns(Object.keys(initialData).filter((col) => col !== 'Id' && col !== 'id'))
-    }
-  }, [initialData])
-
-  const totalPages = Math.max(1, Math.ceil(columns.length / PAGE_SIZE))
+  const totalPages = Math.ceil(columns.length / PAGE_SIZE)
   const startIdx = (page - 1) * PAGE_SIZE
   const endIdx = startIdx + PAGE_SIZE
   const inputs = columns.slice(startIdx, endIdx)
-
-  // agora em lowercase para comparar sem case-sensitivity
-  const inputNumbers = ['ml', 'preço', 'preco', 'peso', 'quantidade']
-
-  function handleChange(col, v) {
-    setValues((prev) => ({ ...prev, [col]: v }))
-  }
-
-  async function handleSave() {
-    const payload = { ...values }
-    if (baseValue) payload.Base = baseValue
-    if (onSave) {
-      onSave(payload)
-      onClose && onClose()
-      return
-    }
-
-    // fallback: chamar API exposta no preload (só se existir)
-    try {
-      if (window?.api && window.api.updateProduto) {
-        await window.api.updateProduto(payload)
-        onClose && onClose()
-      } else {
-        console.warn('Nenhuma função onSave fornecida e window.api.updateProduto não existe')
-      }
-    } catch (err) {
-      console.error('Erro ao atualizar produto:', err)
-    }
-  }
+  const inputNumbers = ['Preço', 'Peso', 'Quantidade']
+  const categorias = ['Ração', 'Variedade']
 
   return (
     <>
@@ -121,57 +75,174 @@ export default function PopUpEditProd({ showModal, onClose, initialData = {}, on
           <div>
             <div className="mt-7 flex flex-col px-30 h-90 w-full">
               {/* Dropdown de produtos base */}
-              <div className="relative mb-6" ref={userDropdownRef}>
-                <button
-                  onClick={() => setUserDropdownOpen((v) => !v)}
-                  className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
-                  aria-haspopup="true"
-                  aria-expanded={userDropdownOpen}
-                  type="button"
-                >
-                  {baseValue || 'Produtos Base'}
-                  <IoIosArrowDown className="text-sm" />
-                </button>
-                {userDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
-                    {produtosBase.map((produto) => (
+              {page === 1 && (
+                <div className="relative" ref={userDropdownRef}>
+                  <button
+                    onClick={() => setUserDropdownOpen((v) => !v)}
+                    className="rounded-xl flex justify-between items-center w-full py-2 px-4 cursor-pointer text-white bg-[#145A0C] h-full"
+                    aria-haspopup="true"
+                    aria-expanded={userDropdownOpen}
+                    type="button"
+                  >
+                    {formValues.Nome || 'Produtos Base'}
+                    <IoIosArrowDown className="text-sm" />
+                  </button>
+                  {userDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                      {/* Botão Limpar */}
                       <button
-                        key={produto.Nome}
-                        className="block w-full text-left px-4 py-2 hover:bg-green-900"
+                        className="block w-full text-left px-4 py-2 bg-red-800 hover:bg-red-900 border-b border-white/20"
                         onClick={() => {
-                          setBaseValue(produto.Nome)
                           setUserDropdownOpen(false)
+                          setIsProductSelected(false)
+                          setSelectedProduct(null) // limpa produto selecionado
+                          setFormValues((prev) => ({ ...prev, Nome: '', Preço: '' }))
                         }}
                       >
-                        {produto.Nome}
+                        Limpar seleção
                       </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+                      {/* Lista de produtos */}
+                      {produtosBase.map((produto) => (
+                        <button
+                          key={produto.Nome}
+                          className="block w-full text-left px-4 py-2 hover:bg-green-900"
+                          onClick={() => {
+                            setUserDropdownOpen(false)
+                            // preenche o campo "Nome" no formValues e guarda o produto selecionado
+                            setIsProductSelected(true)
+                            setSelectedProduct(produto) // salva o objeto para cálculos futuros
+                            setFormValues((prev) => ({
+                              ...prev,
+                              Nome: produto.Nome,
+                              Preço: produto.Preço
+                            }))
+                          }}
+                        >
+                          {produto.Nome}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
-              {/* Inputs gerados dinamicamente a partir das colunas */}
-              {inputs.map((coluna, index) => (
-                <input
-                  key={index}
-                  type={inputNumbers.includes(String(coluna).toLowerCase()) ? 'number' : 'text'}
-                  placeholder={coluna}
-                  value={values[coluna] ?? ''}
-                  onChange={(e) => handleChange(coluna, e.target.value)}
-                  className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
-                />
-              ))}
+              {/* Dropdown de produtos base */}
+              {page === 1 && insertTable !== 'Cereal' && (
+                <div className="relative" ref={userDropdownRef2}>
+                  <button
+                    onClick={() => setUserDropdownOpen2((v) => !v)}
+                    className="rounded-xl flex justify-between items-center w-full py-2 px-4 cursor-pointer text-white bg-[#145A0C] h-full"
+                    aria-haspopup="true"
+                    aria-expanded={userDropdownOpen2}
+                    type="button"
+                  >
+                    {formValues.insertTable || 'Categoria'}
+                    <IoIosArrowDown className="text-sm" />
+                  </button>
+                  {userDropdownOpen2 && (
+                    <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                      {/* Botão Limpar */}
+                      <button
+                        className="block w-full text-left px-4 py-2 bg-red-800 hover:bg-red-900 border-b border-white/20"
+                        onClick={() => {
+                          setUserDropdownOpen2(false)
+                          setFormValues((prev) => ({ ...prev, Categoria: '' }))
+                        }}
+                      >
+                        Limpar seleção
+                      </button>
+                      {/* Lista de produtos */}
+                      {categorias.map((c) => (
+                        <button
+                          key={c}
+                          className="block w-full text-left px-4 py-2 hover:bg-green-900"
+                          onClick={() => {
+                            setUserDropdownOpen2(false) // Corrigido: era setUserDropdownOpen
+                            setFormValues((prev) => ({
+                              ...prev,
+                              Categoria: c === 'Ração' ? 2 : 1
+                            }))
+                          }}
+                        >
+                          {c}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Aqui no futuro entram os inputs puxados do banco */}
+              {inputs.map((coluna) => {
+                // desabilita apenas o campo "Nome" quando um produto base for selecionado
+                if (coluna === 'Nome' || coluna === 'Preço') {
+                  return (
+                    <input
+                      key={coluna}
+                      type={inputNumbers.includes(coluna) ? 'number' : 'text'}
+                      placeholder={coluna}
+                      value={formValues[coluna] ?? ''} // <-- valor persistido
+                      onChange={(e) =>
+                        setFormValues((prev) => ({ ...prev, [coluna]: e.target.value }))
+                      } // <-- atualiza o estado
+                      disabled={isProductSelected}
+                      className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+                    />
+                  )
+                } else if (coluna === 'Peso') {
+                  return (
+                    <input
+                      key={coluna}
+                      type="number"
+                      placeholder={coluna}
+                      value={formValues[coluna] ?? ''} // <-- valor persistido
+                      onChange={(e) => {
+                        const val = e.target.value
+                        // se produto selecionado, usar selectedProduct de forma segura
+                        if (isProductSelected && selectedProduct) {
+                          const precoUnit = parseFloat(selectedProduct.Preço) || 0
+                          const pesoNum = parseFloat(val) || 0
+                          const novoPreco = precoUnit * pesoNum
+                          setFormValues((prev) => ({
+                            ...prev,
+                            [coluna]: val,
+                            Preço: novoPreco,
+                            Nome: `${selectedProduct.Nome} ${val}Kg`
+                          }))
+                        } else {
+                          setFormValues((prev) => ({ ...prev, [coluna]: val }))
+                        }
+                      }} // <-- atualiza o estado
+                      className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+                    />
+                  )
+                }
+
+                // demais inputs permanecem editáveis
+                return (
+                  <input
+                    key={coluna} // manter coluna como key
+                    type={inputNumbers.includes(coluna) ? 'number' : 'text'}
+                    placeholder={coluna}
+                    value={formValues[coluna] ?? ''} // <-- valor persistido
+                    onChange={(e) =>
+                      setFormValues((prev) => ({ ...prev, [coluna]: e.target.value }))
+                    } // <-- atualiza o estado
+                    className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+                  />
+                )
+              })}
             </div>
 
             {totalPages > 1 && (
               <div className="flex justify-end w-full px-30 mt-2">
                 <Button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  onClick={() => setPage(page - 1)}
                   className={`${page === 1 ? 'hidden' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'}`}
                   text={<IoMdArrowRoundBack />}
                 />
                 <Button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  onClick={() => setPage(page + 1)}
                   className={`${page === totalPages ? 'hidden' : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'}`}
                   text={<IoMdArrowRoundForward />}
                 />
@@ -181,9 +252,37 @@ export default function PopUpEditProd({ showModal, onClose, initialData = {}, on
 
           <div className="flex justify-center">
             <Button
-              onClick={handleSave}
               className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60"
               text="Salvar"
+              onClick={() => {
+                let id
+                isProductSelected ? (id = selectedProduct.Id) : (id = null)
+                categoria === 'Cereal'
+                  ? window.api
+                      .createEnsacado([
+                        formValues.Código,
+                        formValues.Nome,
+                        formValues.Peso,
+                        formValues.Preço,
+                        formValues.Quantidade,
+                        id
+                      ])
+                      .then(onClose)
+                      .catch(onClose)
+                  : window.api
+                      .createOutroProduto([
+                        formValues.Nome,
+                        formValues.Preço,
+                        formValues.Quantidade,
+                        formValues.Peso,
+                        formValues.Código,
+                        formValues.Descrição,
+                        formValues.Categoria
+                      ])
+                      .then(onClose)
+                      .catch(onClose)
+                // TODO: enviar formValues para a API / banco
+              }}
             />
           </div>
         </div>

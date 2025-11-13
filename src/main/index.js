@@ -15,10 +15,12 @@ import {
   createEnsacado,
   deleteEnsacado,
   createOutroProduto,
-  getCategoriasIdByNome,
   getEndereco,
   createEndereco,
-  createPessoa
+  createPessoa,
+  deleteOutroProduto,
+  updateOutroProduto,
+  updateCereal
 } from '../database/functions'
 
 function createWindow() {
@@ -105,6 +107,33 @@ app.whenReady().then(() => {
 
       const data = await createPessoa(cliente)
       return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('update-cereal', async (event, produto) => {
+    try {
+      const data = await updateCereal(produto)
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('update-outro-produto', async (event, produto) => {
+    try {
+      const data = await updateOutroProduto(produto)
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('delete-outro-produto', async (event, id) => {
+    try {
+      const data = await deleteOutroProduto(id)
+      return data // ✅ Certifique-se que está retornando
     } catch (error) {
       throw error
     }
@@ -211,8 +240,7 @@ app.whenReady().then(() => {
 
   ipcMain.handle('create-outro-produto', async (event, produto) => {
     try {
-      const id_categoria = await getCategoriasIdByNome(produto[6])
-      const data = await createOutroProduto([produto.slice(0, 6), id_categoria])
+      const data = await createOutroProduto(produto)
       return data
     } catch (error) {
       throw error

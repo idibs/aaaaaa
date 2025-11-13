@@ -123,14 +123,11 @@ export function getOutrosProdutosByCategoria(categoria) {
   })
 }
 
-export function getCategoriasIdByNome(categoria) {
+export function deleteOutroProduto(id) {
   const conn = connection()
   return new Promise((resolve, reject) => {
-    const sql = `SELECT 
-                  Id_categ as Id
-                WHERE Nome_categ = ?;`
-    conn.query(sql, categoria, (error, results) => {
-      conn.end()
+    const sql = `DELETE FROM outros_produtos WHERE Id_out = ?;`
+    conn.query(sql, [id], (error, results) => {
       if (error) {
         reject(error)
       } else {
@@ -194,8 +191,8 @@ export function getPessoasByTipo(tipo) {
                   Cidade_end as Cidade
                 FROM pessoa
                 INNER JOIN endereco ON endereco.Id_end = pessoa.Id_end
-                WHERE Tipo_pes LIKE '%${tipo}%';`
-    conn.query(sql, (error, results) => {
+                WHERE Tipo_pes LIKE ?;`
+    conn.query(sql, [`%${tipo}%`], (error, results) => {
       conn.end()
       if (error) {
         reject(error)
@@ -311,6 +308,42 @@ export function getPedidos() {
                 FROM pedido p
                 INNER JOIN caminhao c ON c.Id_cam = p.Id_cam;`
     conn.query(sql, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function updateCereal(produto) {
+  // ORDEM: [Nome, Preço, Quantidade, Peso, Código, Id]
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `UPDATE produto_ensacado 
+                 SET Nome_ens = ?, Preco_ens = ?, Quantidade_ens = ?, Peso_ens = ?, Codigo_ens = ? 
+                 WHERE Id_ens = ?;`
+    conn.query(sql, produto, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function updateOutroProduto(produto) {
+  // ORDEM: [Nome, Preço, Quantidade, Peso, Código, Descrição, Id]
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `UPDATE outros_produtos
+                  SET Nome_out = ?, Preco_med_out = ?, Quantidade_out = ?, Peso_out = ?, Codigo_out = ?, Descricao_out = ?
+                  WHERE Id_out = ?;`
+    conn.query(sql, produto, (error, results) => {
       conn.end()
       if (error) {
         reject(error)

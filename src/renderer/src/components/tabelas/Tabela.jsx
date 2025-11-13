@@ -7,7 +7,7 @@ import PopupEditProd from '../popups/produtos/PopUpEditProd'
 import PopupEditPes from '../popups/pessoas/PopUpEditPes'
 import PopupEditLote from '../popups/produto_base/PopUpEditLote' // ✅ import adicionado
 
-const Tabela = ({ data, insertTable, onSave }) => {
+const Tabela = ({ data, insertTable }) => {
   const [showModal, setShowModal] = useState(false)
   const [showModalEdit, setShowModalEdit] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState(null)

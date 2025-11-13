@@ -152,7 +152,7 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
                             setUserDropdownOpen2(false) // Corrigido: era setUserDropdownOpen
                             setFormValues((prev) => ({
                               ...prev,
-                              Categoria: c
+                              Categoria: c === 'Ração' ? 2 : 1
                             }))
                           }}
                         >

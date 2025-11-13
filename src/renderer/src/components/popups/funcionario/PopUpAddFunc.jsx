@@ -7,43 +7,26 @@ export default function PopupCriarFuncionario({ showModal, onClose, insertTable 
   if (!showModal) return null
 
   const PAGE_SIZE = 5
-  const [columns, setColumns] = useState([])
+  const columns = ['Nome', 'Telefone', 'Cep', 'Cidade', 'Bairro', 'Rua', 'Numero', 'Complemento']
   const [page, setPage] = useState(1)
   const [dropdownOpen, setDropdownOpen] = useState(false)
-  const [cargos, setCargos] = useState([])
-  const [cargoSelecionado, setCargoSelecionado] = useState('')
+  const [formValues, setFormValues] = useState({}) // <-- persist valores por coluna
   const dropdownRef = useRef(null)
 
+  const cargos = ['Encarregado de Produção', 'Movimentador de Carga', 'Motorista']
 
-  {/*useEffect(() => {
+
+  useEffect(() => {
     setPage(1)
-    // Pega lista de cargos
-    window.api
-      .getCargosNomes()
-      .then((result) => {
-        setCargos(result)
-      })
-      .catch((error) => {
-        console.error('Erro ao buscar nomes de cargos:', error)
-      })
-
-    // Pega colunas da tabela de funcionários
-    window.api
-      .getFuncionariosColunas()
-      .then((cols) => {
-        setColumns(Object.keys(cols[0]).filter((col) => col !== 'Id'))
-      })
-      .catch((error) => {
-        console.error('Erro ao buscar colunas de funcionários:', error)
-      })
-  }, [insertTable]) */}
+    setFormValues({})
+  }, [])
 
   const totalPages = Math.ceil(columns.length / PAGE_SIZE)
   const startIdx = (page - 1) * PAGE_SIZE
   const endIdx = startIdx + PAGE_SIZE
   const inputs = columns.slice(startIdx, endIdx)
 
-  const inputNumbers = ['Salário', 'Idade', 'Telefone']
+  const inputNumbers = ['CPF', 'Telefone']
 
   return (
     <>
@@ -83,7 +66,7 @@ export default function PopupCriarFuncionario({ showModal, onClose, insertTable 
                         key={cargo.Nome}
                         className="block w-full text-left px-4 py-2 hover:bg-green-900"
                         onClick={() => {
-                          setCargoSelecionado(cargo.Nome)
+                          setFormValues((prev) => ({ ...prev, Cargo: cargo }))
                           setDropdownOpen(false)
                         }}
                       >

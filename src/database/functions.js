@@ -22,6 +22,22 @@ export function getEnsacados() {
   })
 }
 
+export function createFuncionario(funcionario) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `INSERT INTO funcionario (Nome_func, Telefone_func, cpf_func, Tipo_func, Id_car) 
+    VALUES (?, ?, ?, ?, ?);`
+    conn.query(sql, funcionario, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
 export function deleteEnsacado(id) {
   const conn = connection()
   return new Promise((resolve, reject) => {

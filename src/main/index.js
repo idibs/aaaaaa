@@ -22,7 +22,8 @@ import {
   updateOutroProduto,
   updateCereal,
   deletePessoa,
-  getPedidoProdutosByPessoa
+  getPedidoProdutosByPessoa,
+  createFuncionario
 } from '../database/functions'
 
 function createWindow() {
@@ -108,6 +109,15 @@ app.whenReady().then(() => {
       const cliente = [pessoa.Nome, pessoa.Telefone, pessoa.Tipo, Id_end[0].Id_end]
 
       const data = await createPessoa(cliente)
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('create-funcionario', async (event, funcionario) => {
+    try {
+      const data = await createFuncionario(funcionario)
       return data
     } catch (error) {
       throw error

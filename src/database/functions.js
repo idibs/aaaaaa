@@ -69,6 +69,58 @@ export function createPessoa(pessoa) {
   })
 }
 
+export function deletePessoa(id, pedidoExiste) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    if (!pedidoExiste || pedidoExiste.length === 0) {
+      const sql = `DELETE FROM pessoa WHERE Id_pes = ?;`
+      conn.query(sql, [id], (error, results) => {
+        conn.end()
+        if (error) reject(error)
+        else resolve(results)
+      })
+      return
+    }
+
+    const sqlUpdate = `UPDATE pedido_produto SET Id_pes = NULL WHERE Id_pes = ? AND Status_pedprod = "Finalizado";`
+    const sqlDeletePedidos = `DELETE FROM pedido_produto WHERE Id_pes = ?;`
+    const sqlDeletePessoa = `DELETE FROM pessoa WHERE Id_pes = ?;`
+
+    conn.query(sqlUpdate, [id], (err) => {
+      if (err) {
+        conn.end()
+        return reject(err)
+      }
+      conn.query(sqlDeletePedidos, [id], (err2) => {
+        if (err2) {
+          conn.end()
+          return reject(err2)
+        }
+        conn.query(sqlDeletePessoa, [id], (err3, results) => {
+          conn.end()
+          if (err3) return reject(err3)
+          resolve(results)
+        })
+      })
+    })
+  })
+}
+
+export function getPedidoProdutosByPessoa(id) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT * FROM pedido_produto Where Id_pes = ?`
+    conn.query(sql, [id], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
 export function createEndereco(endereco) {
   const conn = connection()
   return new Promise((resolve, reject) => {
@@ -128,6 +180,7 @@ export function deleteOutroProduto(id) {
   return new Promise((resolve, reject) => {
     const sql = `DELETE FROM outros_produtos WHERE Id_out = ?;`
     conn.query(sql, [id], (error, results) => {
+      conn.end()
       if (error) {
         reject(error)
       } else {

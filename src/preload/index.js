@@ -21,7 +21,8 @@ const api = {
   updateCereal: (produto) => ipcRenderer.invoke('update-cereal', produto),
   updateOutroProduto: (produto) => ipcRenderer.invoke('update-outro-produto', produto),
   deleteOutroProduto: (id) => ipcRenderer.invoke('delete-outro-produto', id),
-  deleteEnsacado: (id) => ipcRenderer.invoke('delete-ensacado', id)
+  deleteEnsacado: (id) => ipcRenderer.invoke('delete-ensacado', id),
+  deletePessoa: (id) => ipcRenderer.invoke('delete-pessoa', id)
 }
 
 if (process.contextIsolated) {

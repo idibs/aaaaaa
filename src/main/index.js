@@ -20,7 +20,9 @@ import {
   createPessoa,
   deleteOutroProduto,
   updateOutroProduto,
-  updateCereal
+  updateCereal,
+  deletePessoa,
+  getPedidoProdutosByPessoa
 } from '../database/functions'
 
 function createWindow() {
@@ -133,6 +135,16 @@ app.whenReady().then(() => {
   ipcMain.handle('delete-outro-produto', async (event, id) => {
     try {
       const data = await deleteOutroProduto(id)
+      return data // ✅ Certifique-se que está retornando
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('delete-pessoa', async (event, id) => {
+    try {
+      const pedidoExiste = await getPedidoProdutosByPessoa(id)
+      const data = await deletePessoa(id, pedidoExiste)
       return data // ✅ Certifique-se que está retornando
     } catch (error) {
       throw error

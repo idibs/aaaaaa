@@ -24,7 +24,7 @@ export default function Pessoas() {
       .catch((error) => {
         console.error('Error fetching data:', error)
       })
-  }, [tipo]) // Esse useEffect executa quando 'tipo' mudar
+  }, [tipo, data, showModal]) // Esse useEffect executa quando 'tipo' mudar
 
   // useEffect separado para filtrar os dados sempre que 'data' ou 'term' mudarem
   useEffect(() => {

@@ -6,9 +6,9 @@ import Button from '../../botoes/DesignBotao'
 export default function PopupCriarVenda({ showModal, onClose }) {
   if (!showModal) return null
 
-  const PAGE_SIZE = 5
   const columns = ['Cep', 'Cidade', 'Bairro', 'Rua', 'Numero', 'Complemento']
   const [page, setPage] = useState(1)
+  const PAGE_SIZE = 5
   const [dropdownOpenCategorias, setDropdownOpenCategorias] = useState(false)
   const [dropdownOpenMetodos, setDropdownOpenMetodos] = useState(false)
   const [dropdownOpenProdutos, setDropdownOpenProdutos] = useState(false)
@@ -42,8 +42,7 @@ export default function PopupCriarVenda({ showModal, onClose }) {
   const endIdx = startIdx + PAGE_SIZE
   const inputs = columns.slice(startIdx, endIdx)
 
-    const inputNumbers = ['Telefone', 'Número', 'Cep']
-
+  const inputNumbers = ['Telefone', 'Número', 'Cep']
 
   return (
     <>
@@ -65,165 +64,231 @@ export default function PopupCriarVenda({ showModal, onClose }) {
         <div className="flex flex-col justify-between h-140">
           <div>
             <div className="mt-7 flex flex-col px-30 h-90 w-full">
-              {/* Dropdown de metodo de pagamento */}
-              <div className="relative" ref={dropdownRef}>
-                <button
-                  onClick={() => setDropdownOpenMetodos((v) => !v)}
-                  className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
-                  aria-haspopup="true"
-                  aria-expanded={dropdownOpenMetodos}
-                  type="button"
-                >
-                  {formValues.Metodo || 'Selecione o Método de Pagamento'}
-                  <IoIosArrowDown className="text-sm" />
-                </button>
+              {/* PÁGINA 1: dropdowns (método, categoria, produto) + Cliente, Quantidade, Valor Unitário */}
+              {page === 1 && (
+                <>
+                  <div className="relative" ref={dropdownRef}>
+                    <button
+                      onClick={() => setDropdownOpenMetodos((v) => !v)}
+                      className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
+                      aria-haspopup="true"
+                      aria-expanded={dropdownOpenMetodos}
+                      type="button"
+                    >
+                      {formValues.Metodo || 'Selecione o Método de Pagamento'}
+                      <IoIosArrowDown className="text-sm" />
+                    </button>
 
-                {dropdownOpenMetodos && (
-                  <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
-                    {MetodoDePagamento.map((metodo) => (
-                      <button
-                        key={metodo}
-                        className="block w-full text-left px-4 py-2 hover:bg-green-900"
-                        onClick={() => {
-                          setFormValues((prev) => ({ ...prev, Metodo: metodo }))
-                          setDropdownOpenMetodos(false)
-                        }}
-                      >
-                        {metodo}
-                      </button>
-                    ))}
+                    {dropdownOpenMetodos && (
+                      <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                        {MetodoDePagamento.map((metodo) => (
+                          <button
+                            key={metodo}
+                            className="block w-full text-left px-4 py-2 hover:bg-green-900"
+                            onClick={() => {
+                              setFormValues((prev) => ({ ...prev, Metodo: metodo }))
+                              setDropdownOpenMetodos(false)
+                            }}
+                          >
+                            {metodo}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              <div className="relative mt-3" ref={dropdownRef}>
-                <button
-                  onClick={() => setDropdownOpenCategorias((v) => !v)}
-                  className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
-                  aria-haspopup="true"
-                  aria-expanded={dropdownOpenCategorias}
-                  type="button"
-                >
-                  {formValues.Categoria || 'Selecione a Categoria do Produto'}
-                  <IoIosArrowDown className="text-sm" />
-                </button>
 
-                {dropdownOpenCategorias && (
-                  <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
-                    {CategoriasProdutos.map((categoria) => (
-                      <button
-                        key={categoria}
-                        className="block w-full text-left px-4 py-2 hover:bg-green-900"
-                        onClick={() => {
-                          setFormValues((prev) => ({ ...prev, Categoria: categoria }))
-                          setDropdownOpenCategorias(false)
-                        }}
-                      >
-                        {categoria}
-                      </button>
-                    ))}
+                  <div className="relative mt-3" ref={dropdownRef}>
+                    <button
+                      onClick={() => setDropdownOpenCategorias((v) => !v)}
+                      className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
+                      aria-haspopup="true"
+                      aria-expanded={dropdownOpenCategorias}
+                      type="button"
+                    >
+                      {formValues.Categoria || 'Selecione a Categoria do Produto'}
+                      <IoIosArrowDown className="text-sm" />
+                    </button>
+
+                    {dropdownOpenCategorias && (
+                      <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                        {CategoriasProdutos.map((categoria) => (
+                          <button
+                            key={categoria}
+                            className="block w-full text-left px-4 py-2 hover:bg-green-900"
+                            onClick={() => {
+                              setFormValues((prev) => ({ ...prev, Categoria: categoria }))
+                              setDropdownOpenCategorias(false)
+                            }}
+                          >
+                            {categoria}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
 
-              {formValues.Categoria && (
-                <div className="relative mt-3" ref={dropdownRef}>
-                  <button
-                    onClick={() => setDropdownOpenProdutos((v) => !v)}
-                    className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
-                    aria-haspopup="true"
-                    aria-expanded={dropdownOpenProdutos}
-                    type="button"
-                  >
-                    {formValues.produtoNome || 'Selecione o Produto'}
-                    <IoIosArrowDown className="text-sm" />
-                  </button>
+                  {formValues.Categoria && (
+                    <div className="relative mt-3" ref={dropdownRef}>
+                      <button
+                        onClick={() => setDropdownOpenProdutos((v) => !v)}
+                        className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
+                        aria-haspopup="true"
+                        aria-expanded={dropdownOpenProdutos}
+                        type="button"
+                      >
+                        {formValues.produtoNome || 'Selecione o Produto'}
+                        <IoIosArrowDown className="text-sm" />
+                      </button>
 
-                  {dropdownOpenProdutos && (
-                    <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
-                      {produtos.map((produto) => (
-                        <button
-                          key={produto.Id}
-                          className="block w-full text-left px-4 py-2 hover:bg-green-900"
-                          onClick={() => {
-                            // garantir que preço e quantidade sejam números (evita concatenação)
-                            const precoNum = Number(produto.Preço) || 0
-                            const qtdNum = Number(produto.Quantidade) || 0
+                      {dropdownOpenProdutos && (
+                        <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                          {produtos.map((produto) => (
+                            <button
+                              key={produto.Id}
+                              className="block w-full text-left px-4 py-2 hover:bg-green-900"
+                              onClick={() => {
+                                // garantir que preço e quantidade sejam números (evita concatenação)
+                                const precoNum = Number(produto.Preço) || 0
+                                const qtdNum = Number(produto.Quantidade) || 0
 
-                            if (formValues.Categoria === 'Cereais') {
-                              setFormValues((prev) => ({
-                                ...prev,
-                                ProdutoEnsacado: produto.Id,
-                                produtoPreco: precoNum,
-                                produtoQuantidade: qtdNum,
-                                produtoNome: produto.Nome,
-                                produtoPeso: produto.Peso
-                              }))
-                            } else {
-                              setFormValues((prev) => ({
-                                ...prev,
-                                OutroProduto: produto.Id,
-                                produtoPreco: precoNum,
-                                produtoQuantidade: qtdNum,
-                                produtoNome: produto.Nome,
-                                produtoPeso: produto.Peso
-                              }))
-                            }
-                            setDropdownOpenProdutos(false)
-                          }}
-                        >
-                          {produto.Nome}
-                        </button>
-                      ))}
+                                if (formValues.Categoria === 'Cereais') {
+                                  setFormValues((prev) => ({
+                                    ...prev,
+                                    ProdutoEnsacado: produto.Id,
+                                    produtoPreco: precoNum,
+                                    produtoQuantidade: qtdNum,
+                                    produtoNome: produto.Nome,
+                                    produtoPeso: produto.Peso
+                                  }))
+                                } else {
+                                  setFormValues((prev) => ({
+                                    ...prev,
+                                    OutroProduto: produto.Id,
+                                    produtoPreco: precoNum,
+                                    produtoQuantidade: qtdNum,
+                                    produtoNome: produto.Nome,
+                                    produtoPeso: produto.Peso
+                                  }))
+                                }
+                                setDropdownOpenProdutos(false)
+                              }}
+                            >
+                              {produto.Nome}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
-                </div>
+
+                  {/* campos que agora ficam na página 1 */}
+                  <input
+                    type="text"
+                    placeholder="Cliente"
+                    value={formValues.Cliente ?? ''}
+                    onChange={(e) =>
+                      setFormValues((prev) => ({ ...prev, Cliente: e.target.value }))
+                    }
+                    className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+                  />
+
+                  <input
+                    type="number"
+                    disabled={formValues.produtoQuantidade == null}
+                    min={1}
+                    placeholder="Quantidade"
+                    value={formValues.Quantidade ?? ''}
+                    onChange={(e) =>
+                      setFormValues((prev) => ({ ...prev, Quantidade: e.target.value }))
+                    }
+                    className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+                  />
+
+                  <input
+                    type="number"
+                    step="0.01"
+                    disabled={formValues.produtoPreco == null}
+                    placeholder="Valor Unitário"
+                    value={formValues.ValorUnitario ?? ''}
+                    onChange={(e) =>
+                      setFormValues((prev) => ({ ...prev, ValorUnitario: e.target.value }))
+                    }
+                    className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+                  />
+                </>
               )}
 
-              {/* Inputs dinâmicos */}
-              <input
-                type="text"
-                placeholder="Cliente"
-                value={formValues.Cliente ?? ''} // <-- valor persistido
-                onChange={(e) => setFormValues((prev) => ({ ...prev, Cliente: e.target.value }))} // <-- atualiza o estado
-                className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
-              />
-              <input
-                type="number"
-                disabled={!formValues.produtoQuantidade}
-                min={1}
-                placeholder="Quantidade"
-                value={formValues.Quantidade ?? ''} // <-- valor persistido
-                onChange={(e) => setFormValues((prev) => ({ ...prev, Quantidade: e.target.value }))} // <-- atualiza o estado
-                className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
-              />
-              <input
-                type="number"
-                disabled={!formValues.produtoPreco}
-                placeholder="Valor Unitário"
-                value={formValues.ValorUnitario ?? ''} // <-- valor persistido
-                onChange={(e) =>
-                  setFormValues((prev) => ({ ...prev, ValorUnitario: e.target.value }))
-                } // <-- atualiza o estado
-                className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
-              />
-              {inputs.map((coluna) => (
-              <input
-                key={coluna}
-                type={inputNumbers.includes(coluna) ? 'number' : 'text'}
-                placeholder={coluna}
-                value={formValues[coluna] ?? ''} // <-- valor persistido
-                onChange={(e) => setFormValues((prev) => ({ ...prev, [coluna]: e.target.value }))} // <-- atualiza o estado
-                className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
-              />
-            ))}
-              {error}
+              {/* PÁGINA 2: map dos inputs do endereço (apenas página 2) */}
+              {page === 2 && (
+                <>
+                  {/* Inputs explícitos de endereço */}
+                  <input
+                    type="number"
+                    placeholder="Cep"
+                    value={formValues.Cep ?? ''}
+                    onChange={(e) =>
+                      setFormValues((prev) => ({ ...prev, Cep: Number(e.target.value) }))
+                    }
+                    className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Cidade"
+                    value={formValues.Cidade ?? ''}
+                    onChange={(e) => setFormValues((prev) => ({ ...prev, Cidade: e.target.value }))}
+                    className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Bairro"
+                    value={formValues.Bairro ?? ''}
+                    onChange={(e) => setFormValues((prev) => ({ ...prev, Bairro: e.target.value }))}
+                    className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Rua"
+                    value={formValues.Rua ?? ''}
+                    onChange={(e) => setFormValues((prev) => ({ ...prev, Rua: e.target.value }))}
+                    className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+                  />
+
+                  <input
+                    type="number"
+                    placeholder="Numero"
+                    value={formValues.Numero ?? ''}
+                    onChange={(e) =>
+                      setFormValues((prev) => ({
+                        ...prev,
+                        Numero: e.target.value === '' ? '' : Number(e.target.value)
+                      }))
+                    }
+                    className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Complemento"
+                    value={formValues.Complemento ?? ''}
+                    onChange={(e) =>
+                      setFormValues((prev) => ({ ...prev, Complemento: e.target.value }))
+                    }
+                    className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+                  />
+                </>
+              )}
+
+              {error && <div className="text-red-600 mt-2 px-2">{error}</div>}
             </div>
 
             {/* Paginação */}
             {totalPages > 1 && (
               <div className="flex justify-end w-full px-30 mt-2">
                 <Button
-                  onClick={() => setPage(page - 1)}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
                   className={`${
                     page === 1
                       ? 'hidden'
@@ -232,7 +297,7 @@ export default function PopupCriarVenda({ showModal, onClose }) {
                   text={<IoMdArrowRoundBack />}
                 />
                 <Button
-                  onClick={() => setPage(page + 1)}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   className={`${
                     page === totalPages
                       ? 'hidden'
@@ -291,18 +356,27 @@ export default function PopupCriarVenda({ showModal, onClose }) {
                   Quantidade: quantidade,
                   ValorTotal: valorTotal,
                   PesoTotal: pesoTotal,
-                  Data: dataAgr
-              }
-              console.log('Payload para criar pedido:', payload)
+                  Data: dataAgr,
+                  Endereco: {
+                    Cep: formValues.Cep || null,
+                    Cidade: formValues.Cidade || null,
+                    Bairro: formValues.Bairro || null,
+                    Rua: formValues.Rua || null,
+                    Numero: formValues.Numero || null,
+                    Complemento: formValues.Complemento || null
+                  }
+                }
+                console.log('Payload para criar pedido:', payload)
 
-                window.api.createPedidoProduto(payload).then((result) => {
-                  console.log('Pedido criado com sucesso:', result)
-                  onClose()
-                })
-                .catch((err) => {
-                  setError(`Erro ao criar pedido: ${err.message}`)
-                })
-                // TODO: montar payload e chamar window.api.createPedidoProduto(...)
+                window.api
+                  .createPedidoProduto(payload)
+                  .then((result) => {
+                    console.log('Pedido criado com sucesso:', result)
+                    onClose()
+                  })
+                  .catch((err) => {
+                    setError(`Erro ao criar pedido: ${err.message}`)
+                  })
               }}
             />
           </div>

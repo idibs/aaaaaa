@@ -178,7 +178,7 @@ app.whenReady().then(() => {
   ipcMain.handle('create-pedido-produto', async (event, pedidoProduto) => {
     try {
       const Cliente = await getPessoaByNome(pedidoProduto.Cliente)
-      
+
       if (!Cliente || Cliente.length === 0) {
         throw new Error(`Cliente "${pedidoProduto.Cliente}" não encontrado no banco`)
       }
@@ -186,6 +186,26 @@ app.whenReady().then(() => {
       const idPessoa = Cliente[0].Id_pes
       if (!idPessoa) {
         throw new Error('ID da pessoa inválido')
+      }
+
+      const endereco = [
+        pedidoProduto.Endereco.Cidade,
+        pedidoProduto.Endereco.Rua,
+        pedidoProduto.Endereco.Numero,
+        pedidoProduto.Endereco.Bairro,
+        pedidoProduto.Endereco.Cep,
+        pedidoProduto.Endereco.Complemento
+      ]
+
+      // usar as mesmas chaves usadas no formulário (Cep, Numero)
+      let Id_end = await getEndereco(pedidoProduto.Endereco.Cep, pedidoProduto.Endereco.Numero)
+
+      if (!Id_end || Id_end.length === 0) {
+        await createEndereco(endereco)
+        Id_end = await getEndereco(pedidoProduto.Endereco.Cep, pedidoProduto.Endereco.Numero)
+        if (!Id_end || Id_end.length === 0) {
+          throw new Error('Erro ao criar endereço')
+        }
       }
 
       const pedido = [
@@ -197,7 +217,8 @@ app.whenReady().then(() => {
         pedidoProduto.PesoTotal,
         pedidoProduto.ValorTotal,
         pedidoProduto.Metodo,
-        "Finalizado",
+        'Finalizado',
+        Id_end[0].Id_end
       ]
 
       const data = await createPedidoProduto(pedido)

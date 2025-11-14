@@ -4,7 +4,6 @@ import Input from '../../components/inputs/Input'
 import { useState, useEffect } from 'react'
 import Button from '../../components/botoes/DesignBotao'
 import Popup from '../../components/popups/venda/PopUpCriarVenda'
-import PopUpOrcamento from '../../components/popups/venda/PopUpOrcamento'
 
 export default function Produtos() {
   const [data, setData] = useState([])
@@ -12,8 +11,6 @@ export default function Produtos() {
   const [term, setTerm] = useState('')
   const [filteredData, setFilteredData] = useState([])
   const [showModal, setShowModal] = useState(false)
-  const [showOrcamento, setShowOrcamento] = useState(false)
-  const [selectedVenda, setSelectedVenda] = useState(null)
 
   const insertTable = 'venda'
 
@@ -22,7 +19,7 @@ export default function Produtos() {
       .getPedidoProdutosByStatus(status)
       .then((result) => setData(result))
       .catch((error) => console.error('Error fetching data:', error))
-  }, [status, data, Tabela, showModal, showOrcamento])
+  }, [status, data, Tabela, showModal])
 
   useEffect(() => {
     setFilteredData(data.filter((item) => item.Cliente.toLowerCase().includes(term.toLowerCase())))
@@ -32,22 +29,6 @@ export default function Produtos() {
 
   const openModal = () => setShowModal(true)
   const closeModal = () => setShowModal(false)
-
-  const openOrcamento = (venda) => {
-    setSelectedVenda(venda)
-    setShowOrcamento(true)
-  }
-  const closeOrcamento = () => setShowOrcamento(false)
-
-  const finalizarVenda = async (valor) => {
-    try {
-      await window.api.finalizarVenda(selectedVenda.id, valor)
-      setShowOrcamento(false)
-      setStatus('Finalizado')
-    } catch (err) {
-      console.error('Erro ao finalizar venda:', err)
-    }
-  }
 
   return (
     <div className="pt-10">
@@ -86,12 +67,7 @@ export default function Produtos() {
         </div>
 
         <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
-          <TabelaVaidacao
-            data={filteredData}
-            insertTable={insertTable}
-            onCheckClick={status === 'Em orçamento' ? openOrcamento : undefined}
-            status={status}
-          />
+          <TabelaVaidacao data={filteredData} insertTable={insertTable} status={status} />
         </div>
 
         <div className="mt-4 mb-4 flex justify-between">
@@ -127,11 +103,6 @@ export default function Produtos() {
 
       {/* Popups */}
       <Popup showModal={showModal} onClose={closeModal} table={data} insertTable={insertTable} />
-      <PopUpOrcamento
-        showModal={showOrcamento}
-        onClose={closeOrcamento}
-        onFinalizar={finalizarVenda}
-      />
     </div>
   )
 }

@@ -6,6 +6,7 @@ import PopupEditPag from '../popups/pagamento/PopUpEditPag'
 import PopupEditVenda from '../popups/venda/PopUpEditVenda'
 import PopUpAtribuirCarga from '../popups/venda/PopUpAtribuiraCarga'
 import PopUpCriarCarga from '../popups/carga/PopUpCriarCarga'
+import PopUpOrcamento from '../popups/venda/PopUpOrcamento'
 
 const Tabela = ({ data, insertTable, onSave, status }) => {
   const [showModalDelete, setShowModalDelete] = useState(false)
@@ -15,12 +16,16 @@ const Tabela = ({ data, insertTable, onSave, status }) => {
   const [showAtribuirCarga, setShowAtribuirCarga] = useState(false)
   const [showCriarCarga, setShowCriarCarga] = useState(false)
   const [itemPraCarga, setItemPraCarga] = useState(null)
+  const [showOrcamento, setShowOrcamento] = useState(false)
 
   const handleCheckboxChange = (id) => {
     setSelectedItems((prevSelected) =>
       prevSelected.includes(id) ? prevSelected.filter((item) => item !== id) : [...prevSelected, id]
     )
   }
+
+  const openOrcamento = () => setShowOrcamento(true)
+  const closeOrcamento = () => setShowOrcamento(false)
 
   const openAtribuirCarga = () => setShowAtribuirCarga(true)
   const closeAtribuirCarga = () => setShowAtribuirCarga(false)
@@ -84,6 +89,9 @@ const Tabela = ({ data, insertTable, onSave, status }) => {
                           if (status === 'Finalizado') {
                             setItemPraCarga(item.Id)
                             openAtribuirCarga()
+                            return
+                          } else if (status === 'Em orçamento') {
+                            openOrcamento()
                             return
                           }
 
@@ -180,6 +188,7 @@ const Tabela = ({ data, insertTable, onSave, status }) => {
         itemPraCarga={itemPraCarga}
       />
       <PopUpCriarCarga showModal={showCriarCarga} onClose={closeCriarCarga} />
+      <PopUpOrcamento showModal={showOrcamento} onClose={closeOrcamento} />
     </>
   )
 }

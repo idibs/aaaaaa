@@ -389,8 +389,8 @@ export function getPedidoProdutosByStatus(status) {
 export function createPedidoProduto(pedidoProduto) {
   const conn = connection()
   return new Promise((resolve, reject) => {
-    const sql = `INSERT INTO pedido_produto (Id_pes, Id_ens, Id_out, Data_pedprod, Quantidade_pedprod, Peso_total_pedprod, Valor_total_pedprod, Metodo_pagamento_pedprod, Status_pedprod) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);`
+    const sql = `INSERT INTO pedido_produto (Id_pes, Id_ens, Id_out, Data_pedprod, Quantidade_pedprod, Peso_total_pedprod, Valor_total_pedprod, Metodo_pagamento_pedprod, Status_pedprod, Id_end) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
     conn.query(sql, pedidoProduto, (error, results) => {
       conn.end()
       if (error) {

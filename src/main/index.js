@@ -28,7 +28,8 @@ import {
   finalizaPedido,
   getCargas,
   atribuirCarga,
-  createPedidoProduto
+  createPedidoProduto,
+  getPessoaByNome
 } from '../database/functions'
 
 function createWindow() {
@@ -176,9 +177,33 @@ app.whenReady().then(() => {
 
   ipcMain.handle('create-pedido-produto', async (event, pedidoProduto) => {
     try {
-      const data = await createPedidoProduto(pedidoProduto)
+      const Cliente = await getPessoaByNome(pedidoProduto.Cliente)
+      
+      if (!Cliente || Cliente.length === 0) {
+        throw new Error(`Cliente "${pedidoProduto.Cliente}" não encontrado no banco`)
+      }
+
+      const idPessoa = Cliente[0].Id_pes
+      if (!idPessoa) {
+        throw new Error('ID da pessoa inválido')
+      }
+
+      const pedido = [
+        idPessoa,
+        pedidoProduto.ProdutoEnsacado || null,
+        pedidoProduto.OutroProduto || null,
+        pedidoProduto.Data,
+        pedidoProduto.Quantidade,
+        pedidoProduto.PesoTotal,
+        pedidoProduto.ValorTotal,
+        pedidoProduto.Metodo,
+        "Finalizado",
+      ]
+
+      const data = await createPedidoProduto(pedido)
       return data
     } catch (error) {
+      console.error('Erro ao criar pedido:', error)
       throw error
     }
   })

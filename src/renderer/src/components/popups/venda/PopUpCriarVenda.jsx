@@ -7,7 +7,7 @@ export default function PopupCriarVenda({ showModal, onClose }) {
   if (!showModal) return null
 
   const PAGE_SIZE = 5
-  const columns = ['Nome', 'CPF', 'Telefone']
+  const columns = ['Cep', 'Cidade', 'Bairro', 'Rua', 'Numero', 'Complemento']
   const [page, setPage] = useState(1)
   const [dropdownOpenCategorias, setDropdownOpenCategorias] = useState(false)
   const [dropdownOpenMetodos, setDropdownOpenMetodos] = useState(false)
@@ -41,6 +41,9 @@ export default function PopupCriarVenda({ showModal, onClose }) {
   const startIdx = (page - 1) * PAGE_SIZE
   const endIdx = startIdx + PAGE_SIZE
   const inputs = columns.slice(startIdx, endIdx)
+
+    const inputNumbers = ['Telefone', 'Número', 'Cep']
+
 
   return (
     <>
@@ -152,7 +155,8 @@ export default function PopupCriarVenda({ showModal, onClose }) {
                                 ProdutoEnsacado: produto.Id,
                                 produtoPreco: precoNum,
                                 produtoQuantidade: qtdNum,
-                                produtoNome: produto.Nome
+                                produtoNome: produto.Nome,
+                                produtoPeso: produto.Peso
                               }))
                             } else {
                               setFormValues((prev) => ({
@@ -160,7 +164,8 @@ export default function PopupCriarVenda({ showModal, onClose }) {
                                 OutroProduto: produto.Id,
                                 produtoPreco: precoNum,
                                 produtoQuantidade: qtdNum,
-                                produtoNome: produto.Nome
+                                produtoNome: produto.Nome,
+                                produtoPeso: produto.Peso
                               }))
                             }
                             setDropdownOpenProdutos(false)
@@ -201,6 +206,16 @@ export default function PopupCriarVenda({ showModal, onClose }) {
                 } // <-- atualiza o estado
                 className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
               />
+              {inputs.map((coluna) => (
+              <input
+                key={coluna}
+                type={inputNumbers.includes(coluna) ? 'number' : 'text'}
+                placeholder={coluna}
+                value={formValues[coluna] ?? ''} // <-- valor persistido
+                onChange={(e) => setFormValues((prev) => ({ ...prev, [coluna]: e.target.value }))} // <-- atualiza o estado
+                className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+              />
+            ))}
               {error}
             </div>
 
@@ -242,9 +257,16 @@ export default function PopupCriarVenda({ showModal, onClose }) {
                   ? Number(formValues.produtoPreco) * 1.15
                   : undefined
                 const valor = Number(formValues.ValorUnitario) || 0
+                const peso = Number(formValues.produtoPeso) || 0
+
+                setError(null)
 
                 if (!formValues.Metodo || !formValues.Categoria || !formValues.produtoNome) {
                   setError('Preencha método, categoria e produto.')
+                  return
+                }
+                if (!formValues.Cliente || formValues.Cliente.trim() === '') {
+                  setError('Cliente é obrigatório.')
                   return
                 }
                 if (!quantidade || quantidade < 1 || (max && quantidade > max)) {
@@ -256,7 +278,30 @@ export default function PopupCriarVenda({ showModal, onClose }) {
                   return
                 }
 
-                console.log('Salvar venda', formValues)
+                const pesoTotal = peso * quantidade
+                const valorTotal = quantidade * valor
+                const date = new Date()
+                const dataAgr = date.toISOString().split('T')[0] // Formato YYYY-MM-DD
+
+                const payload = {
+                  Cliente: formValues.Cliente,
+                  Metodo: formValues.Metodo,
+                  ProdutoEnsacado: formValues.ProdutoEnsacado || null,
+                  OutroProduto: formValues.OutroProduto || null,
+                  Quantidade: quantidade,
+                  ValorTotal: valorTotal,
+                  PesoTotal: pesoTotal,
+                  Data: dataAgr
+              }
+              console.log('Payload para criar pedido:', payload)
+
+                window.api.createPedidoProduto(payload).then((result) => {
+                  console.log('Pedido criado com sucesso:', result)
+                  onClose()
+                })
+                .catch((err) => {
+                  setError(`Erro ao criar pedido: ${err.message}`)
+                })
                 // TODO: montar payload e chamar window.api.createPedidoProduto(...)
               }}
             />

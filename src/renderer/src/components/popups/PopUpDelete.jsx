@@ -17,9 +17,10 @@ export default function PopupDelete({ showModal, onClose, initialData, insertTab
         await window.api.deleteEnsacado(id)
       } else if (insertTable === 'ração' || insertTable === 'variedade') {
         await window.api.deleteOutroProduto(id)
-      }
-      else if (insertTable === 'cliente') {
+      } else if (insertTable === 'cliente') {
         await window.api.deletePessoa(id)
+      } else if (insertTable === 'funcionario') {
+        await window.api.deleteFuncionario(id)
       }
       console.log(insertTable)
       onClose()

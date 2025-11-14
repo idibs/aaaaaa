@@ -1,38 +1,53 @@
 import { IoMdClose } from 'react-icons/io'
-import { IoMdArrowRoundBack, IoMdArrowRoundForward } from 'react-icons/io'
-import { useState, useEffect } from 'react'
+import { IoMdArrowRoundBack, IoMdArrowRoundForward, IoIosArrowDown } from 'react-icons/io'
+import { useState, useEffect, useRef } from 'react'
 import Button from '../../botoes/DesignBotao'
 
-export default function PopupCriarVenda({ showModal, onClose, insertTable }) {
+export default function PopupCriarVenda({ showModal, onClose }) {
   if (!showModal) return null
 
-  const PAGE_SIZE = 4
-  const [columns, setColumns] = useState([])
+  const PAGE_SIZE = 5
+  const columns = ['Nome', 'CPF', 'Telefone']
   const [page, setPage] = useState(1)
+  const [dropdownOpenCategorias, setDropdownOpenCategorias] = useState(false)
+  const [dropdownOpenMetodos, setDropdownOpenMetodos] = useState(false)
+  const [dropdownOpenProdutos, setDropdownOpenProdutos] = useState(false)
+  const [produtos, setProdutos] = useState([])
+  const [formValues, setFormValues] = useState({}) // <-- persist valores por coluna
+  const [error, setError] = useState(null)
+  const dropdownRef = useRef(null)
 
-  /* 
+  const CategoriasProdutos = ['Cereais', 'Ração', 'Variedade']
+  const MetodoDePagamento = ['PIX', 'Dinheiro', 'Cartão de Crédito', 'Cartão de Débito', 'Boleto']
+
   useEffect(() => {
     setPage(1)
-    window.api
-      .getVendasColunas()
-      .then((result) => setColumns(result))
-      .catch((error) => console.error('Erro ao buscar colunas de vendas:', error))
-  }, [insertTable])
-  */
+    setFormValues({})
+  }, [])
+
+  useEffect(() => {
+    if (formValues.Categoria === 'Cereais') {
+      window.api.getEnsacados().then((data) => {
+        setProdutos(data)
+      })
+    } else if (formValues.Categoria === 'Ração' || formValues.Categoria === 'Variedade') {
+      window.api.getOutrosProdutosByCategoria(formValues.Categoria).then((data) => {
+        setProdutos(data)
+      })
+    }
+  }, [formValues.Categoria])
 
   const totalPages = Math.ceil(columns.length / PAGE_SIZE)
   const startIdx = (page - 1) * PAGE_SIZE
   const endIdx = startIdx + PAGE_SIZE
   const inputs = columns.slice(startIdx, endIdx)
 
-  const inputNumbers = ['Quantidade', 'Preço', 'Desconto', 'Total']
-
   return (
     <>
       {/* Fundo escuro */}
       <div className="fixed inset-0 bg-black/40 z-10"></div>
 
-      {/* Conteúdo do popup */}
+      {/* Popup principal */}
       <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border border-[#1A6D12] w-200 z-20 h-180 p-4 bg-[#fffcff] rounded-xl shadow-2xl">
         <div className="flex justify-end">
           <button className="cursor-pointer" onClick={onClose}>
@@ -41,52 +56,209 @@ export default function PopupCriarVenda({ showModal, onClose, insertTable }) {
         </div>
 
         <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">
-          Nova Venda
+          Novo Pedido de Produto
         </h1>
 
-        {/* Container principal com justify-between */}
         <div className="flex flex-col justify-between h-140">
-          {/* Campos dinâmicos */}
-          <div className="mt-7 flex flex-col px-30 h-90 w-full">
-            {inputs.map((coluna, index) => (
+          <div>
+            <div className="mt-7 flex flex-col px-30 h-90 w-full">
+              {/* Dropdown de metodo de pagamento */}
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setDropdownOpenMetodos((v) => !v)}
+                  className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
+                  aria-haspopup="true"
+                  aria-expanded={dropdownOpenMetodos}
+                  type="button"
+                >
+                  {formValues.Metodo || 'Selecione o Método de Pagamento'}
+                  <IoIosArrowDown className="text-sm" />
+                </button>
+
+                {dropdownOpenMetodos && (
+                  <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                    {MetodoDePagamento.map((metodo) => (
+                      <button
+                        key={metodo}
+                        className="block w-full text-left px-4 py-2 hover:bg-green-900"
+                        onClick={() => {
+                          setFormValues((prev) => ({ ...prev, Metodo: metodo }))
+                          setDropdownOpenMetodos(false)
+                        }}
+                      >
+                        {metodo}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="relative mt-3" ref={dropdownRef}>
+                <button
+                  onClick={() => setDropdownOpenCategorias((v) => !v)}
+                  className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
+                  aria-haspopup="true"
+                  aria-expanded={dropdownOpenCategorias}
+                  type="button"
+                >
+                  {formValues.Categoria || 'Selecione a Categoria do Produto'}
+                  <IoIosArrowDown className="text-sm" />
+                </button>
+
+                {dropdownOpenCategorias && (
+                  <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                    {CategoriasProdutos.map((categoria) => (
+                      <button
+                        key={categoria}
+                        className="block w-full text-left px-4 py-2 hover:bg-green-900"
+                        onClick={() => {
+                          setFormValues((prev) => ({ ...prev, Categoria: categoria }))
+                          setDropdownOpenCategorias(false)
+                        }}
+                      >
+                        {categoria}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {formValues.Categoria && (
+                <div className="relative mt-3" ref={dropdownRef}>
+                  <button
+                    onClick={() => setDropdownOpenProdutos((v) => !v)}
+                    className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
+                    aria-haspopup="true"
+                    aria-expanded={dropdownOpenProdutos}
+                    type="button"
+                  >
+                    {formValues.produtoNome || 'Selecione o Produto'}
+                    <IoIosArrowDown className="text-sm" />
+                  </button>
+
+                  {dropdownOpenProdutos && (
+                    <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                      {produtos.map((produto) => (
+                        <button
+                          key={produto.Id}
+                          className="block w-full text-left px-4 py-2 hover:bg-green-900"
+                          onClick={() => {
+                            // garantir que preço e quantidade sejam números (evita concatenação)
+                            const precoNum = Number(produto.Preço) || 0
+                            const qtdNum = Number(produto.Quantidade) || 0
+
+                            if (formValues.Categoria === 'Cereais') {
+                              setFormValues((prev) => ({
+                                ...prev,
+                                ProdutoEnsacado: produto.Id,
+                                produtoPreco: precoNum,
+                                produtoQuantidade: qtdNum,
+                                produtoNome: produto.Nome
+                              }))
+                            } else {
+                              setFormValues((prev) => ({
+                                ...prev,
+                                OutroProduto: produto.Id,
+                                produtoPreco: precoNum,
+                                produtoQuantidade: qtdNum,
+                                produtoNome: produto.Nome
+                              }))
+                            }
+                            setDropdownOpenProdutos(false)
+                          }}
+                        >
+                          {produto.Nome}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Inputs dinâmicos */}
               <input
-                key={index}
-                type={inputNumbers.includes(coluna) ? 'number' : 'text'}
-                placeholder={coluna}
+                type="text"
+                placeholder="Cliente"
+                value={formValues.Cliente ?? ''} // <-- valor persistido
+                onChange={(e) => setFormValues((prev) => ({ ...prev, Cliente: e.target.value }))} // <-- atualiza o estado
                 className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
               />
-            ))}
+              <input
+                type="number"
+                disabled={!formValues.produtoQuantidade}
+                min={1}
+                placeholder="Quantidade"
+                value={formValues.Quantidade ?? ''} // <-- valor persistido
+                onChange={(e) => setFormValues((prev) => ({ ...prev, Quantidade: e.target.value }))} // <-- atualiza o estado
+                className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+              />
+              <input
+                type="number"
+                disabled={!formValues.produtoPreco}
+                placeholder="Valor Unitário"
+                value={formValues.ValorUnitario ?? ''} // <-- valor persistido
+                onChange={(e) =>
+                  setFormValues((prev) => ({ ...prev, ValorUnitario: e.target.value }))
+                } // <-- atualiza o estado
+                className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+              />
+              {error}
+            </div>
+
+            {/* Paginação */}
+            {totalPages > 1 && (
+              <div className="flex justify-end w-full px-30 mt-2">
+                <Button
+                  onClick={() => setPage(page - 1)}
+                  className={`${
+                    page === 1
+                      ? 'hidden'
+                      : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'
+                  }`}
+                  text={<IoMdArrowRoundBack />}
+                />
+                <Button
+                  onClick={() => setPage(page + 1)}
+                  className={`${
+                    page === totalPages
+                      ? 'hidden'
+                      : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'
+                  }`}
+                  text={<IoMdArrowRoundForward />}
+                />
+              </div>
+            )}
           </div>
 
-          {/* Paginação */}
-          {totalPages > 1 && (
-            <div className="flex justify-end w-full px-30 mt-2">
-              <Button
-                onClick={() => setPage(page - 1)}
-                className={`${
-                  page === 1
-                    ? 'hidden'
-                    : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'
-                }`}
-                text={<IoMdArrowRoundBack />}
-              />
-              <Button
-                onClick={() => setPage(page + 1)}
-                className={`${
-                  page === totalPages
-                    ? 'hidden'
-                    : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'
-                }`}
-                text={<IoMdArrowRoundForward />}
-              />
-            </div>
-          )}
-
-          {/* Botão salvar */}
+          {/* Botão Salvar */}
           <div className="flex justify-center">
             <Button
               className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60"
               text="Salvar"
+              onClick={() => {
+                // validação final antes de salvar
+                const quantidade = Number(formValues.Quantidade) || 0
+                const max = Number(formValues.produtoQuantidade) || undefined
+                const minUnit = formValues.produtoPreco
+                  ? Number(formValues.produtoPreco) * 1.15
+                  : undefined
+                const valor = Number(formValues.ValorUnitario) || 0
+
+                if (!formValues.Metodo || !formValues.Categoria || !formValues.produtoNome) {
+                  setError('Preencha método, categoria e produto.')
+                  return
+                }
+                if (!quantidade || quantidade < 1 || (max && quantidade > max)) {
+                  setError(`Quantidade inválida. Deve estar entre 1 e ${max || '∞'}.`)
+                  return
+                }
+                if (minUnit && valor < minUnit) {
+                  setError(`Valor unitário inválido. Mínimo: ${minUnit.toFixed(2)}.`)
+                  return
+                }
+
+                console.log('Salvar venda', formValues)
+                // TODO: montar payload e chamar window.api.createPedidoProduto(...)
+              }}
             />
           </div>
         </div>

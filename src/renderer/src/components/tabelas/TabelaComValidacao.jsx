@@ -4,20 +4,29 @@ import { useState } from 'react'
 import PopupDelete from '../popups/PopUpDelete'
 import PopupEditPag from '../popups/pagamento/PopUpEditPag'
 import PopupEditVenda from '../popups/venda/PopUpEditVenda'
+import PopUpAtribuirCarga from '../popups/venda/PopUpAtribuiraCarga'
+import PopUpCriarCarga from '../popups/carga/PopUpCriarCarga'
 
-const Tabela = ({ data, insertTable, onSave }) => {
+const Tabela = ({ data, insertTable, onSave, status }) => {
   const [showModalDelete, setShowModalDelete] = useState(false)
   const [showModalEdit, setShowModalEdit] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   const [selectedItems, setSelectedItems] = useState([])
+  const [showAtribuirCarga, setShowAtribuirCarga] = useState(false)
+  const [showCriarCarga, setShowCriarCarga] = useState(false)
+  const [itemPraCarga, setItemPraCarga] = useState(null)
 
   const handleCheckboxChange = (id) => {
     setSelectedItems((prevSelected) =>
-      prevSelected.includes(id)
-        ? prevSelected.filter((item) => item !== id)
-        : [...prevSelected, id]
+      prevSelected.includes(id) ? prevSelected.filter((item) => item !== id) : [...prevSelected, id]
     )
   }
+
+  const openAtribuirCarga = () => setShowAtribuirCarga(true)
+  const closeAtribuirCarga = () => setShowAtribuirCarga(false)
+
+  const openCriarCarga = () => setShowCriarCarga(true)
+  const closeCriarCarga = () => setShowCriarCarga(false)
 
   return (
     <>
@@ -71,7 +80,21 @@ const Tabela = ({ data, insertTable, onSave }) => {
                     <div className="flex justify-evenly items-center">
                       {/* Confirmação */}
                       <button
-                        onClick={() => alert(`Item ${id} confirmado!`)}
+                        onClick={() => {
+                          if (status === 'Finalizado') {
+                            setItemPraCarga(item.Id)
+                            openAtribuirCarga()
+                            return
+                          }
+
+                          if (item.Valor_total && item.Pagamento) {
+                            window.api.finalizaPedido(item.Id).catch((err) => console.error(err))
+                          } else {
+                            alert(
+                              'Este pedido não possui todos os dados necessários para finalização.'
+                            )
+                          }
+                        }}
                         className="cursor-pointer text-green-600 hover:text-green-800"
                       >
                         <FaCheck />
@@ -141,17 +164,22 @@ const Tabela = ({ data, insertTable, onSave }) => {
         />
       )}
 
-        {selectedItem && (insertTable === 'pedido_produto' || insertTable === 'produto') &&  (
-        <PopupEditVenda
-          showModal={showModalEdit}
-          onClose={() => {
-            setShowModalEdit(false)
-            setSelectedItem(null)
-          }}
-          vendaSelecionada={selectedItem}  // ✅ corrigido aqui
-          onSalvar={(payload) => onSave && onSave(payload, selectedItem)}
-        />
-      )}
+      <PopupEditVenda
+        showModal={showModalEdit}
+        onClose={() => {
+          setShowModalEdit(false)
+          setSelectedItem(null)
+        }}
+        vendaSelecionada={selectedItem} // ✅ corrigido aqui
+        onSalvar={(payload) => onSave && onSave(payload, selectedItem)}
+      />
+      <PopUpAtribuirCarga
+        showModal={showAtribuirCarga}
+        onClose={closeAtribuirCarga}
+        onCriarNovaCarga={openCriarCarga}
+        itemPraCarga={itemPraCarga}
+      />
+      <PopUpCriarCarga showModal={showCriarCarga} onClose={closeCriarCarga} />
     </>
   )
 }

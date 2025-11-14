@@ -23,7 +23,14 @@ const api = {
   updateOutroProduto: (produto) => ipcRenderer.invoke('update-outro-produto', produto),
   deleteOutroProduto: (id) => ipcRenderer.invoke('delete-outro-produto', id),
   deleteEnsacado: (id) => ipcRenderer.invoke('delete-ensacado', id),
-  deletePessoa: (id) => ipcRenderer.invoke('delete-pessoa', id)
+  deletePessoa: (id) => ipcRenderer.invoke('delete-pessoa', id),
+  deleteFuncionario: (id) => ipcRenderer.invoke('delete-funcionario', id),
+  finalizaPedido: (id) => ipcRenderer.invoke('finaliza-pedido', id),
+  getCargas: () => ipcRenderer.invoke('get-cargas'),
+  //createCarga: (carga) => ipcRenderer.invoke('create-carga', carga),
+  createPedidoProduto: (pedidoProduto) =>
+    ipcRenderer.invoke('create-pedido-produto', pedidoProduto),
+  atribuirCarga: (id_venda, id_carga) => ipcRenderer.invoke('atribuir-carga', id_venda, id_carga)
 }
 
 if (process.contextIsolated) {

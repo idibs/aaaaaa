@@ -23,7 +23,12 @@ import {
   updateCereal,
   deletePessoa,
   getPedidoProdutosByPessoa,
-  createFuncionario
+  createFuncionario,
+  deleteFuncionario,
+  finalizaPedido,
+  getCargas,
+  atribuirCarga,
+  createPedidoProduto
 } from '../database/functions'
 
 function createWindow() {
@@ -145,6 +150,60 @@ app.whenReady().then(() => {
   ipcMain.handle('delete-outro-produto', async (event, id) => {
     try {
       const data = await deleteOutroProduto(id)
+      return data // ✅ Certifique-se que está retornando
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('get-cargas', async (event) => {
+    try {
+      const data = await getCargas()
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('atribuir-carga', async (event, id_venda, id_carga) => {
+    try {
+      const data = await atribuirCarga(id_venda, id_carga)
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('create-pedido-produto', async (event, pedidoProduto) => {
+    try {
+      const data = await createPedidoProduto(pedidoProduto)
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  /*ipcMain.handle('create-carga', async (event, carga) => {
+    try {
+      const data = await createCarga(carga)
+      return data
+    } catch (error) {
+      throw error
+    }
+  })*/
+
+  ipcMain.handle('delete-funcionario', async (event, id) => {
+    try {
+      const data = await deleteFuncionario(id)
+      return data // ✅ Certifique-se que está retornando
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('finaliza-pedido', async (event, id) => {
+    try {
+      const data = await finalizaPedido(id)
       return data // ✅ Certifique-se que está retornando
     } catch (error) {
       throw error

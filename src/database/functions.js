@@ -38,6 +38,36 @@ export function createFuncionario(funcionario) {
   })
 }
 
+export function deleteFuncionario(id) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `DELETE FROM funcionario WHERE Id_func = ?;`
+    conn.query(sql, [id], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function finalizaPedido(id) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `UPDATE pedido_produto SET Status_pedprod = "Finalizado" WHERE Id_pedprod = ?;`
+    conn.query(sql, [id], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
 export function deleteEnsacado(id) {
   const conn = connection()
   return new Promise((resolve, reject) => {
@@ -175,6 +205,7 @@ export function getOutrosProdutosByCategoria(categoria) {
                   Id_out as Id, 
                   Nome_out as Nome, 
                   Quantidade_out as Quantidade, 
+                  preco_med_out as Preço,
                   Peso_out as Peso, 
                   Codigo_out as Codigo
                 FROM outros_produtos p
@@ -313,6 +344,7 @@ export function getPedidoProdutosByStatus(status) {
     const sql = `SELECT 
                     Id_pedprod AS Id,
                     Nome_pes AS Cliente,
+                    Id_ped AS Carga,
                     Nome_out AS Nome_Produto,
                     Nome_ens AS Nome_Cereal,
                     Data_pedprod AS Data,
@@ -326,6 +358,54 @@ export function getPedidoProdutosByStatus(status) {
                 LEFT JOIN outros_produtos op ON pp.Id_out = op.Id_out
                 WHERE Status_pedprod = ?;`
     conn.query(sql, [status], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function createPedidoProduto(pedidoProduto) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `INSERT INTO pedido_produto (Id_pes, Id_ens, Id_out, Data_pedprod, Quantidade_pedprod, Peso_total_pedprod, Valor_total_pedprod, Metodo_pagamento_pedprod, Status_pedprod, Id_ped) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`
+    conn.query(sql, pedidoProduto, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function getCargas() {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT 
+                    Id_ped AS Id
+                FROM pedido;`
+    conn.query(sql, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function atribuirCarga(id_venda, id_carga) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `UPDATE pedido_produto SET Id_ped = ? WHERE Id_pedprod = ?;`
+    conn.query(sql, [id_carga, id_venda], (error, results) => {
       conn.end()
       if (error) {
         reject(error)

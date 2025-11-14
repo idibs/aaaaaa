@@ -1,11 +1,10 @@
-import Tabela from '../../components/tabelas/TabelaComValidacao'
+import TabelaVaidacao from '../../components/tabelas/TabelaComValidacao'
+import Tabela from '../../components/tabelas/Tabela'
 import Input from '../../components/inputs/Input'
 import { useState, useEffect } from 'react'
 import Button from '../../components/botoes/DesignBotao'
 import Popup from '../../components/popups/venda/PopUpCriarVenda'
 import PopUpOrcamento from '../../components/popups/venda/PopUpOrcamento'
-import PopUpAtribuirCarga from '../../components/popups/venda/PopUpAtribuiraCarga'
-import PopUpCriarCarga from '../../components/popups/carga/PopUpCriarCarga'
 
 export default function Produtos() {
   const [data, setData] = useState([])
@@ -14,23 +13,19 @@ export default function Produtos() {
   const [filteredData, setFilteredData] = useState([])
   const [showModal, setShowModal] = useState(false)
   const [showOrcamento, setShowOrcamento] = useState(false)
-  const [showAtribuirCarga, setShowAtribuirCarga] = useState(false)
-  const [showCriarCarga, setShowCriarCarga] = useState(false)
   const [selectedVenda, setSelectedVenda] = useState(null)
 
-  const insertTable = 'produto'
+  const insertTable = 'venda'
 
   useEffect(() => {
     window.api
       .getPedidoProdutosByStatus(status)
       .then((result) => setData(result))
       .catch((error) => console.error('Error fetching data:', error))
-  }, [status])
+  }, [status, data, Tabela, showModal, showOrcamento])
 
   useEffect(() => {
-    setFilteredData(
-      data.filter((item) => item.Cliente.toLowerCase().includes(term.toLowerCase()))
-    )
+    setFilteredData(data.filter((item) => item.Cliente.toLowerCase().includes(term.toLowerCase())))
   }, [term, data])
 
   const changeData = (status) => setStatus(status)
@@ -44,12 +39,6 @@ export default function Produtos() {
   }
   const closeOrcamento = () => setShowOrcamento(false)
 
-  const openAtribuirCarga = () => setShowAtribuirCarga(true)
-  const closeAtribuirCarga = () => setShowAtribuirCarga(false)
-
-  const openCriarCarga = () => setShowCriarCarga(true)
-  const closeCriarCarga = () => setShowCriarCarga(false)
-
   const finalizarVenda = async (valor) => {
     try {
       await window.api.finalizarVenda(selectedVenda.id, valor)
@@ -62,9 +51,7 @@ export default function Produtos() {
 
   return (
     <div className="pt-10">
-      <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">
-        Pedidos de Produtos
-      </h1>
+      <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">Pedidos de Produtos</h1>
 
       <p className="text-black ps-30 mt-10 mb-3">Nome do Cliente:</p>
 
@@ -91,15 +78,6 @@ export default function Produtos() {
               <>
                 <Button
                   className="text-[#1A6D12] border border-[#1A6D12] hover:bg-[#ececec] w-36 py-1.5 text-sm"
-                  text="Adicionar Carga"
-                  onClick={openAtribuirCarga}
-                />
-                <Button
-                  className="text-[#1A6D12] border border-[#1A6D12] hover:bg-[#ececec] w-36 py-1.5 text-sm"
-                  text="Gerar PDF"
-                />
-                <Button
-                  className="text-[#1A6D12] border border-[#1A6D12] hover:bg-[#ececec] w-36 py-1.5 text-sm"
                   text="Relatório"
                 />
               </>
@@ -108,10 +86,11 @@ export default function Produtos() {
         </div>
 
         <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
-          <Tabela
+          <TabelaVaidacao
             data={filteredData}
             insertTable={insertTable}
             onCheckClick={status === 'Em orçamento' ? openOrcamento : undefined}
+            status={status}
           />
         </div>
 
@@ -153,12 +132,6 @@ export default function Produtos() {
         onClose={closeOrcamento}
         onFinalizar={finalizarVenda}
       />
-      <PopUpAtribuirCarga
-        showModal={showAtribuirCarga}
-        onClose={closeAtribuirCarga}
-        onCriarNovaCarga={openCriarCarga}
-      />
-      <PopUpCriarCarga showModal={showCriarCarga} onClose={closeCriarCarga} />
     </div>
   )
 }

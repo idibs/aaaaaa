@@ -1,6 +1,5 @@
 import Button from '../botoes/DesignBotao'
 import { IoMdClose } from 'react-icons/io'
-import { Link } from 'react-router-dom'
 
 export default function PopupDelete({ showModal, onClose, initialData, insertTable }) {
   if (!showModal) return null
@@ -9,7 +8,6 @@ export default function PopupDelete({ showModal, onClose, initialData, insertTab
   const deleteItem = async (id) => {
     try {
       if (!id) {
-        console.log('ID não fornecido')
         return
       }
 
@@ -21,8 +19,9 @@ export default function PopupDelete({ showModal, onClose, initialData, insertTab
         await window.api.deletePessoa(id)
       } else if (insertTable === 'funcionario') {
         await window.api.deleteFuncionario(id)
+      } else if (insertTable === 'venda') {
+        await window.api.deletePedidoProduto(id)
       }
-      console.log(insertTable)
       onClose()
     } catch (err) {
       console.error('Erro ao deletar:', err)

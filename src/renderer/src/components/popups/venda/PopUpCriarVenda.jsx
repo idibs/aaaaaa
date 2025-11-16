@@ -366,12 +366,10 @@ export default function PopupCriarVenda({ showModal, onClose }) {
                     Complemento: formValues.Complemento || null
                   }
                 }
-                console.log('Payload para criar pedido:', payload)
 
                 window.api
                   .createPedidoProduto(payload)
                   .then((result) => {
-                    console.log('Pedido criado com sucesso:', result)
                     onClose()
                   })
                   .catch((err) => {

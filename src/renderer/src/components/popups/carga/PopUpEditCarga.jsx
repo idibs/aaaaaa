@@ -27,7 +27,6 @@ export default function PopupEditCarga({ showModal, onClose, insertTable, initia
   }
 
   const handleSave = () => {
-    console.log('Dados salvos:', formData)
     onClose()
   }
 
@@ -52,8 +51,8 @@ export default function PopupEditCarga({ showModal, onClose, insertTable, initia
                   key.toLowerCase().includes('data')
                     ? 'text' // mantém texto para mostrar "DD/MM/AAAA"
                     : typeof value === 'number'
-                    ? 'number'
-                    : 'text'
+                      ? 'number'
+                      : 'text'
                 }
                 value={value}
                 placeholder={key}

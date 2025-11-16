@@ -15,26 +15,19 @@ export default function Produtos() {
   const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
+    // busca ao mudar categoria ou quando o modal for fechado/aberto
     if (categoria === 'Cereal') {
       window.api
         .getEnsacados()
-        .then((result) => {
-          setData(result)
-        })
-        .catch((error) => {
-          console.error('Error fetching data:', error)
-        })
+        .then((result) => setData(result))
+        .catch((error) => console.error('Error fetching data:', error))
     } else if (categoria === 'Ração' || categoria === 'Variedade') {
       window.api
         .getOutrosProdutosByCategoria(categoria)
-        .then((result) => {
-          setData(result)
-        })
-        .catch((error) => {
-          console.error('Error fetching data:', error)
-        })
+        .then((result) => setData(result))
+        .catch((error) => console.error('Error fetching data:', error))
     }
-  }, [categoria, showModal, data])
+  }, [categoria, showModal])
 
   // useEffect separado para filtrar os dados sempre que 'data' ou 'term' mudarem
   useEffect(() => {

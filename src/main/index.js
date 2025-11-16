@@ -29,7 +29,11 @@ import {
   getCargas,
   atribuirCarga,
   createPedidoProduto,
-  getPessoaByNome
+  getPessoaByNome,
+  getEnsacadoByNome,
+  getOutroProdutoByNome,
+  updateValorPedido, // <-- ADICIONADO
+  deletePedidoProduto
 } from '../database/functions'
 
 function createWindow() {
@@ -225,6 +229,39 @@ app.whenReady().then(() => {
       return data
     } catch (error) {
       console.error('Erro ao criar pedido:', error)
+      throw error
+    }
+  })
+
+  ipcMain.handle('delete-pedido-produto', async (event, id) => {
+    try {
+      const data = await deletePedidoProduto(id)
+      return data // ✅ Certifique-se que está retornando
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('adicionar-orcamento-produto', async (event, Id_pedprod, valorTotal) => {
+    try {
+      // atualiza valor/estado do pedido usando updateValorPedido (ja existente em functions.js)
+      const data = await updateValorPedido(Id_pedprod, valorTotal)
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('get-produto-by-nome', async (event, nome) => {
+    try {
+      let data = await getEnsacadoByNome(nome)
+
+      if (!data || data.length === 0) {
+        data = await getOutroProdutoByNome(nome)
+      }
+
+      return data[0]
+    } catch (error) {
       throw error
     }
   })

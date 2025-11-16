@@ -28,7 +28,6 @@ export default function Pessoas() {
 
   // useEffect separado para filtrar os dados sempre que 'data' ou 'term' mudarem
   useEffect(() => {
-    console.log(data)
     setFilteredData(data.filter((item) => item.Nome.toLowerCase().includes(term.toLowerCase())))
   }, [term, data]) // Executa quando 'data' ou 'term' mudam
 
@@ -90,8 +89,12 @@ export default function Pessoas() {
           </div>
         </div>
         {/* table */}
-          <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
-          <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} onSave={handlePessoaSave} />
+        <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
+          <Tabela
+            data={filteredData ? filteredData : []}
+            insertTable={insertTable}
+            onSave={handlePessoaSave}
+          />
         </div>
         {/* escolher entre tabelas */}
         <div className="mt-4 mb-4 flex justify-between">

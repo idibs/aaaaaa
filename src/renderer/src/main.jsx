@@ -65,8 +65,3 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <RouterProvider router={router} />
   </StrictMode>
 )
-
-// ver oq é isso
-window.ipcRenderer?.on('main-process-message', (_event, message) => {
-  console.log(message)
-})

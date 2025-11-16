@@ -17,6 +17,9 @@ const Tabela = ({ data, insertTable, onSave, status }) => {
   const [showCriarCarga, setShowCriarCarga] = useState(false)
   const [itemPraCarga, setItemPraCarga] = useState(null)
   const [showOrcamento, setShowOrcamento] = useState(false)
+  const [nomeProduto, setNomeProduto] = useState('')
+  const [idPedido, setIdPedido] = useState(null)
+  const [quantidade, setQuantidade] = useState(0)
 
   const handleCheckboxChange = (id) => {
     setSelectedItems((prevSelected) =>
@@ -24,7 +27,12 @@ const Tabela = ({ data, insertTable, onSave, status }) => {
     )
   }
 
-  const openOrcamento = () => setShowOrcamento(true)
+  const openOrcamento = (Nome_produto, Id_pedido, quantidade) => {
+    setNomeProduto(Nome_produto)
+    setQuantidade(quantidade)
+    setIdPedido(Id_pedido)
+    setShowOrcamento(true)
+  }
   const closeOrcamento = () => setShowOrcamento(false)
 
   const openAtribuirCarga = () => setShowAtribuirCarga(true)
@@ -91,7 +99,11 @@ const Tabela = ({ data, insertTable, onSave, status }) => {
                             openAtribuirCarga()
                             return
                           } else if (status === 'Em orçamento') {
-                            openOrcamento()
+                            openOrcamento(
+                              item.Nome_Cereal || item.Nome_Produto,
+                              item.Id,
+                              item.Quantidade
+                            )
                             return
                           }
 
@@ -148,16 +160,15 @@ const Tabela = ({ data, insertTable, onSave, status }) => {
       </table>
 
       {/* Modal de exclusão */}
-      {selectedItem && (
-        <PopupDelete
-          showModal={showModalDelete}
-          onClose={() => {
-            setShowModalDelete(false)
-            setSelectedItem(null)
-          }}
-          initialData={selectedItem}
-        />
-      )}
+      <PopupDelete
+        showModal={showModalDelete}
+        onClose={() => {
+          setShowModalDelete(false)
+          setSelectedItem(null)
+        }}
+        initialData={selectedItem}
+        insertTable={insertTable}
+      />
 
       {/* Modal de edição */}
       {selectedItem && insertTable === 'pagamento' && (
@@ -188,7 +199,13 @@ const Tabela = ({ data, insertTable, onSave, status }) => {
         itemPraCarga={itemPraCarga}
       />
       <PopUpCriarCarga showModal={showCriarCarga} onClose={closeCriarCarga} />
-      <PopUpOrcamento showModal={showOrcamento} onClose={closeOrcamento} />
+      <PopUpOrcamento
+        showModal={showOrcamento}
+        onClose={closeOrcamento}
+        nomeProduto={nomeProduto}
+        idPedido={idPedido}
+        quantidade={quantidade}
+      />
     </>
   )
 }

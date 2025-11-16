@@ -22,6 +22,21 @@ export function getEnsacados() {
   })
 }
 
+export function deletePedidoProduto(id) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `DELETE FROM pedido_produto WHERE Id_pedprod = ?;`
+    conn.query(sql, [id], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
 export function createFuncionario(funcionario) {
   const conn = connection()
   return new Promise((resolve, reject) => {
@@ -58,6 +73,21 @@ export function finalizaPedido(id) {
   return new Promise((resolve, reject) => {
     const sql = `UPDATE pedido_produto SET Status_pedprod = "Finalizado" WHERE Id_pedprod = ?;`
     conn.query(sql, [id], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function updateValorPedido(id, valorTotal) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `UPDATE pedido_produto SET Status_pedprod = "Finalizado", Valor_total_pedprod = ? WHERE Id_pedprod = ?;`
+    conn.query(sql, [valorTotal, id], (error, results) => {
       conn.end()
       if (error) {
         reject(error)
@@ -376,6 +406,44 @@ export function getPedidoProdutosByStatus(status) {
                 LEFT JOIN outros_produtos op ON pp.Id_out = op.Id_out
                 WHERE Status_pedprod = ?;`
     conn.query(sql, [status], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function getOutroProdutoByNome(nome) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT 
+                  Id_out as Id,
+                  Preco_med_out as Preço
+                FROM outros_produtos
+                WHERE Nome_out = ?;`
+    conn.query(sql, [nome], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function getEnsacadoByNome(nome) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT 
+                  Id_ens as Id,
+                  Preco_ens as Preço
+                FROM produto_ensacado
+                WHERE Nome_ens = ?;`
+    conn.query(sql, [nome], (error, results) => {
       conn.end()
       if (error) {
         reject(error)

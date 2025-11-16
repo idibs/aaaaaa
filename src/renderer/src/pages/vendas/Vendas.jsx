@@ -67,7 +67,18 @@ export default function Produtos() {
         </div>
 
         <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
-          <TabelaVaidacao data={filteredData} insertTable={insertTable} status={status} />
+          <TabelaVaidacao
+            data={filteredData}
+            insertTable={insertTable}
+            status={status}
+            onSave={() => {
+              // recarrega os dados após salvar/deletar
+              window.api
+                .getPedidoProdutosByStatus(status)
+                .then((result) => setData(result))
+                .catch((error) => console.error('Error fetching data:', error))
+            }}
+          />
         </div>
 
         <div className="mt-4 mb-4 flex justify-between">

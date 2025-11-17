@@ -95,7 +95,7 @@ const Tabela = ({ data, insertTable, onSave, status }) => {
                       <button
                         onClick={() => {
                           if (status === 'Finalizado') {
-                            setItemPraCarga(item.Id)
+                            setItemPraCarga(item)
                             openAtribuirCarga()
                             return
                           } else if (status === 'Em orçamento') {

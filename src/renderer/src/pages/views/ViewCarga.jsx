@@ -8,6 +8,8 @@ export default function ViewCarga() {
   const { id } = useParams()
   const navigate = useNavigate()
 
+  const insertTable = 'view_carga_detalhes' // tabela de visualização
+
   useEffect(() => {
     if (!id) return // evita chamada com id indefinido
     window.api
@@ -30,7 +32,7 @@ export default function ViewCarga() {
 
       {/* Container da Tabela */}
       <div className="border border-[#1A6D12] h-[70vh] overflow-auto w-4/5 rounded-lg shadow-md">
-        <Tabela data={data ? data : []} />
+        <Tabela data={data ? data : []} insertTable={insertTable} />
       </div>
     </div>
   )

@@ -56,7 +56,7 @@ export default function PopUpAtribuirCarga({ showModal, onClose, itemPraCarga })
                 aria-expanded={dropdownOpen}
                 type="button"
               >
-                {selectedCarga || 'Selecione a Carga'}
+                {selectedCarga || itemPraCarga.Carga || 'Selecione a Carga'}
                 <IoIosArrowDown className="text-sm" />
               </button>
 
@@ -86,7 +86,13 @@ export default function PopUpAtribuirCarga({ showModal, onClose, itemPraCarga })
               onClick={() => {
                 if (selectedCarga) {
                   window.api
-                    .atribuirCarga(itemPraCarga, selectedCarga)
+                    .atribuirCarga(
+                      itemPraCarga.Id,
+                      selectedCarga,
+                      Number(itemPraCarga.Peso_total),
+                      Number(itemPraCarga.Valor_total),
+                      itemPraCarga.Carga || null
+                    )
                     .then(() => onClose())
                     .catch(() => onClose())
                 }

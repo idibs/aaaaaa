@@ -33,7 +33,13 @@ import {
   getEnsacadoByNome,
   getOutroProdutoByNome,
   updateValorPedido, // <-- ADICIONADO
-  deletePedidoProduto
+  deletePedidoProduto,
+  getCaminhoes,
+  createCarga,
+  adicionaPrecoPesoCarga,
+  deletePedidoProdutoFromCarga,
+  retirarPrecoPesoCarga,
+  deleteCarga
 } from '../database/functions'
 
 function createWindow() {
@@ -170,14 +176,44 @@ app.whenReady().then(() => {
     }
   })
 
-  ipcMain.handle('atribuir-carga', async (event, id_venda, id_carga) => {
+  ipcMain.handle(
+    'atribuir-carga',
+    async (event, id_venda, id_carga, peso_venda, valor_venda, carga_atual) => {
+      try {
+        if (carga_atual) {
+          await retirarPrecoPesoCarga(carga_atual, valor_venda, peso_venda)
+        }
+        await atribuirCarga(id_venda, id_carga)
+        await adicionaPrecoPesoCarga(id_carga, valor_venda, peso_venda)
+        const data = { success: true }
+        return data
+      } catch (error) {
+        throw error
+      }
+    }
+  )
+
+  ipcMain.handle('delete-carga', async (event, id) => {
     try {
-      const data = await atribuirCarga(id_venda, id_carga)
-      return data
+      const data = await deleteCarga(id)
+      return data // ✅ Certifique-se que está retornando
     } catch (error) {
       throw error
     }
   })
+
+  ipcMain.handle(
+    'delete-pedido-produto-from-carga',
+    async (event, id_ped, valor_pedido, peso_pedido) => {
+      try {
+        await deletePedidoProdutoFromCarga(id_ped, valor_pedido, peso_pedido)
+        const data = { success: true }
+        return data
+      } catch (error) {
+        throw error
+      }
+    }
+  )
 
   ipcMain.handle('create-pedido-produto', async (event, pedidoProduto) => {
     try {
@@ -229,6 +265,15 @@ app.whenReady().then(() => {
       return data
     } catch (error) {
       console.error('Erro ao criar pedido:', error)
+      throw error
+    }
+  })
+
+  ipcMain.handle('get-caminhoes', async (event) => {
+    try {
+      const data = await getCaminhoes()
+      return data
+    } catch (error) {
       throw error
     }
   })
@@ -396,6 +441,15 @@ app.whenReady().then(() => {
   ipcMain.handle('create-ensacado', async (event, produto) => {
     try {
       const data = await createEnsacado(produto)
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('create-carga', async (event, carga) => {
+    try {
+      const data = await createCarga(carga)
       return data
     } catch (error) {
       throw error

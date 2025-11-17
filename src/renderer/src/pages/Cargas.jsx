@@ -12,19 +12,24 @@ export default function Carga() {
   const [showModal, setShowModal] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false) // controla o dropdown
 
-  const insertTable = 'produto'
+  const insertTable = 'carga'
 
+  // Carrega dados ao montar e também quando o modal de criar carga for fechado/aberto
   useEffect(() => {
     window.api
       .getPedidos()
       .then((result) => setData(result))
       .catch((error) => console.error('Error fetching data:', error))
-  }, [])
+  }, [showModal]) // atualizado: não depende de `data` (evita loop)
 
+  // Filtra tratando valores nulos/undefined como string vazia
   useEffect(() => {
+    const q = term.toLowerCase()
     setFilteredData(
       data.filter((item) =>
-        item.Valor_total?.toString().toLowerCase().includes(term.toLowerCase())
+        String(item.Caminhão ?? '')
+          .toLowerCase()
+          .includes(q)
       )
     )
   }, [term, data])
@@ -44,9 +49,7 @@ export default function Carga() {
 
   return (
     <div className="pt-10 h-screen">
-      <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">
-        Cargas
-      </h1>
+      <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">Cargas</h1>
 
       <p className="text-black ps-30 mt-10 mb-3">Nome do Caminhão:</p>
 

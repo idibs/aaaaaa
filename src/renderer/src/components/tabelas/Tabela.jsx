@@ -1,5 +1,5 @@
 import { MdEdit } from 'react-icons/md'
-import { FaTrash } from 'react-icons/fa'
+import { FaTrash, FaMinusCircle } from 'react-icons/fa'
 import { useState } from 'react'
 import PopupDelete from '../popups/PopUpDelete'
 import PopupEditFunc from '../popups/funcionario/PopUpEditFunc'
@@ -112,25 +112,39 @@ const Tabela = ({ data, insertTable }) => {
                   <td className="border border-[#1A6D12] text-center py-1">
                     <div className="flex justify-evenly">
                       {/* Ao clicar na lixeira: seleciona o item e abre o modal de delete */}
-                      <button
-                        onClick={() => {
-                          setSelectedProduct(item)
-                          openModal()
-                        }}
-                        className="cursor-pointer"
-                      >
-                        <FaTrash />
-                      </button>
+                      {insertTable.toLowerCase() !== 'view_carga_detalhes' ? (
+                        <button
+                          onClick={() => {
+                            setSelectedProduct(item)
+                            openModal()
+                          }}
+                          className="cursor-pointer"
+                        >
+                          <FaTrash />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setSelectedProduct(item)
+                            openModal()
+                          }}
+                          className="cursor-pointer"
+                        >
+                          <FaMinusCircle />
+                        </button>
+                      )}
 
-                      <button
-                        onClick={() => {
-                          setSelectedProduct(item)
-                          openModalEdit()
-                        }}
-                        className="cursor-pointer"
-                      >
-                        <MdEdit />
-                      </button>
+                      {insertTable.toLowerCase() !== 'view_carga_detalhes' && (
+                        <button
+                          onClick={() => {
+                            setSelectedProduct(item)
+                            openModalEdit()
+                          }}
+                          className="cursor-pointer"
+                        >
+                          <MdEdit />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>

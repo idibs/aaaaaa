@@ -22,6 +22,22 @@ export function getEnsacados() {
   })
 }
 
+export function adicionaPrecoPesoCarga(idCarga, Preco, Peso) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `UPDATE pedido SET Valor_total_ped = Valor_total_ped + ?, Peso_total_ped = Peso_total_ped + ? WHERE Id_ped = ?;`
+
+    conn.query(sql, [Preco, Peso, idCarga], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
 export function deletePedidoProduto(id) {
   const conn = connection()
   return new Promise((resolve, reject) => {
@@ -531,11 +547,29 @@ export function getPedidoProdutosByCarga(id_ped) {
   })
 }
 
+export function getCaminhoes() {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT 
+                    Id_cam AS Id,
+                    Código_cam AS Código
+                FROM caminhao;`
+    conn.query(sql, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
 export function getPedidos() {
   const conn = connection()
   return new Promise((resolve, reject) => {
     const sql = `SELECT 
-                    Id_ped as Id,
+                    Id_ped as Carga,
                     Valor_total_ped as Valor_total,
                     Peso_total_ped as Peso_total,
                     Data_entrega_ped as Data_entregue,
@@ -561,6 +595,74 @@ export function updateCereal(produto) {
                  SET Nome_ens = ?, Preco_ens = ?, Quantidade_ens = ?, Peso_ens = ?, Codigo_ens = ? 
                  WHERE Id_ens = ?;`
     conn.query(sql, produto, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function deletePedidoProdutoFromCarga(id, Valor_total, Peso_total) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sqlDelete = `UPDATE pedido_produto SET Id_ped = NULL WHERE Id_pedprod = ?;`
+    const sqlUpdateCarga = `UPDATE pedido SET Valor_total_ped = Valor_total_ped - ?, Peso_total_ped = Peso_total_ped - ? WHERE Id_ped = (SELECT Id_ped FROM pedido_produto WHERE Id_pedprod = ?);`
+    conn.query(sqlUpdateCarga, [Valor_total, Peso_total, id], (err) => {
+      if (err) {
+        conn.end()
+        return reject(err)
+      }
+      conn.query(sqlDelete, [id], (error, results) => {
+        conn.end()
+        if (error) {
+          reject(error)
+        } else {
+          resolve(results)
+        }
+      })
+    })
+  })
+}
+
+export function deleteCarga(id) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `DELETE FROM pedido WHERE Id_ped = ?;`
+    conn.query(sql, [id], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function retirarPrecoPesoCarga(idCarga, Preco, Peso) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `UPDATE pedido SET Valor_total_ped = Valor_total_ped - ?, Peso_total_ped = Peso_total_ped - ? WHERE Id_ped = ?;`
+    conn.query(sql, [Preco, Peso, idCarga], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function createCarga(caminhao) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `INSERT INTO pedido (Id_cam, Valor_total_ped, Peso_total_ped)
+    VALUES (?, 0, 0);`
+    conn.query(sql, [caminhao], (error, results) => {
       conn.end()
       if (error) {
         reject(error)

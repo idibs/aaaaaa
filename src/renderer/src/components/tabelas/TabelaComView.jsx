@@ -33,7 +33,7 @@ const TabelaComView = ({ data, insertTable }) => {
       <tbody>
         {data.length > 0 ? (
           data.map((item, index) => {
-            const id = item.Id || item.id || index
+            const id = item.Id || item.Carga || index
             return (
               <tr key={index} className="hover:bg-[#ececec]">
                 {Object.entries(item).map(([key, value], idx) => (
@@ -46,10 +46,25 @@ const TabelaComView = ({ data, insertTable }) => {
                 <td className="border border-[#1A6D12] text-center py-1">
                   <div className="flex justify-evenly">
                     {/* Botão de deletar */}
-                    <button onClick={openModal} className="cursor-pointer">
+                    <button
+                      onClick={() => {
+                        setSelectedItem(item)
+                        openModal()
+                      }}
+                      className="cursor-pointer"
+                    >
                       <FaTrash />
                     </button>
-                    <PopupDelete showModal={showModal} onClose={closeModal} />
+                    <PopupDelete
+                      showModal={showModal}
+                      onClose={closeModal}
+                      initialData={selectedItem}
+                      insertTable={insertTable.toLowerCase()}
+                      onSave={() => {
+                        // recarrega dados após deletar
+                        window.location.reload()
+                      }}
+                    />
 
                     {/* Botão de editar */}
                     <button

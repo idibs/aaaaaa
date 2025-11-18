@@ -62,6 +62,15 @@ export default function PopUpAtribuirCarga({ showModal, onClose, itemPraCarga })
 
               {dropdownOpen && (
                 <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                  <button
+                    className="block w-full text-left px-4 py-2 bg-red-900 hover:bg-red-950"
+                    onClick={() => {
+                      setDropdownOpen(false)
+                      setSelectedCarga(null)
+                    }}
+                  >
+                    Limpar seleção
+                  </button>
                   {cargas.map((carga) => (
                     <button
                       key={carga.Id}

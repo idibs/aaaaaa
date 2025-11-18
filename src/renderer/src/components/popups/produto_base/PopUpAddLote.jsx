@@ -7,15 +7,15 @@ export default function PopupAddLote({ showModal, onClose, insertTable }) {
   if (!showModal) return null
 
   const PAGE_SIZE = 5
-  const [columns, setColumns] = useState([])
-  const [selectOptions, setSelectOptions] = useState([])
+  const columns = ['Preço', 'Quantidade']
   const [page, setPage] = useState(1)
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
   const [produtosBase, setProdutosBase] = useState([])
-  const [baseValue, setBaseValue] = useState('')
+  const [formValues, setFormValues] = useState({}) // <-- persist valores por coluna
   const userDropdownRef = useRef(null)
+  const [error, setError] = useState('')
 
-   useEffect(() => {
+  useEffect(() => {
     setPage(1)
     window.api
       .getProdutosNomes()
@@ -31,7 +31,6 @@ export default function PopupAddLote({ showModal, onClose, insertTable }) {
   const startIdx = (page - 1) * PAGE_SIZE
   const endIdx = startIdx + PAGE_SIZE
   const inputs = columns.slice(startIdx, endIdx)
-  const inputNumbers = ['ML', 'Preço', 'Peso', 'Quantidade']
 
   return (
     <>
@@ -43,32 +42,55 @@ export default function PopupAddLote({ showModal, onClose, insertTable }) {
           </button>
         </div>
 
-        <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">Adicionar a um Lote</h1>
+        <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">
+          Adicionar a um Lote
+        </h1>
 
         <div className="flex flex-col justify-between h-140">
           <div>
             <div className="mt-7 flex flex-col px-30 h-90 w-full">
               {/* Dropdown de produtos base */}
-              <div className="relative mb-6" ref={userDropdownRef}>
+              <div className="relative" ref={userDropdownRef}>
                 <button
-                  onClick={() => setUserDropdownOpen((v) => !v)}
+                  onClick={() => setDropdownOpen((v) => !v)}
                   className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
                   aria-haspopup="true"
-                  aria-expanded={userDropdownOpen}
+                  aria-expanded={dropdownOpen}
                   type="button"
                 >
-                  Produtos Base
+                  {formValues.ProdutoNome || 'Produtos Base'}
                   <IoIosArrowDown className="text-sm" />
                 </button>
-                {userDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 max-h-90 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-y-scroll">
+                    <button
+                      className="block w-full text-left px-4 py-2 bg-red-900 hover:bg-red-950"
+                      onClick={() => {
+                        setDropdownOpen(false)
+                        setFormValues((prev) => ({
+                          ...prev,
+                          Produto: '',
+                          ProdutoNome: '',
+                          ProdutoPreco: '',
+                          ProdutoQuantidade: ''
+                        }))
+                      }}
+                    >
+                      Limpar seleção
+                    </button>
                     {produtosBase.map((produto) => (
                       <button
                         key={produto.Nome}
                         className="block w-full text-left px-4 py-2 hover:bg-green-900"
                         onClick={() => {
-                          setBaseValue(produto.Nome)
-                          setUserDropdownOpen(false)
+                          setFormValues((prev) => ({
+                            ...prev,
+                            Produto: produto.Id,
+                            ProdutoNome: produto.Nome,
+                            ProdutoPreco: produto.Preço,
+                            ProdutoQuantidade: produto.Quantidade
+                          }))
+                          setDropdownOpen(false)
                         }}
                       >
                         {produto.Nome}
@@ -81,9 +103,11 @@ export default function PopupAddLote({ showModal, onClose, insertTable }) {
               {/* Aqui no futuro entram os inputs puxados do banco */}
               {inputs.map((coluna, index) => (
                 <input
-                  key={index}
-                  type={inputNumbers.includes(coluna) ? 'number' : 'text'}
-                  placeholder={coluna}
+                  key={coluna} // manter coluna como key
+                  type="number"
+                  placeholder={coluna === 'Preço' ? 'Preço' : 'Quantidade em KG'}
+                  value={formValues[coluna] ?? ''} // <-- valor persistido
+                  onChange={(e) => setFormValues((prev) => ({ ...prev, [coluna]: e.target.value }))} // <-- atualiza o estado
                   className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
                 />
               ))}
@@ -104,9 +128,38 @@ export default function PopupAddLote({ showModal, onClose, insertTable }) {
               </div>
             )}
           </div>
+          {error && <p className="text-red-500 text-center">{error}</p>}
 
           <div className="flex justify-center">
-            <Button className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60" text="Salvar" />
+            <Button
+              className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60"
+              text="Salvar"
+              onClick={() => {
+                setError('')
+
+                const preco = parseFloat(formValues.Preço)
+                const quantidade = parseFloat(formValues.Quantidade)
+                const precoAntigo = parseFloat(formValues.ProdutoPreco)
+                const quantidadeAntiga = parseFloat(formValues.ProdutoQuantidade)
+                const novaQuantidade = quantidade + quantidadeAntiga
+                const novoPrecoMedio = (preco + precoAntigo) / novaQuantidade
+
+                if (
+                  isNaN(preco) ||
+                  isNaN(quantidade) ||
+                  isNaN(precoAntigo) ||
+                  isNaN(quantidadeAntiga)
+                ) {
+                  setError('Por favor, insira valores válidos para preço e quantidade.')
+                  return
+                }
+
+                window.api
+                  .addLote(formValues.Produto, novoPrecoMedio, novaQuantidade)
+                  .then(onClose)
+                  .catch((error) => setError(`erro: ${error.message}`))
+              }}
+            />
           </div>
         </div>
       </div>

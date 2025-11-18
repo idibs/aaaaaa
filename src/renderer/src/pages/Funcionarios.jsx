@@ -25,7 +25,7 @@ export default function Funcionarios() {
       .catch((error) => {
         console.error('Error fetching data:', error)
       })
-  }, [tipo, data, showModal])
+  }, [tipo, data, Tabela, showModal])
 
   // useEffect separado para filtrar os dados sempre que 'data' ou 'term' mudarem
   useEffect(() => {

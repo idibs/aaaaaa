@@ -13,89 +13,38 @@ import { IoMdArrowRoundBack, IoMdArrowRoundForward, IoIosArrowDown } from 'react
 
 // Popup para editar um produto. Baseado no PopUpCriarProd.jsx,
 // recebe `initialData` (objeto com os campos do produto) e um `onSave` opcional.
-export default function PopUpEditProd({ showModal, onClose, initialData = {}, onSave }) {
+export default function PopUpEditProd({ showModal, onClose, insertTable }) {
   if (!showModal) return null
 
   const PAGE_SIZE = 5
-  const [columns, setColumns] = useState([])
-  const [produtosBase, setProdutosBase] = useState([])
+  const columns = ['Preço', 'Quantidade']
   const [page, setPage] = useState(1)
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [produtosBase, setProdutosBase] = useState([])
+  const [formValues, setFormValues] = useState({}) // <-- persist valores por coluna
   const userDropdownRef = useRef(null)
-  const [baseValue, setBaseValue] = useState('')
-
-  // valores controlados para os inputs
-  const [values, setValues] = useState(() => ({ ...initialData }))
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    // reset page and load auxiliary data
     setPage(1)
     window.api
       .getProdutosNomes()
-      .then((result) => setProdutosBase(result))
-      .catch((err) => console.error('Erro ao buscar produtos base:', err))
-    // Se initialData vier com chaves, use-as como colunas (puxar campos da tabela)
-    if (initialData && Object.keys(initialData).length > 0) {
-      setColumns(Object.keys(initialData).filter((col) => col !== 'Id'))
-      return
-    }
-
-    // tentar recuperar colunas relevantes (fallback simples)
-    window.api
-      .getPedidoProdutosByStatus?.('Em analise')
-      .then((cols) => {
-        if (Array.isArray(cols) && cols.length > 0) {
-          setColumns(Object.keys(cols[0]).filter((col) => col !== 'Id'))
-        }
+      .then((result) => {
+        setProdutosBase(result)
       })
-      .catch((err) => console.warn('Não foi possível obter colunas via getPedidoProdutosByStatus:', err))
-  }, [])
+      .catch((error) => {
+        console.error('Error fetching product names:', error)
+      })
+  }, [insertTable])
 
-  // quando `initialData` mudar, atualiza os valores e o produto base selecionado
-  useEffect(() => {
-    setValues({ ...initialData })
-    if (initialData && initialData.Base) setBaseValue(initialData.Base)
-    if (initialData && Object.keys(initialData).length > 0) {
-      setColumns(Object.keys(initialData).filter((col) => col !== 'Id'))
-    }
-  }, [initialData])
-
-  const totalPages = Math.max(1, Math.ceil(columns.length / PAGE_SIZE))
+  const totalPages = Math.ceil(columns.length / PAGE_SIZE)
   const startIdx = (page - 1) * PAGE_SIZE
   const endIdx = startIdx + PAGE_SIZE
   const inputs = columns.slice(startIdx, endIdx)
 
-  const inputNumbers = ['ML', 'Preço', 'Peso', 'Quantidade']
-
-  function handleChange(col, v) {
-    setValues((prev) => ({ ...prev, [col]: v }))
-  }
-
-  async function handleSave() {
-    const payload = { ...values }
-    if (baseValue) payload.Base = baseValue
-    if (onSave) {
-      onSave(payload)
-      onClose()
-      return
-    }
-
-    // fallback: chamar API exposta no preload
-    try {
-      if (window.api && window.api.updateProduto) {
-        await window.api.updateProduto(payload)
-        onClose()
-      } else {
-        console.warn('Nenhuma função onSave fornecida e window.api.updateProduto não existe')
-      }
-    } catch (err) {
-      console.error('Erro ao atualizar produto:', err)
-    }
-  }
-
   return (
     <>
-    <div className="fixed inset-0 bg-black opacity-10 z-10"></div>
+      <div className="fixed inset-0 bg-black/40 z-10"></div>
       <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border border-[#1A6D12] w-200 z-20 h-180 p-4 bg-[#fffcff] rounded-xl shadow-2xl">
         <div className="flex justify-end">
           <button className="cursor-pointer" onClick={onClose}>
@@ -103,32 +52,40 @@ export default function PopUpEditProd({ showModal, onClose, initialData = {}, on
           </button>
         </div>
 
-        <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">Editar Produto</h1>
+        <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">
+          Adicionar a um Lote
+        </h1>
 
         <div className="flex flex-col justify-between h-140">
           <div>
             <div className="mt-7 flex flex-col px-30 h-90 w-full">
               {/* Dropdown de produtos base */}
-              <div className="relative mb-6" ref={userDropdownRef}>
+              <div className="relative" ref={userDropdownRef}>
                 <button
-                  onClick={() => setUserDropdownOpen((v) => !v)}
+                  onClick={() => setDropdownOpen((v) => !v)}
                   className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
                   aria-haspopup="true"
-                  aria-expanded={userDropdownOpen}
+                  aria-expanded={dropdownOpen}
                   type="button"
                 >
-                  {baseValue || 'Produtos Base'}
+                  {formValues.ProdutoNome || 'Produtos Base'}
                   <IoIosArrowDown className="text-sm" />
                 </button>
-                {userDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                {dropdownOpen && (
+                  <div className="absolute h-90 right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-scroll">
                     {produtosBase.map((produto) => (
                       <button
                         key={produto.Nome}
                         className="block w-full text-left px-4 py-2 hover:bg-green-900"
                         onClick={() => {
-                          setBaseValue(produto.Nome)
-                          setUserDropdownOpen(false)
+                          setFormValues((prev) => ({
+                            ...prev,
+                            Produto: produto.Id,
+                            ProdutoNome: produto.Nome,
+                            ProdutoPreco: produto.Preço,
+                            ProdutoQuantidade: produto.Quantidade
+                          }))
+                          setDropdownOpen(false)
                         }}
                       >
                         {produto.Nome}
@@ -138,14 +95,14 @@ export default function PopUpEditProd({ showModal, onClose, initialData = {}, on
                 )}
               </div>
 
-              {/* Inputs gerados dinamicamente a partir das colunas */}
+              {/* Aqui no futuro entram os inputs puxados do banco */}
               {inputs.map((coluna, index) => (
                 <input
-                  key={index}
-                  type={inputNumbers.includes(coluna) ? 'number' : 'text'}
-                  placeholder={coluna}
-                  value={values[coluna] ?? ''}
-                  onChange={(e) => handleChange(coluna, e.target.value)}
+                  key={coluna} // manter coluna como key
+                  type="number"
+                  placeholder={coluna === 'Preço' ? 'Preço' : 'Quantidade em KG'}
+                  value={formValues[coluna] ?? ''} // <-- valor persistido
+                  onChange={(e) => setFormValues((prev) => ({ ...prev, [coluna]: e.target.value }))} // <-- atualiza o estado
                   className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
                 />
               ))}
@@ -166,9 +123,38 @@ export default function PopUpEditProd({ showModal, onClose, initialData = {}, on
               </div>
             )}
           </div>
+          {error && <p className="text-red-500 text-center">{error}</p>}
 
           <div className="flex justify-center">
-            <Button onClick={handleSave} className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60" text="Salvar" />
+            <Button
+              className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60"
+              text="Salvar"
+              onClick={() => {
+                setError('')
+
+                const preco = parseFloat(formValues.Preço)
+                const quantidade = parseFloat(formValues.Quantidade)
+                const precoAntigo = parseFloat(formValues.ProdutoPreco)
+                const quantidadeAntiga = parseFloat(formValues.ProdutoQuantidade)
+                const novaQuantidade = quantidade + quantidadeAntiga
+                const novoPrecoMedio = (preco + precoAntigo) / novaQuantidade
+
+                if (
+                  isNaN(preco) ||
+                  isNaN(quantidade) ||
+                  isNaN(precoAntigo) ||
+                  isNaN(quantidadeAntiga)
+                ) {
+                  setError('Por favor, insira valores válidos para preço e quantidade.')
+                  return
+                }
+
+                window.api
+                  .addLote(formValues.Produto, novoPrecoMedio, novaQuantidade)
+                  .then(onClose)
+                  .catch((error) => setError(`erro: ${error.message}`))
+              }}
+            />
           </div>
         </div>
       </div>

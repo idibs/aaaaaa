@@ -13,6 +13,7 @@ export default function PopupCriarFuncionario({ showModal, onClose }) {
   const [dropdownOpen2, setDropdownOpen2] = useState(false)
   const [formValues, setFormValues] = useState({}) // <-- persist valores por coluna
   const dropdownRef = useRef(null)
+  const dropdownRef2 = useRef(null)
 
   const cargos = ['Encarregado de Produção', 'Movimentador de Carga', 'Motorista']
   const tipos = ['Registrado', 'Não Registrado']
@@ -52,7 +53,10 @@ export default function PopupCriarFuncionario({ showModal, onClose }) {
               {/* Dropdown de cargos */}
               <div className="relative" ref={dropdownRef}>
                 <button
-                  onClick={() => setDropdownOpen((v) => !v)}
+                  onClick={() => {
+                    setDropdownOpen((v) => !v)
+                    setDropdownOpen2(false)
+                  }}
                   className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
                   aria-haspopup="true"
                   aria-expanded={dropdownOpen}
@@ -63,19 +67,22 @@ export default function PopupCriarFuncionario({ showModal, onClose }) {
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                  <div className="absolute right-0 mt-2 max-h-90 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-y-scroll">
+                    <button
+                      className="block w-full text-left px-4 py-2 bg-red-900 hover:bg-red-950"
+                      onClick={() => {
+                        setDropdownOpen(false)
+                        setFormValues((prev) => ({ ...prev, Cargo: '' }))
+                      }}
+                    >
+                      Limpar seleção
+                    </button>
                     {cargos.map((cargo) => (
                       <button
                         key={cargo}
                         className="block w-full text-left px-4 py-2 hover:bg-green-900"
                         onClick={() => {
-                          if (cargo === 'Encarregado de Produção') {
-                            setFormValues((prev) => ({ ...prev, Cargo: 1 }))
-                          } else if (cargo === 'Movimentador de Carga') {
-                            setFormValues((prev) => ({ ...prev, Cargo: 2 }))
-                          } else if (cargo === 'Motorista') {
-                            setFormValues((prev) => ({ ...prev, Cargo: 3 }))
-                          }
+                          setFormValues((prev) => ({ ...prev, Cargo: cargo }))
                           setDropdownOpen(false)
                         }}
                       >
@@ -85,9 +92,12 @@ export default function PopupCriarFuncionario({ showModal, onClose }) {
                   </div>
                 )}
               </div>
-              <div className="relative mt-3" ref={dropdownRef}>
+              <div className="relative mt-3" ref={dropdownRef2}>
                 <button
-                  onClick={() => setDropdownOpen2((v) => !v)}
+                  onClick={() => {
+                    setDropdownOpen2((v) => !v)
+                    setDropdownOpen(false)
+                  }}
                   className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
                   aria-haspopup="true"
                   aria-expanded={dropdownOpen2}
@@ -98,7 +108,16 @@ export default function PopupCriarFuncionario({ showModal, onClose }) {
                 </button>
 
                 {dropdownOpen2 && (
-                  <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                  <div className="absolute right-0 mt-2 max-h-90 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-y-scroll">
+                    <button
+                      className="block w-full text-left px-4 py-2 bg-red-900 hover:bg-red-950"
+                      onClick={() => {
+                        setDropdownOpen(false)
+                        setFormValues((prev) => ({ ...prev, Tipo: '' }))
+                      }}
+                    >
+                      Limpar seleção
+                    </button>
                     {tipos.map((tipo) => (
                       <button
                         key={tipo}
@@ -159,17 +178,35 @@ export default function PopupCriarFuncionario({ showModal, onClose }) {
               className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60"
               text="Salvar"
               onClick={() => {
+                // calcula id do cargo (retorno numérico, não função)
+                const cargoId =
+                  formValues.Cargo === 'Encarregado de Produção'
+                    ? 1
+                    : formValues.Cargo === 'Movimentador de Carga'
+                      ? 2
+                      : formValues.Cargo === 'Motorista'
+                        ? 3
+                        : null
+
+                // validação mínima
+                if (!formValues.Nome || !formValues.CPF) {
+                  alert('Nome e CPF são obrigatórios.')
+                  return
+                }
+
                 window.api
                   .createFuncionario([
                     formValues.Nome,
                     formValues.Telefone,
                     formValues.CPF,
                     formValues.Tipo,
-                    formValues.Cargo
+                    cargoId
                   ])
                   .then(onClose)
-                  .catch(onClose)
-                // TODO: enviar formValues para a API / banco
+                  .catch((err) => {
+                    console.error('Erro ao criar funcionário:', err)
+                    onClose()
+                  })
               }}
             />
           </div>

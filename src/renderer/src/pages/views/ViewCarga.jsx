@@ -6,7 +6,6 @@ import Button from '../../components/botoes/BotaoVoltar.jsx'
 export default function ViewCarga() {
   const [data, setData] = useState([])
   const { id } = useParams()
-  const navigate = useNavigate()
 
   const insertTable = 'view_carga_detalhes' // tabela de visualização
 
@@ -16,7 +15,7 @@ export default function ViewCarga() {
       .getPedidoProdutosByCarga(id)
       .then((result) => setData(result))
       .catch((error) => console.error('Error fetching data:', error))
-  }, [id])
+  }, [id, data, Tabela])
 
   return (
     <div className="pt-10 h-screen flex flex-col items-center">

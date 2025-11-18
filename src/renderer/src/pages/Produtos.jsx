@@ -27,7 +27,7 @@ export default function Produtos() {
         .then((result) => setData(result))
         .catch((error) => console.error('Error fetching data:', error))
     }
-  }, [categoria, showModal])
+  }, [categoria, showModal, Tabela])
 
   // useEffect separado para filtrar os dados sempre que 'data' ou 'term' mudarem
   useEffect(() => {

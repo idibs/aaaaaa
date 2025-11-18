@@ -21,7 +21,7 @@ export default function Pagamento() {
         setData(result)
       })
       .catch((error) => console.error('Erro ao buscar funcionários:', error))
-  }, [tipo])
+  }, [tipo, Tabela, showModal])
 
   // Filtra os dados pelo nome sempre que data ou term mudarem
   useEffect(() => {

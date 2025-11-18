@@ -3,7 +3,7 @@ import Input from '../components/inputs/Input'
 import { useState, useEffect } from 'react'
 import Button from '../components/botoes/DesignBotao'
 import PopupAddLote from '../components/popups/produto_base/PopUpAddLote' // popup de adicionar lote
-import PopupCriarProduto from '../components/popups/produtos/PopUpCriarProd' // popup de criar produto
+import PopupCriarProduto from '../components/popups/produto_base/PopUpCriarProdBase' // popup de criar produto
 
 export default function Compras() {
   const [data, setData] = useState([])
@@ -19,12 +19,10 @@ export default function Compras() {
       .getProdutos()
       .then((result) => setData(result))
       .catch((error) => console.error('Error fetching data:', error))
-  }, [])
+  }, [data, showAddLote, showCriarProduto, Tabela])
 
   useEffect(() => {
-    setFilteredData(
-      data.filter((item) => item.Nome.toLowerCase().includes(term.toLowerCase()))
-    )
+    setFilteredData(data.filter((item) => item.Nome.toLowerCase().includes(term.toLowerCase())))
   }, [term, data])
 
   return (

@@ -69,7 +69,11 @@ export default function PopupCriarVenda({ showModal, onClose }) {
                 <>
                   <div className="relative" ref={dropdownRef}>
                     <button
-                      onClick={() => setDropdownOpenMetodos((v) => !v)}
+                      onClick={() => {
+                        setDropdownOpenMetodos((v) => !v)
+                        setDropdownOpenCategorias(false)
+                        setDropdownOpenProdutos(false)
+                      }}
                       className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
                       aria-haspopup="true"
                       aria-expanded={dropdownOpenMetodos}
@@ -80,7 +84,16 @@ export default function PopupCriarVenda({ showModal, onClose }) {
                     </button>
 
                     {dropdownOpenMetodos && (
-                      <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                      <div className="absolute right-0 mt-2 max-h-90 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-y-scroll">
+                        <button
+                          className="block w-full text-left px-4 py-2 bg-red-900 hover:bg-red-950"
+                          onClick={() => {
+                            setDropdownOpenMetodos(false)
+                            setFormValues((prev) => ({ ...prev, Metodo: '' }))
+                          }}
+                        >
+                          Limpar seleção
+                        </button>
                         {MetodoDePagamento.map((metodo) => (
                           <button
                             key={metodo}
@@ -99,7 +112,11 @@ export default function PopupCriarVenda({ showModal, onClose }) {
 
                   <div className="relative mt-3" ref={dropdownRef}>
                     <button
-                      onClick={() => setDropdownOpenCategorias((v) => !v)}
+                      onClick={() => {
+                        setDropdownOpenCategorias((v) => !v)
+                        setDropdownOpenMetodos(false)
+                        setDropdownOpenProdutos(false)
+                      }}
                       className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
                       aria-haspopup="true"
                       aria-expanded={dropdownOpenCategorias}
@@ -110,7 +127,24 @@ export default function PopupCriarVenda({ showModal, onClose }) {
                     </button>
 
                     {dropdownOpenCategorias && (
-                      <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                      <div className="absolute right-0 mt-2 max-h-90 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-y-scroll">
+                        <button
+                          className="block w-full text-left px-4 py-2 bg-red-900 hover:bg-red-950"
+                          onClick={() => {
+                            setDropdownOpenCategorias((v) => !v)
+                            setFormValues((prev) => ({
+                              ...prev,
+                              Categoria: '',
+                              OutroProduto: '',
+                              produtoPreco: '',
+                              produtoQuantidade: '',
+                              produtoNome: '',
+                              produtoPeso: ''
+                            }))
+                          }}
+                        >
+                          Limpar seleção
+                        </button>
                         {CategoriasProdutos.map((categoria) => (
                           <button
                             key={categoria}
@@ -130,7 +164,11 @@ export default function PopupCriarVenda({ showModal, onClose }) {
                   {formValues.Categoria && (
                     <div className="relative mt-3" ref={dropdownRef}>
                       <button
-                        onClick={() => setDropdownOpenProdutos((v) => !v)}
+                        onClick={() => {
+                          setDropdownOpenProdutos((v) => !v)
+                          setDropdownOpenCategorias(false)
+                          setDropdownOpenMetodos(false)
+                        }}
                         className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
                         aria-haspopup="true"
                         aria-expanded={dropdownOpenProdutos}
@@ -141,7 +179,23 @@ export default function PopupCriarVenda({ showModal, onClose }) {
                       </button>
 
                       {dropdownOpenProdutos && (
-                        <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                        <div className="absolute right-0 mt-2 max-h-90 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-y-scroll">
+                          <button
+                            className="block w-full text-left px-4 py-2 bg-red-900 hover:bg-red-950"
+                            onClick={() => {
+                              setDropdownOpenProdutos((v) => !v)
+                              setFormValues((prev) => ({
+                                ...prev,
+                                OutroProduto: '',
+                                produtoPreco: '',
+                                produtoQuantidade: '',
+                                produtoNome: '',
+                                produtoPeso: ''
+                              }))
+                            }}
+                          >
+                            Limpar seleção
+                          </button>
                           {produtos.map((produto) => (
                             <button
                               key={produto.Id}

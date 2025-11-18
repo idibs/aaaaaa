@@ -39,7 +39,12 @@ import {
   adicionaPrecoPesoCarga,
   deletePedidoProdutoFromCarga,
   retirarPrecoPesoCarga,
-  deleteCarga
+  deleteCarga,
+  updateProdutoPrecoQuantidade,
+  createProdutoBase,
+  editFuncionario,
+  getPessoaEndereco,
+  editPessoa
 } from '../database/functions'
 
 function createWindow() {
@@ -192,6 +197,73 @@ app.whenReady().then(() => {
       }
     }
   )
+
+  ipcMain.handle('add-lote', async (event, id_produto, novoPreco, novaQuantidade) => {
+    try {
+      const data = await updateProdutoPrecoQuantidade(id_produto, novoPreco, novaQuantidade)
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('create-produto-base', async (event, produtoBase) => {
+    try {
+      const data = await createProdutoBase(produtoBase)
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('edit-funcionario', async (event, funcionario) => {
+    try {
+      const data = await editFuncionario(funcionario)
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('edit-pessoa', async (event, pessoa) => {
+    try {
+      const endereco = [
+        pessoa.Cidade,
+        pessoa.Rua,
+        pessoa.Numero,
+        pessoa.Bairro,
+        pessoa.Cep,
+        pessoa.Complemento
+      ]
+
+      // usar as mesmas chaves usadas no formulário (Cep, Numero)
+      let Id_end = await getEndereco(pessoa.Cep, pessoa.Numero)
+
+      if (!Id_end || Id_end.length === 0) {
+        await createEndereco(endereco)
+        Id_end = await getEndereco(pessoa.Cep, pessoa.Numero)
+        if (!Id_end || Id_end.length === 0) {
+          throw new Error('Erro ao criar endereço')
+        }
+      }
+
+      const cliente = [pessoa.Nome, pessoa.Telefone, pessoa.Tipo, Id_end[0].Id_end, pessoa.Id]
+
+      const data = await editPessoa(cliente)
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('get-pessoa-endereco', async (event, id) => {
+    try {
+      const data = await getPessoaEndereco(id)
+      return data[0]
+    } catch (error) {
+      throw error
+    }
+  })
 
   ipcMain.handle('delete-carga', async (event, id) => {
     try {

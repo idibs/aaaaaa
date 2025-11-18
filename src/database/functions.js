@@ -53,6 +53,63 @@ export function deletePedidoProduto(id) {
   })
 }
 
+export function editPessoa(pessoa) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `UPDATE pessoa SET Nome_pes = ?, Telefone_pes = ?, Tipo_pes= ?, Id_end = ? 
+    WHERE Id_pes = ?;`
+    conn.query(sql, pessoa, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function getPessoaEndereco(id) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `select  Nome_pes as Nome,
+Telefone_pes as Telefone,
+Cidade_end as Cidade,
+Rua_end as Rua,
+Numero_end as Numero,
+Bairro_end as Bairro,
+Cep_end as Cep,
+Complemento_end as Complemento
+from pessoa
+INNER JOIN endereco ON pessoa.Id_end = endereco.Id_end
+WHERE Id_pes = ?;`
+    conn.query(sql, [id], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function editFuncionario(funcionario) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `UPDATE funcionario SET Nome_func = ?, Telefone_func = ?, cpf_func = ?, Tipo_func = ?, Id_car = ? 
+    WHERE Id_func = ?;`
+    conn.query(sql, funcionario, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
 export function createFuncionario(funcionario) {
   const conn = connection()
   return new Promise((resolve, reject) => {
@@ -311,8 +368,11 @@ export function getFuncionariosByTipo(tipo) {
                   Id_func as Id, 
                   Nome_func as Nome, 
                   Telefone_func as Telefone,
-                  cpf_func as CPF
+                  cpf_func as CPF,
+                  Tipo_func as Tipo,
+                  Nome_car as Cargo
                 FROM funcionario
+                INNER JOIN cargo ON cargo.Id_car = funcionario.Id_car
                 WHERE Tipo_func = ?;`
     conn.query(sql, tipo, (error, results) => {
       conn.end()
@@ -367,12 +427,45 @@ export function getPessoasByTipo(tipo) {
   })
 }
 
+export function updateProdutoPrecoQuantidade(id, novoPreco, novaQuantidade) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `UPDATE produto SET Preco_med_prod = ?, Quantidade_prod = ? WHERE Id_prod = ?;`
+    conn.query(sql, [novoPreco, novaQuantidade, id], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function createProdutoBase(produto) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `INSERT INTO produto (Nome_prod, Preco_med_prod, Quantidade_prod, Descricao_prod, Id_categ, Codigo_prod)
+    VALUES (?,?,?,?,?,?)`
+
+    conn.query(sql, produto, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
 export function getProdutosNomes() {
   const conn = connection()
   return new Promise((resolve, reject) => {
     const sql = `SELECT 
                   Nome_prod as Nome,
                   Preco_med_prod as Preço,
+                  Quantidade_prod as Quantidade,
                   Id_prod as Id
                 FROM produto;`
     conn.query(sql, (error, results) => {

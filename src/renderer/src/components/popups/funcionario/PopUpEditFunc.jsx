@@ -3,73 +3,27 @@ import { IoIosArrowDown } from 'react-icons/io'
 import { useState, useEffect, useRef } from 'react'
 import Button from '../../botoes/DesignBotao'
 
-export default function PopupEditFunc({ showModal, onClose, insertTable, initialData, onSave }) {
+export default function PopupEditFunc({ showModal, onClose, initialData }) {
   if (!showModal) return null
 
-  const [form, setForm] = useState({})
+  const [formValues, setFormValues] = useState({})
 
   useEffect(() => {
     if (initialData) {
       const copy = { ...initialData }
-      delete copy.Id
-      delete copy.id
-      setForm(copy)
-      // set initial cargo if exists in initialData
-      const possibleCargo =
-        initialData.Cargo || initialData.CargoNome || initialData.CargoSelecionado || ''
-      if (possibleCargo) setCargoSelecionado(possibleCargo)
-    } else {
-      setForm({})
+      setFormValues(copy)
     }
   }, [initialData])
 
-  const handleChange = (key, value) => setForm((prev) => ({ ...prev, [key]: value }))
+  const handleChange = (key, value) => setFormValues((prev) => ({ ...prev, [key]: value }))
 
-  // novo: estados e refs para dropdown de cargos
-  const [cargos, setCargos] = useState([])
-  const [cargoSelecionado, setCargoSelecionado] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [dropdownOpen2, setDropdownOpen2] = useState(false)
   const dropdownRef = useRef(null)
+  const dropdownRef2 = useRef(null)
 
-  useEffect(() => {
-    // busca cargos quando o componente abrir
-    if (window.api && window.api.getCargosNomes) {
-      window.api
-        .getCargosNomes()
-        .then((result) => {
-          setCargos(result || [])
-        })
-        .catch((error) => console.error('Erro ao buscar nomes de cargos:', error))
-    }
-  }, [insertTable])
-
-  const handleSave = async () => {
-    try {
-      // inclui cargo selecionado no payload
-      const payload = { ...form }
-      if (cargoSelecionado) payload.Cargo = cargoSelecionado
-
-      if (onSave) {
-        onSave(payload, initialData)
-        if (onClose) onClose()
-        return
-      }
-
-      // fallback: chamar API exposta no preload
-      try {
-        if (window.api && window.api.updateFuncionario) {
-          await window.api.updateFuncionario(payload)
-          if (onClose) onClose()
-        } else {
-          console.warn('Nenhuma função onSave fornecida e window.api.updateFuncionario não existe')
-        }
-      } catch (err) {
-        console.error('Erro ao atualizar funcionário:', err)
-      }
-    } catch (err) {
-      console.error('Erro ao salvar edição:', err)
-    }
-  }
+  const cargos = ['Encarregado de Produção', 'Movimentador de Carga', 'Motorista']
+  const tipos = ['Registrado', 'Não Registrado']
 
   return (
     <>
@@ -89,7 +43,7 @@ export default function PopupEditFunc({ showModal, onClose, insertTable, initial
         <div className="flex flex-col justify-between h-140">
           <div className="mt-7 flex flex-col px-30 w-full">
             {/* Dropdown de cargos (novo) */}
-            <div className="relative mb-6" ref={dropdownRef}>
+            <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen((v) => !v)}
                 className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
@@ -97,7 +51,7 @@ export default function PopupEditFunc({ showModal, onClose, insertTable, initial
                 aria-expanded={dropdownOpen}
                 type="button"
               >
-                {cargoSelecionado || 'Selecione o Cargo'}
+                {formValues.Cargo || 'Selecione o Cargo'}
                 <IoIosArrowDown className="text-sm" />
               </button>
 
@@ -105,23 +59,51 @@ export default function PopupEditFunc({ showModal, onClose, insertTable, initial
                 <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
                   {cargos.map((cargo) => (
                     <button
-                      key={cargo.Nome}
+                      key={cargo}
                       className="block w-full text-left px-4 py-2 hover:bg-green-900"
                       onClick={() => {
-                        setCargoSelecionado(cargo.Nome)
-                        setForm((prev) => ({ ...prev, Cargo: cargo.Nome }))
+                        setFormValues((prev) => ({ ...prev, Cargo: cargo }))
                         setDropdownOpen(false)
                       }}
                     >
-                      {cargo.Nome}
+                      {cargo}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="relative mt-3" ref={dropdownRef2}>
+              <button
+                onClick={() => setDropdownOpen2((v) => !v)}
+                className="border-solid border border-[#1A6D12] px-4 w-full py-2 rounded-xl flex justify-between items-center"
+                aria-haspopup="true"
+                aria-expanded={dropdownOpen2}
+                type="button"
+              >
+                {formValues.Tipo || 'Selecione o Tipo de Contrato'}
+                <IoIosArrowDown className="text-sm" />
+              </button>
+
+              {dropdownOpen2 && (
+                <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                  {tipos.map((tipo) => (
+                    <button
+                      key={tipo}
+                      className="block w-full text-left px-4 py-2 hover:bg-green-900"
+                      onClick={() => {
+                        setFormValues((prev) => ({ ...prev, Tipo: tipo }))
+                        setDropdownOpen2(false)
+                      }}
+                    >
+                      {tipo}
                     </button>
                   ))}
                 </div>
               )}
             </div>
 
-            {Object.entries(form)
-              .filter(([key]) => key !== 'Cargo' && key !== 'CargoNome' && key !== 'CargoId')
+            {Object.entries(formValues)
+              .filter(([key]) => key !== 'Cargo' && key !== 'Id')
               .map(([key, value], idx) => (
                 <input
                   key={idx}
@@ -133,7 +115,7 @@ export default function PopupEditFunc({ showModal, onClose, insertTable, initial
                 />
               ))}
 
-            {Object.keys(form).length === 0 && (
+            {Object.keys(formValues).length === 0 && (
               <p className="text-center">Nenhum dado para editar.</p>
             )}
           </div>
@@ -142,7 +124,38 @@ export default function PopupEditFunc({ showModal, onClose, insertTable, initial
             <Button
               className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60"
               text="Salvar"
-              onClick={handleSave}
+              onClick={() => {
+                // calcula id do cargo (retorno numérico, não função)
+                const cargoId =
+                  formValues.Cargo === 'Encarregado de Produção'
+                    ? 1
+                    : formValues.Cargo === 'Movimentador de Carga'
+                      ? 2
+                      : formValues.Cargo === 'Motorista'
+                        ? 3
+                        : null
+
+                // validação mínima
+                if (!formValues.Nome || !formValues.CPF) {
+                  alert('Nome e CPF são obrigatórios.')
+                  return
+                }
+
+                window.api
+                  .editFuncionario([
+                    formValues.Nome,
+                    formValues.Telefone,
+                    formValues.CPF,
+                    formValues.Tipo,
+                    cargoId,
+                    formValues.Id
+                  ])
+                  .then(onClose)
+                  .catch((err) => {
+                    console.error('Erro ao criar funcionário:', err)
+                    onClose()
+                  })
+              }}
             />
           </div>
         </div>

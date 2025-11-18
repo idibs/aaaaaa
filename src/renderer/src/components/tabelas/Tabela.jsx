@@ -35,11 +35,7 @@ const Tabela = ({ data, insertTable }) => {
         closeModalEdit()
         setSelectedProduct(null)
       },
-      initialData: selectedProduct,
-      onSave: (payload) => {
-        onSave?.(payload, selectedProduct)
-        closeModalEdit()
-      }
+      initialData: selectedProduct
     }
 
     switch (insertTable.toLowerCase()) {

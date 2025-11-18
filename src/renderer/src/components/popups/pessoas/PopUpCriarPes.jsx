@@ -3,7 +3,7 @@ import { IoMdArrowRoundBack, IoMdArrowRoundForward, IoIosArrowDown } from 'react
 import { useState, useEffect, useRef } from 'react'
 import Button from '../../botoes/DesignBotao'
 
-export default function PopupCriarPes({ showModal, onClose, insertTable }) {
+export default function PopupCriarPes({ showModal, onClose }) {
   if (!showModal) return null
 
   const PAGE_SIZE = 5
@@ -68,7 +68,16 @@ export default function PopupCriarPes({ showModal, onClose, insertTable }) {
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute left-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                  <div className="absolute right-0 mt-2 max-h-90 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-y-scroll">
+                    <button
+                      className="block w-full text-left px-4 py-2 bg-red-900 hover:bg-red-950"
+                      onClick={() => {
+                        setDropdownOpen(false)
+                        setFormValues((prev) => ({ ...prev, Tipo: '' }))
+                      }}
+                    >
+                      Limpar seleção
+                    </button>
                     {tiposPessoa.map((tipo) => (
                       <button
                         key={tipo}

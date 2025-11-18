@@ -20,7 +20,7 @@ export default function Carga() {
       .getPedidos()
       .then((result) => setData(result))
       .catch((error) => console.error('Error fetching data:', error))
-  }, [showModal]) // atualizado: não depende de `data` (evita loop)
+  }, [showModal, Tabela]) // atualizado: não depende de `data` (evita loop)
 
   // Filtra tratando valores nulos/undefined como string vazia
   useEffect(() => {

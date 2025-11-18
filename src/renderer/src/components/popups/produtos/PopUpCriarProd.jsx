@@ -30,26 +30,20 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
       .catch((error) => {
         console.error('Error fetching product names:', error)
       })
-    categoria === 'Cereal'
-      ? setColumns(['Nome', 'Preço', 'Peso', 'Quantidade', 'Código'])
-      : setColumns([
-          'Nome',
-          'Preço',
-          'Quantidade',
-          'Peso',
-          'Código',
-          'Foto',
-          'Descrição',
-          'Categoria'
-        ])
-  }, [categoria, showModal]) // <- inclui showModal para resetar ao abrir
+  }, [showModal]) // <- inclui showModal para resetar ao abrir
+
+  useEffect(() => {
+    formValues.Categoria === 'Cereal'
+      ? setColumns(['Nome', 'Preço', 'Quantidade', 'Peso', 'Código'])
+      : setColumns(['Nome', 'Preço', 'Quantidade', 'Peso', 'Código', 'Descrição'])
+  }, [formValues])
 
   const totalPages = Math.ceil(columns.length / PAGE_SIZE)
   const startIdx = (page - 1) * PAGE_SIZE
   const endIdx = startIdx + PAGE_SIZE
   const inputs = columns.slice(startIdx, endIdx)
   const inputNumbers = ['Preço', 'Peso', 'Quantidade']
-  const categorias = ['Ração', 'Variedade']
+  const categorias = ['Cereal', 'Ração', 'Variedade']
 
   return (
     <>
@@ -61,7 +55,7 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
           </button>
         </div>
 
-        <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">Novo Produto</h1>
+        <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">Novo Pessoa</h1>
 
         <div className="flex flex-col justify-between h-140">
           <div>
@@ -70,8 +64,11 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
               {page === 1 && (
                 <div className="relative" ref={userDropdownRef}>
                   <button
-                    onClick={() => setUserDropdownOpen((v) => !v)}
-                    className="rounded-xl flex justify-between items-center w-full py-2 px-4 cursor-pointer text-white bg-[#145A0C] h-full"
+                    onClick={() => {
+                      setUserDropdownOpen((v) => !v)
+                      setUserDropdownOpen2(false)
+                    }}
+                    className="border border-[#1A6D12] px-4 py-2 w-full rounded-xl flex justify-between items-center focus:outline-none"
                     aria-haspopup="true"
                     aria-expanded={userDropdownOpen}
                     type="button"
@@ -80,10 +77,10 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
                     <IoIosArrowDown className="text-sm" />
                   </button>
                   {userDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                    <div className="absolute right-0 mt-2 max-h-90 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-y-scroll">
                       {/* Botão Limpar */}
                       <button
-                        className="block w-full text-left px-4 py-2 bg-red-800 hover:bg-red-900 border-b border-white/20"
+                        className="block w-full text-left px-4 py-2 bg-red-900 hover:bg-red-950"
                         onClick={() => {
                           setUserDropdownOpen(false)
                           setIsProductSelected(false)
@@ -119,11 +116,14 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
               )}
 
               {/* Dropdown de produtos base */}
-              {page === 1 && categoria !== 'Cereal' && (
-                <div className="relative" ref={userDropdownRef2}>
+              {page === 1 && (
+                <div className="relative mt-3" ref={userDropdownRef2}>
                   <button
-                    onClick={() => setUserDropdownOpen2((v) => !v)}
-                    className="rounded-xl flex justify-between items-center w-full py-2 px-4 cursor-pointer text-white bg-[#145A0C] h-full"
+                    onClick={() => {
+                      setUserDropdownOpen2((v) => !v)
+                      setUserDropdownOpen(false)
+                    }}
+                    className="border border-[#1A6D12] px-4 py-2 w-full rounded-xl flex justify-between items-center focus:outline-none"
                     aria-haspopup="true"
                     aria-expanded={userDropdownOpen2}
                     type="button"
@@ -132,10 +132,10 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
                     <IoIosArrowDown className="text-sm" />
                   </button>
                   {userDropdownOpen2 && (
-                    <div className="absolute right-0 mt-2 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-hidden">
+                    <div className="absolute right-0 mt-2 max-h-90 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-y-scroll">
                       {/* Botão Limpar */}
                       <button
-                        className="block w-full text-left px-4 py-2 bg-red-800 hover:bg-red-900 border-b border-white/20"
+                        className="block w-full text-left px-4 py-2 bg-red-900 hover:bg-red-950"
                         onClick={() => {
                           setUserDropdownOpen2(false)
                           setFormValues((prev) => ({ ...prev, Categoria: '' }))
@@ -152,7 +152,7 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
                             setUserDropdownOpen2(false) // Corrigido: era setUserDropdownOpen
                             setFormValues((prev) => ({
                               ...prev,
-                              Categoria: c === 'Ração' ? 2 : 1
+                              Categoria: c
                             }))
                           }}
                         >
@@ -165,68 +165,69 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
               )}
 
               {/* Aqui no futuro entram os inputs puxados do banco */}
-              {inputs.map((coluna) => {
-                // desabilita apenas o campo "Nome" quando um produto base for selecionado
-                if (coluna === 'Nome' || coluna === 'Preço') {
+              {formValues.Categoria &&
+                inputs.map((coluna) => {
+                  // desabilita apenas o campo "Nome" quando um produto base for selecionado
+                  if (coluna === 'Nome' || coluna === 'Preço') {
+                    return (
+                      <input
+                        key={coluna}
+                        type={inputNumbers.includes(coluna) ? 'number' : 'text'}
+                        placeholder={coluna}
+                        value={formValues[coluna] ?? ''} // <-- valor persistido
+                        onChange={(e) =>
+                          setFormValues((prev) => ({ ...prev, [coluna]: e.target.value }))
+                        } // <-- atualiza o estado
+                        disabled={isProductSelected}
+                        className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+                      />
+                    )
+                  } else if (coluna === 'Peso') {
+                    return (
+                      <input
+                        key={coluna}
+                        type="number"
+                        placeholder={coluna}
+                        value={formValues[coluna] ?? ''} // <-- valor persistido
+                        onChange={(e) => {
+                          const val = e.target.value
+                          // se produto selecionado, usar selectedProduct de forma segura
+                          if (isProductSelected && selectedProduct) {
+                            const precoUnit = parseFloat(selectedProduct.Preço) || 0
+                            const pesoNum = parseFloat(val) || 0
+                            const novoPreco = precoUnit * pesoNum
+                            setFormValues((prev) => ({
+                              ...prev,
+                              [coluna]: val,
+                              Preço: novoPreco,
+                              Nome: `${selectedProduct.Nome} ${val}Kg`
+                            }))
+                          } else {
+                            setFormValues((prev) => ({ ...prev, [coluna]: val }))
+                          }
+                        }} // <-- atualiza o estado
+                        className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+                      />
+                    )
+                  }
+
+                  // demais inputs permanecem editáveis
                   return (
                     <input
-                      key={coluna}
+                      key={coluna} // manter coluna como key
                       type={inputNumbers.includes(coluna) ? 'number' : 'text'}
                       placeholder={coluna}
                       value={formValues[coluna] ?? ''} // <-- valor persistido
                       onChange={(e) =>
                         setFormValues((prev) => ({ ...prev, [coluna]: e.target.value }))
                       } // <-- atualiza o estado
-                      disabled={isProductSelected}
                       className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
                     />
                   )
-                } else if (coluna === 'Peso') {
-                  return (
-                    <input
-                      key={coluna}
-                      type="number"
-                      placeholder={coluna}
-                      value={formValues[coluna] ?? ''} // <-- valor persistido
-                      onChange={(e) => {
-                        const val = e.target.value
-                        // se produto selecionado, usar selectedProduct de forma segura
-                        if (isProductSelected && selectedProduct) {
-                          const precoUnit = parseFloat(selectedProduct.Preço) || 0
-                          const pesoNum = parseFloat(val) || 0
-                          const novoPreco = precoUnit * pesoNum
-                          setFormValues((prev) => ({
-                            ...prev,
-                            [coluna]: val,
-                            Preço: novoPreco,
-                            Nome: `${selectedProduct.Nome} ${val}Kg`
-                          }))
-                        } else {
-                          setFormValues((prev) => ({ ...prev, [coluna]: val }))
-                        }
-                      }} // <-- atualiza o estado
-                      className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
-                    />
-                  )
-                }
-
-                // demais inputs permanecem editáveis
-                return (
-                  <input
-                    key={coluna} // manter coluna como key
-                    type={inputNumbers.includes(coluna) ? 'number' : 'text'}
-                    placeholder={coluna}
-                    value={formValues[coluna] ?? ''} // <-- valor persistido
-                    onChange={(e) =>
-                      setFormValues((prev) => ({ ...prev, [coluna]: e.target.value }))
-                    } // <-- atualiza o estado
-                    className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
-                  />
-                )
-              })}
+                })}
             </div>
 
-            {totalPages > 1 && (
+            {totalPages > 1 && formValues.Categoria && (
               <div className="flex justify-end w-full px-30 mt-2">
                 <Button
                   onClick={() => setPage(page - 1)}
@@ -269,7 +270,7 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
                         formValues.Peso,
                         formValues.Código,
                         formValues.Descrição,
-                        formValues.Categoria
+                        formValues.Categoria === 'Ração' ? 2 : 1
                       ])
                       .then(onClose)
                       .catch(onClose)

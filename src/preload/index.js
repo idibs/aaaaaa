@@ -17,13 +17,17 @@ const api = {
   getProdutosNomes: () => ipcRenderer.invoke('get-produtos-nomes'),
   getPedidoProdutosByCarga: (Id_ped) => ipcRenderer.invoke('get-pedido-produtos-by-carga', Id_ped),
   getProdutoByNome: (nome) => ipcRenderer.invoke('get-produto-by-nome', nome),
+  getPessoaEndereco: (id) => ipcRenderer.invoke('get-pessoa-endereco', id),
   createEnsacado: (produto) => ipcRenderer.invoke('create-ensacado', produto),
   createOutroProduto: (produto) => ipcRenderer.invoke('create-outro-produto', produto),
   createPessoa: (pessoa) => ipcRenderer.invoke('create-pessoa', pessoa),
   createFuncionario: (funcionario) => ipcRenderer.invoke('create-funcionario', funcionario),
   createCarga: (carga) => ipcRenderer.invoke('create-carga', carga),
+  createProdutoBase: (produtoBase) => ipcRenderer.invoke('create-produto-base', produtoBase),
   updateCereal: (produto) => ipcRenderer.invoke('update-cereal', produto),
   updateOutroProduto: (produto) => ipcRenderer.invoke('update-outro-produto', produto),
+  editFuncionario: (funcionario) => ipcRenderer.invoke('edit-funcionario', funcionario),
+  editPessoa: (pessoa) => ipcRenderer.invoke('edit-pessoa', pessoa),
   deleteOutroProduto: (id) => ipcRenderer.invoke('delete-outro-produto', id),
   deleteEnsacado: (id) => ipcRenderer.invoke('delete-ensacado', id),
   deletePessoa: (id) => ipcRenderer.invoke('delete-pessoa', id),
@@ -33,6 +37,8 @@ const api = {
   deletePedidoProdutoFromCarga: (id, Valor_total, Peso_total) =>
     ipcRenderer.invoke('delete-pedido-produto-from-carga', id, Valor_total, Peso_total),
   finalizaPedido: (id) => ipcRenderer.invoke('finaliza-pedido', id),
+  addLote: (id_produto, novoPreco, novaQuantidade) =>
+    ipcRenderer.invoke('add-lote', id_produto, novoPreco, novaQuantidade),
   /*atualizaEstoque: (id_produto, quantidade) =>
     ipcRenderer.invoke('atualiza-estoque', id_produto, quantidade),
   atualizaEstoqueOutroProduto: (id_produto, quantidade) =>

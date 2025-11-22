@@ -28,6 +28,7 @@ const api = {
   editOutroProduto: (produto) => ipcRenderer.invoke('edit-outro-produto', produto),
   editFuncionario: (funcionario) => ipcRenderer.invoke('edit-funcionario', funcionario),
   editPessoa: (pessoa) => ipcRenderer.invoke('edit-pessoa', pessoa),
+  editCarga: (carga) => ipcRenderer.invoke('edit-carga', carga),
   deleteOutroProduto: (id) => ipcRenderer.invoke('delete-outro-produto', id),
   deleteEnsacado: (id) => ipcRenderer.invoke('delete-ensacado', id),
   deletePessoa: (id) => ipcRenderer.invoke('delete-pessoa', id),

@@ -44,7 +44,8 @@ import {
   getPessoaEndereco,
   editPessoa,
   editCereal,
-  editOutroProduto
+  editOutroProduto,
+  editCarga
 } from '../database/functions'
 
 function createWindow() {
@@ -250,6 +251,15 @@ app.whenReady().then(() => {
       const cliente = [pessoa.Nome, pessoa.Telefone, pessoa.Tipo, Id_end[0].Id_end, pessoa.Id]
 
       const data = await editPessoa(cliente)
+      return data
+    } catch (error) {
+      throw error
+    }
+  })
+
+  ipcMain.handle('edit-carga', async (event, carga) => {
+    try {
+      const data = await editCarga(carga)
       return data
     } catch (error) {
       throw error

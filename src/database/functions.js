@@ -69,6 +69,21 @@ export function editPessoa(pessoa) {
   })
 }
 
+export function editCarga(carga) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `UPDATE pedido SET Id_cam = ?, Data_entrega_ped = ? WHERE Id_ped = ?;`
+    conn.query(sql, carga, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
 export function getPessoaEndereco(id) {
   const conn = connection()
   return new Promise((resolve, reject) => {

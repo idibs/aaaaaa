@@ -83,23 +83,23 @@ export default function PopupCriarCarga({ showModal, onClose }) {
               {error && <p className="text-red-500 mt-2">{error}</p>}
             </div>
           </div>
+        </div>
 
-          <div className="flex justify-center gap-4 mt-6">
-            <Button
-              text="Atribuir a Carga"
-              className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-44"
-              onClick={() => {
-                if (selectedCarga) {
-                  setError(null)
+        <div className="flex justify-center gap-4 mt-6">
+          <Button
+            text="Atribuir a Carga"
+            className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-44"
+            onClick={() => {
+              if (selectedCarga) {
+                setError(null)
 
-                  window.api
-                    .createCarga(selectedCarga)
-                    .then(() => onClose())
-                    .catch(() => setError('Erro ao criar carga. Tente novamente.'))
-                }
-              }}
-            />
-          </div>
+                window.api
+                  .createCarga(selectedCarga)
+                  .then(() => onClose())
+                  .catch(() => setError('Erro ao criar carga. Tente novamente.'))
+              }
+            }}
+          />
         </div>
       </div>
     </>

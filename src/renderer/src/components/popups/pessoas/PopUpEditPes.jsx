@@ -7,60 +7,53 @@ export default function PopUpEditPes({ showModal, onClose, initialData }) {
   if (!showModal) return null
 
   const PAGE_SIZE = 5
+  const columns = ['Nome', 'Telefone', 'Cep', 'Cidade', 'Bairro', 'Rua', 'Numero', 'Complemento']
   const [page, setPage] = useState(1)
-  const [formValues, setFormValues] = useState({
-    Nome: '',
-    Telefone: '',
-    Cep: '',
-    Cidade: '',
-    Bairro: '',
-    Rua: '',
-    Numero: '',
-    Complemento: ''
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [formValues, setFormValues] = useState({}) // <-- persist valores por coluna
   const dropdownRef = useRef(null)
+  const [error, setError] = useState('')
+
   const tiposPessoa = ['Cliente', 'Fornecedor', 'Vendedor', 'Cliente/Fornecedor']
 
-  // busca dados e popula formValues quando o modal abre / initialData muda
   useEffect(() => {
-    if (!showModal || !initialData?.Id) return
-    setLoading(true)
+    setPage(1)
+    setFormValues(initialData)
     window.api
       .getPessoaEndereco(initialData.Id)
-      .then((result) => {
-        if (!result) return
-        // result já deve ser objeto com chaves mapeadas
-        setFormValues({
-          Nome: result.Nome ?? '',
-          Telefone: result.Telefone ?? '',
-          Cep: result.Cep ?? '',
-          Cidade: result.Cidade ?? '',
-          Bairro: result.Bairro ?? '',
-          Rua: result.Rua ?? '',
-          Numero: result.Numero ?? '',
-          Complemento: result.Complemento ?? ''
-        })
-      })
-      .catch((err) => {
-        console.error('Erro ao buscar pessoa:', err)
-        setError('Erro ao carregar dados')
-      })
-      .finally(() => setLoading(false))
-  }, [showModal, initialData])
+      .then((result) =>
+        setFormValues((prev) => ({
+          ...prev,
+          Rua: result.Rua,
+          Bairro: result.Bairro,
+          Numero: result.Numero,
+          Complemento: result.Complemento,
+          Cep: result.Cep || ''
+        }))
+      )
+      .catch((err) => setError(`Não foi possivel buscar o endereço: ${err}`))
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
-  const totalPages = Math.max(1, Math.ceil(Object.keys(formValues).length / PAGE_SIZE))
+  const totalPages = Math.ceil(columns.length / PAGE_SIZE)
   const startIdx = (page - 1) * PAGE_SIZE
   const endIdx = startIdx + PAGE_SIZE
-  const inputs = Object.keys(formValues).slice(startIdx, endIdx)
+  const inputs = columns.slice(startIdx, endIdx)
 
-  const handleChange = (key, value) => setFormValues((prev) => ({ ...prev, [key]: value }))
+  const inputNumbers = ['Telefone', 'Número', 'Cep']
 
   return (
     <>
+      {/* Fundo escuro */}
       <div className="fixed inset-0 bg-black/40 z-10"></div>
+
+      {/* Conteúdo do popup */}
       <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 border border-[#1A6D12] w-200 z-20 h-180 p-4 bg-[#fffcff] rounded-xl shadow-2xl">
         <div className="flex justify-end">
           <button className="cursor-pointer" onClick={onClose}>
@@ -68,11 +61,11 @@ export default function PopUpEditPes({ showModal, onClose, initialData }) {
           </button>
         </div>
 
-        <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">
-          Editar Registro
-        </h1>
+        <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">Novo Registro</h1>
 
+        {/* Container principal com justify-between */}
         <div className="flex flex-col justify-between h-140">
+          {/* Dropdown de tipo da pessoa */}
           <div className="mt-7 flex flex-col px-30 w-full">
             {page === 1 && (
               <div className="relative" ref={dropdownRef}>
@@ -85,14 +78,23 @@ export default function PopUpEditPes({ showModal, onClose, initialData }) {
                 </button>
 
                 {dropdownOpen && (
-                  <div className="absolute left-0 mt-2 w-full bg-[#044a23] text-white rounded shadow z-30 overflow-hidden">
+                  <div className="absolute right-0 mt-2 max-h-90 w-full bg-[#044a23] text-white rounded shadow-[0_8px_25px_rgba(0,0,0,0.5)] z-30 overflow-y-scroll">
+                    <button
+                      className="block w-full text-left px-4 py-2 bg-red-900 hover:bg-red-950"
+                      onClick={() => {
+                        setDropdownOpen(false)
+                        setFormValues((prev) => ({ ...prev, Tipo: '' }))
+                      }}
+                    >
+                      Limpar seleção
+                    </button>
                     {tiposPessoa.map((tipo) => (
                       <button
                         key={tipo}
                         className="block w-full text-left px-4 py-2 hover:bg-green-900"
                         onClick={() => {
                           setDropdownOpen(false)
-                          handleChange('Tipo', tipo)
+                          setFormValues((prev) => ({ ...prev, Tipo: tipo }))
                         }}
                       >
                         {tipo}
@@ -103,74 +105,58 @@ export default function PopUpEditPes({ showModal, onClose, initialData }) {
               </div>
             )}
 
-            {loading && <p className="mt-3">Carregando...</p>}
-
-            {inputs.map((key) => (
+            {/* Campos dinâmicos */}
+            {inputs.map((coluna) => (
               <input
-                key={key}
-                type={['Numero', 'Telefone'].includes(key) ? 'number' : 'text'}
-                placeholder={key}
-                value={formValues[key] ?? ''}
-                onChange={(e) => handleChange(key, e.target.value)}
+                key={coluna}
+                type={inputNumbers.includes(coluna) ? 'number' : 'text'}
+                placeholder={coluna}
+                value={formValues[coluna] ?? ''} // <-- valor persistido
+                onChange={(e) => setFormValues((prev) => ({ ...prev, [coluna]: e.target.value }))} // <-- atualiza o estado
                 className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
               />
             ))}
           </div>
 
+          {/* Paginação */}
           {totalPages > 1 && (
             <div className="flex justify-end w-full px-30 mt-2">
               <Button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className={`${page === 1 ? 'hidden' : 'text-[#1A6D12] border border-[#1A6D12]'}`}
+                onClick={() => setPage(page - 1)}
+                className={`${
+                  page === 1
+                    ? 'hidden'
+                    : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'
+                }`}
                 text={<IoMdArrowRoundBack />}
               />
               <Button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                className={`${page === totalPages ? 'hidden' : 'text-[#1A6D12] border border-[#1A6D12]'}`}
+                onClick={() => setPage(page + 1)}
+                className={`${
+                  page === totalPages
+                    ? 'hidden'
+                    : 'text-[#1A6D12] border-solid border border-[#1A6D12] hover:bg-[#ececec]'
+                }`}
                 text={<IoMdArrowRoundForward />}
               />
             </div>
           )}
 
+          {error && <p className="text-red-600 mt-2 px-4">{error}</p>}
+
+          {/* Botão salvar */}
           <div className="flex justify-center mt-4">
             <Button
               className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60"
               text="Salvar"
               onClick={() => {
-                setError(null)
-                // validação mínima
-                if (!formValues.Nome || formValues.Nome.trim() === '') {
-                  setError('Nome é obrigatório')
-                  return
-                }
-
-                const payload = {
-                  Nome: formValues.Nome,
-                  Telefone: formValues.Telefone,
-                  Tipo: formValues.Tipo,
-                  Cidade: formValues.Cidade,
-                  Rua: formValues.Rua,
-                  Numero: formValues.Numero,
-                  Bairro: formValues.Bairro,
-                  Cep: formValues.Cep,
-                  Complemento: formValues.Complemento,
-                  Id_pes: initialData?.Id
-                }
-
-                if (window.api?.editPessoa) {
-                  window.api
-                    .editPessoa(payload)
-                    .then(() => onClose())
-                    .catch((err) => setError(err?.message || 'Erro ao salvar'))
-                } else {
-                  // se editPessoa não existe no preload, só logamos (evita erro)
-                  console.warn('API editPessoa não disponível. payload:', payload)
-                  onClose()
-                }
+                window.api
+                  .editPessoa(formValues)
+                  .then(onClose)
+                  .catch((err) => setError(`não foi possível salvar as akterações: ${err}`))
               }}
             />
           </div>
-          {error && <div className="text-red-600 mt-2 px-2">{error}</div>}
         </div>
       </div>
     </>

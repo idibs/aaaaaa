@@ -680,7 +680,7 @@ export function getPedidos() {
   })
 }
 
-export function updateCereal(produto) {
+export function editCereal(produto) {
   // ORDEM: [Nome, Preço, Quantidade, Peso, Código, Id]
   const conn = connection()
   return new Promise((resolve, reject) => {
@@ -766,12 +766,12 @@ export function createCarga(caminhao) {
   })
 }
 
-export function updateOutroProduto(produto) {
+export function editOutroProduto(produto) {
   // ORDEM: [Nome, Preço, Quantidade, Peso, Código, Descrição, Id]
   const conn = connection()
   return new Promise((resolve, reject) => {
     const sql = `UPDATE outros_produtos
-                  SET Nome_out = ?, Preco_med_out = ?, Quantidade_out = ?, Peso_out = ?, Codigo_out = ?, Descricao_out = ?
+                  SET Nome_out = ?, Preco_med_out = ?, Quantidade_out = ?, Peso_out = ?, Codigo_out = ?, Descricao_out = ?, Id_categ = ?
                   WHERE Id_out = ?;`
     conn.query(sql, produto, (error, results) => {
       conn.end()

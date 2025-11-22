@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from 'react'
 import Button from '../../botoes/DesignBotao'
 import { IoMdArrowRoundBack, IoMdArrowRoundForward, IoIosArrowDown } from 'react-icons/io'
 
-export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
+export default function PopupCriarRegistro({ showModal, onClose, categoria, initialData }) {
   if (!showModal) return null
 
   const PAGE_SIZE = 5
@@ -250,7 +250,7 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
               onClick={() => {
                 let id
                 isProductSelected ? (id = selectedProduct.Id) : (id = null)
-                categoria === 'Cereal'
+                formValues.Categoria === 'Cereal'
                   ? window.api
                       .createEnsacado([
                         formValues.Código,
@@ -270,7 +270,7 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria }) {
                         formValues.Peso,
                         formValues.Código,
                         formValues.Descrição,
-                        formValues.Categoria === 'Ração' ? 2 : 1
+                        formValues.Categoria === 'Ração' ? 1 : 2
                       ])
                       .then(onClose)
                       .catch(onClose)

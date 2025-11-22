@@ -35,7 +35,8 @@ const Tabela = ({ data, insertTable }) => {
         closeModalEdit()
         setSelectedProduct(null)
       },
-      initialData: selectedProduct
+      initialData: selectedProduct,
+      categoria: insertTable
     }
 
     switch (insertTable.toLowerCase()) {

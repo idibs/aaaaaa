@@ -19,8 +19,6 @@ import {
   createEndereco,
   createPessoa,
   deleteOutroProduto,
-  updateOutroProduto,
-  updateCereal,
   deletePessoa,
   getPedidoProdutosByPessoa,
   createFuncionario,
@@ -44,7 +42,9 @@ import {
   createProdutoBase,
   editFuncionario,
   getPessoaEndereco,
-  editPessoa
+  editPessoa,
+  editCereal,
+  editOutroProduto
 } from '../database/functions'
 
 function createWindow() {
@@ -145,18 +145,18 @@ app.whenReady().then(() => {
     }
   })
 
-  ipcMain.handle('update-cereal', async (event, produto) => {
+  ipcMain.handle('edit-cereal', async (event, produto) => {
     try {
-      const data = await updateCereal(produto)
+      const data = await editCereal(produto)
       return data
     } catch (error) {
       throw error
     }
   })
 
-  ipcMain.handle('update-outro-produto', async (event, produto) => {
+  ipcMain.handle('edit-outro-produto', async (event, produto) => {
     try {
-      const data = await updateOutroProduto(produto)
+      const data = await editOutroProduto(produto)
       return data
     } catch (error) {
       throw error

@@ -72,7 +72,7 @@ export default function Produtos() {
         </div>
         {/* table */}
         <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
-          <Tabela data={filteredData ? filteredData : []} insertTable={categoria.toLowerCase()} />
+          <Tabela data={filteredData ? filteredData : []} insertTable={categoria} />
         </div>
         {/* escolher entre tabelas */}
         <div className="mt-4 mb-4 flex justify-between">

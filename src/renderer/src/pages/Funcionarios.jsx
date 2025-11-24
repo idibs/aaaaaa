@@ -42,7 +42,7 @@ export default function Funcionarios() {
   const closeModal = () => setShowModal(false)
 
   return (
-    <div className="pt-10">
+    <div className="pt-5">
       <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">Funcionários</h1>
       {/* texto do input da tabela */}
       <p className="text-black ps-30 mt-10 mb-3">Nome do Funcionário:</p>
@@ -69,8 +69,12 @@ export default function Funcionarios() {
           </div>
         </div>
         {/* table */}
-        <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
-          <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} />
+          <div className="max-w-full mt-6 mx-auto">
+          <div className="border border-[#1A6D12] rounded-md shadow-sm h-[50vh] lg:h-[70vh] max-h-[100vh]">
+            <div className="w-full h-full overflow-auto">
+              <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} />
+            </div>
+          </div>
         </div>
         {/* escolher entre tabelas */}
         <div className="mt-4 mb-4 flex justify-around">

@@ -48,12 +48,12 @@ export default function Carga() {
   }
 
   return (
-    <div className="pt-10 h-screen">
+    <div className="pt-10">
       <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">Cargas</h1>
 
       <p className="text-black ps-30 mt-10 mb-3">Nome do Caminhão:</p>
 
-      <div className="h-full w-full px-30">
+      <div className="w-full px-30">
         <div className="w-full flex justify-between items-center">
           {/* Campo de busca */}
           <div className="flex flex-col w-1/3">
@@ -105,8 +105,12 @@ export default function Carga() {
         </div>
 
         {/* Tabela */}
-        <div className="border border-[#1A6D12] h-6/10 overflow-auto w-full mt-3">
-          <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} />
+         <div className="max-w-full mt-6 mx-auto">
+          <div className="border border-[#1A6D12] rounded-md shadow-sm h-[50vh] lg:h-[70vh] max-h-[100vh]">
+            <div className="w-full h-full overflow-auto">
+              <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} />
+            </div>
+          </div>
         </div>
       </div>
 

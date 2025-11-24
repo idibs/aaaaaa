@@ -39,25 +39,31 @@ export default function PopupDelete({ showModal, onClose, initialData, insertTab
 
   return (
     <>
+      {/* overlay backdrop */}
       <div className="fixed inset-0 bg-black/5 z-10"></div>
-      <div className="fixed border border-[#1A6D12] w-100 z-20 top-80 start-140 p-4 bg-[#fffcff] rounded-xl shadow-xl">
-        <div className="flex justify-end">
-          <button className="cursor-pointer" onClick={onClose}>
-            <IoMdClose />
-          </button>
-        </div>
-        <p className="text-black ps-1 mb-7">Deseja deletar o cadastro?</p>
-        <div className="flex gap-2 w-full justify-center">
-          <Button
-            className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-20"
-            text="Sim"
-            onClick={() => deleteItem(initialData?.Id ?? initialData?.id ?? initialData?.Carga)}
-          />
-          <Button
-            className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-20"
-            text="Não"
-            onClick={onClose}
-          />
+
+      {/* full-screen wrapper that centers the modal */}
+      <div className="fixed inset-0 z-20 flex items-center justify-center p-4">
+        {/* inner modal container with constrained width */}
+        <div className="border border-[#1A6D12] w-full max-w-md p-4 bg-[#fffcff] rounded-xl shadow-xl">
+          <div className="flex justify-end">
+            <button className="cursor-pointer" onClick={onClose}>
+              <IoMdClose />
+            </button>
+          </div>
+          <p className="text-black ps-1 mb-7">Deseja deletar o cadastro?</p>
+          <div className="flex gap-2 w-full justify-center">
+            <Button
+              className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-20"
+              text="Sim"
+              onClick={() => deleteItem(initialData?.Id ?? initialData?.id ?? initialData?.Carga)}
+            />
+            <Button
+              className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-20"
+              text="Não"
+              onClick={onClose}
+            />
+          </div>
         </div>
       </div>
     </>

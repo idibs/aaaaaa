@@ -31,7 +31,7 @@ export default function Produtos() {
   const closeModal = () => setShowModal(false)
 
   return (
-    <div className="pt-10">
+    <div className="pt-5">
       <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">Pedidos de Produtos</h1>
 
       <p className="text-black ps-30 mt-10 mb-3">Nome do Cliente:</p>
@@ -66,8 +66,10 @@ export default function Produtos() {
           </div>
         </div>
 
-        <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
-          <TabelaVaidacao
+        <div className="max-w-full mt-6 mx-auto">
+          <div className="border border-[#1A6D12] rounded-md shadow-sm h-[50vh] lg:h-[70vh] max-h-[100vh]">
+            <div className="w-full h-full overflow-auto">
+              <TabelaVaidacao
             data={filteredData}
             insertTable={insertTable}
             status={status}
@@ -79,6 +81,8 @@ export default function Produtos() {
                 .catch((error) => console.error('Error fetching data:', error))
             }}
           />
+            </div>
+          </div>
         </div>
 
         <div className="mt-4 mb-4 flex justify-between">

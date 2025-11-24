@@ -79,8 +79,10 @@ export default function Pagamento() {
           </div>
         </div>
         {/* table */}
-        <div className="border border-[#1A6D12] h-120 overflow-auto w-full mt-3">
-          <Tabela
+        <div className="max-w-full mt-6 mx-auto">
+          <div className="border border-[#1A6D12] rounded-md shadow-sm h-[50vh] lg:h-[70vh] max-h-[100vh]">
+            <div className="w-full h-full overflow-auto">
+              <Tabela
             data={tabelaFormatada}
             columns={[
               'status',
@@ -93,6 +95,8 @@ export default function Pagamento() {
             ]}
             insertTable={insertTable}
           />
+            </div>
+          </div>
         </div>
         {/* escolher entre tabelas */}
         <div className="mt-4 mb-4 flex justify-around">

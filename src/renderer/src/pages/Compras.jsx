@@ -26,7 +26,7 @@ export default function Compras() {
   }, [term, data])
 
   return (
-    <div className="pt-10 h-screen">
+    <div className="pt-10 overflow-hidden">
       <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">
         Valor dos Itens em Estoque
       </h1>
@@ -61,8 +61,12 @@ export default function Compras() {
         </div>
 
         {/* Table */}
-        <div className="border border-[#1A6D12] h-6/10 overflow-auto w-full mt-3">
-          <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} />
+        <div className="max-w-full mt-6 mx-auto">
+          <div className="border border-[#1A6D12] rounded-md shadow-sm h-[50vh] lg:h-[70vh] max-h-[100vh]">
+            <div className="w-full h-full overflow-auto">
+              <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} />
+            </div>
+          </div>
         </div>
       </div>
 

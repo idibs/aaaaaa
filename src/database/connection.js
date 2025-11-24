@@ -2,9 +2,11 @@ import mysql from 'mysql2'
 
 export default function connection() {
   return mysql.createConnection({
-    host: 'localhost',
+    host: 'metro.proxy.rlwy.net',
     user: 'root',
-    password: 'Jomacara1308',
-    database: 'TCC'
+    password: 'gyGgmjuRTGCJsZtYuEPxFubBIsKYoCwt',
+    database: 'tcc',
+    port: 59910,
+    ssl: { rejectUnauthorized: false }
   })
 }

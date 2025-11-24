@@ -21,7 +21,7 @@ export default function PopupEditCarga({ showModal, onClose, initialData }) {
     const formattedData = Object.entries(initialData).reduce((acc, [key, value]) => {
       if (key.toLowerCase().includes('data') && value) {
         const date = new Date(value)
-        acc[key] = date.toLocaleDateString('pt-BR') // <-- formato DD/MM/AAAA
+        acc[key] = date.toISOString().split('T')[0]
       } else {
         acc[key] = value ?? ''
       }
@@ -53,7 +53,9 @@ export default function PopupEditCarga({ showModal, onClose, initialData }) {
           </button>
         </div>
 
-        <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">Editar Carga</h1>
+        <h1 className="mt-4 text-4xl text-[#1A6D12] font-black py-4 text-center">
+          Finalizar Carga
+        </h1>
         <div className="flex flex-col justify-between h-140">
           {/* Dropdown de tipo da pessoa */}
           <div className="mt-7 flex flex-col px-30 w-full">
@@ -86,7 +88,6 @@ export default function PopupEditCarga({ showModal, onClose, initialData }) {
                       className="block w-full text-left px-4 py-2 hover:bg-green-900"
                       onClick={() => {
                         setSelectedCarga(caminhao.Id)
-
                         setDropdownOpen(false)
                       }}
                     >
@@ -97,25 +98,13 @@ export default function PopupEditCarga({ showModal, onClose, initialData }) {
               )}
             </div>
 
-            {Object.entries(formData).map(
-              ([key, value], index) =>
-                key.toLowerCase().includes('data') && (
-                  <input
-                    key={index}
-                    type={
-                      key.toLowerCase().includes('data')
-                        ? 'date' // mantém texto para mostrar "DD/MM/AAAA"
-                        : typeof value === 'number'
-                          ? 'number'
-                          : 'text'
-                    }
-                    value={value}
-                    placeholder={key}
-                    onChange={(e) => handleChange(key, e.target.value)}
-                    className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
-                  />
-                )
-            )}
+            <input
+              type="date"
+              value={formData.Data_entregue}
+              placeholder="Data de entrega do pedido"
+              onChange={(e) => handleChange('Data_entregue', e.target.value)}
+              className="border border-[#1A6D12] px-4 py-2 rounded-xl mt-3 focus:outline-none focus:ring-2 focus:ring-[#1A6D12] text-gray-800 placeholder-gray-500"
+            />
           </div>
 
           {/* Botão salvar */}

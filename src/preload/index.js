@@ -38,14 +38,8 @@ const api = {
   deletePedidoProdutoFromCarga: (id, Valor_total, Peso_total) =>
     ipcRenderer.invoke('delete-pedido-produto-from-carga', id, Valor_total, Peso_total),
   finalizaPedido: (id) => ipcRenderer.invoke('finaliza-pedido', id),
-  addLote: (id_produto, novoPreco, novaQuantidade) =>
-    ipcRenderer.invoke('add-lote', id_produto, novoPreco, novaQuantidade),
-  /*atualizaEstoque: (id_produto, quantidade) =>
-    ipcRenderer.invoke('atualiza-estoque', id_produto, quantidade),
-  atualizaEstoqueOutroProduto: (id_produto, quantidade) =>
-    ipcRenderer.invoke('atualiza-estoque-outro-produto', id_produto, quantidade),
-  atualizaPrecoProduto: (id_produto, novoPreco) =>
-    ipcRenderer.invoke('atualiza-preco-produto', id_produto, novoPreco),*/
+  addLote: (id_produto, novoPreco, novaQuantidade, quantidadeCompradaNova) =>
+    ipcRenderer.invoke('add-lote', id_produto, novoPreco, novaQuantidade, quantidadeCompradaNova),
   adicionarOrcamentoProduto: (id_pedprod, valorTotal) =>
     ipcRenderer.invoke('adicionar-orcamento-produto', id_pedprod, valorTotal),
   getCargas: () => ipcRenderer.invoke('get-cargas'),

@@ -204,8 +204,8 @@ export function deleteEnsacado(id) {
 export function createOutroProduto(produto) {
   const conn = connection()
   return new Promise((resolve, reject) => {
-    const sql = `INSERT INTO outros_produtos (Nome_out, Preco_med_out, Quantidade_out, Peso_out, Codigo_out, Descricao_out, Id_categ) 
-    VALUES (?, ?, ?, ?, ?, ?, ?);`
+    const sql = `INSERT INTO outros_produtos (Nome_out, Preco_med_out, Quantidade_out, Peso_out, Codigo_out, Descricao_out, Id_categ, Id_prod) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?);`
     conn.query(sql, produto, (error, results) => {
       conn.end()
       if (error) {
@@ -442,11 +442,16 @@ export function getPessoasByTipo(tipo) {
   })
 }
 
-export function updateProdutoPrecoQuantidade(id, novoPreco, novaQuantidade) {
+export function updateProdutoPrecoQuantidade(
+  id,
+  novoPreco,
+  novaQuantidade,
+  quantidadeCompradaNova
+) {
   const conn = connection()
   return new Promise((resolve, reject) => {
-    const sql = `UPDATE produto SET Preco_med_prod = ?, Quantidade_prod = ? WHERE Id_prod = ?;`
-    conn.query(sql, [novoPreco, novaQuantidade, id], (error, results) => {
+    const sql = `UPDATE produto SET Preco_med_prod = ?, Quantidade_prod = ?, Compras_prod = Compras_prod + ? WHERE Id_prod = ?;`
+    conn.query(sql, [novoPreco, novaQuantidade, quantidadeCompradaNova, id], (error, results) => {
       conn.end()
       if (error) {
         reject(error)
@@ -481,9 +486,25 @@ export function getProdutosNomes() {
                   Nome_prod as Nome,
                   Preco_med_prod as Preço,
                   Quantidade_prod as Quantidade,
+                  Compras_prod as Compras,
                   Id_prod as Id
                 FROM produto;`
     conn.query(sql, (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function updateProdutoBaseQuantidade(quantidade, id) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `UPDATE produto set Quantidade_prod = Quantidade_prod - ? WHERE Id_prod = ?;`
+    conn.query(sql, [quantidade, id], (error, results) => {
       conn.end()
       if (error) {
         reject(error)
@@ -549,6 +570,36 @@ export function getOutroProdutoByNome(nome) {
                 FROM outros_produtos
                 WHERE Nome_out = ?;`
     conn.query(sql, [nome], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function updateQuantidadeCereal(quantidade, id) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `UPDATE produto_ensacado set Quantidade_ens = Quantidade_ens + ? where Id_ens = ?;`
+    conn.query(sql, [quantidade, id], (error, results) => {
+      conn.end()
+      if (error) {
+        reject(error)
+      } else {
+        resolve(results)
+      }
+    })
+  })
+}
+
+export function updateQuantidadeOutroProduto(quantidade, id) {
+  const conn = connection()
+  return new Promise((resolve, reject) => {
+    const sql = `UPDATE outros_produtos set Quantidade_out = Quantidade_out + ? where Id_out = ?;`
+    conn.query(sql, [quantidade, id], (error, results) => {
       conn.end()
       if (error) {
         reject(error)

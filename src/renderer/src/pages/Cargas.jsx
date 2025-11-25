@@ -48,7 +48,7 @@ export default function Carga() {
   }
 
   return (
-    <div className="pt-10">
+    <div className="pt-5">
       <h1 className="text-4xl text-[#1A6D12] font-black py-4 text-center">Cargas</h1>
 
       <p className="text-black ps-30 mt-10 mb-3">Nome do Caminhão:</p>
@@ -73,40 +73,12 @@ export default function Carga() {
               text="Criar carga"
               onClick={openModal}
             />
-
-            {/* Dropdown de Relatórios */}
-            <div className="relative">
-              <button
-                className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-40 h-full py-2 rounded-xl flex items-center justify-center"
-                onClick={() => setShowDropdown(!showDropdown)}
-                type="button"
-              >
-                Relatórios
-                <IoIosArrowDown className="inline-block ml-2" />
-              </button>
-              {showDropdown && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-[#1A6D12] rounded-lg shadow-lg z-10">
-                  <button
-                    onClick={handleRelatorioCarga}
-                    className="block w-full text-left px-4 py-2 hover:bg-[#e9f5ec] text-[#1A6D12]"
-                  >
-                    Relatório de Carga
-                  </button>
-                  <button
-                    onClick={handleRelatorioLucro}
-                    className="block w-full text-left px-4 py-2 hover:bg-[#e9f5ec] text-[#1A6D12]"
-                  >
-                    Relatório de Lucro
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
         </div>
 
         {/* Tabela */}
-         <div className="max-w-full mt-6 mx-auto">
-          <div className="border border-[#1A6D12] rounded-md shadow-sm h-[50vh] lg:h-[70vh] max-h-[100vh]">
+        <div className="max-w-full mt-6 mx-auto">
+          <div className="border border-[#1A6D12] rounded-md shadow-sm lg:h-[67vh] 2xl:h-[72vh] max-h-[100vh]">
             <div className="w-full h-full overflow-auto">
               <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} />
             </div>

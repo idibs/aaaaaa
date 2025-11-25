@@ -69,8 +69,8 @@ export default function Funcionarios() {
           </div>
         </div>
         {/* table */}
-          <div className="max-w-full mt-6 mx-auto">
-          <div className="border border-[#1A6D12] rounded-md shadow-sm h-[50vh] lg:h-[70vh] max-h-[100vh]">
+        <div className="max-w-full mt-6 mx-auto">
+          <div className="border border-[#1A6D12] rounded-md shadow-sm lg:h-[62vh] 2xl:h-[67vh] max-h-[100vh]">
             <div className="w-full h-full overflow-auto">
               <Tabela data={filteredData ? filteredData : []} insertTable={insertTable} />
             </div>

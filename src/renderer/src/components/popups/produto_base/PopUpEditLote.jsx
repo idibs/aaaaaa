@@ -137,7 +137,14 @@ export default function PopUpEditProd({ showModal, onClose, insertTable }) {
                 const precoAntigo = parseFloat(formValues.ProdutoPreco)
                 const quantidadeAntiga = parseFloat(formValues.ProdutoQuantidade)
                 const novaQuantidade = quantidade + quantidadeAntiga
-                const novoPrecoMedio = (preco + precoAntigo) / novaQuantidade
+                const novoPrecoMedio = (preco + precoAntigo) / 2
+
+                console.log(preco)
+                console.log(quantidade)
+                console.log(precoAntigo)
+                console.log(quantidadeAntiga)
+                console.log(novaQuantidade)
+                console.log(novoPrecoMedio)
 
                 if (
                   isNaN(preco) ||
@@ -149,10 +156,10 @@ export default function PopUpEditProd({ showModal, onClose, insertTable }) {
                   return
                 }
 
-                window.api
+                /*window.api
                   .addLote(formValues.Produto, novoPrecoMedio, novaQuantidade)
                   .then(onClose)
-                  .catch((error) => setError(`erro: ${error.message}`))
+                  .catch((error) => setError(`erro: ${error.message}`))*/
               }}
             />
           </div>

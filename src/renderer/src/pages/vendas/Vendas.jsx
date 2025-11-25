@@ -50,37 +50,28 @@ export default function Produtos() {
           {/* Botões condicionais */}
           <div className="flex gap-2 items-center">
             <Button
-              className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-36 py-1.5 text-sm"
+              className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-40 h-full py-2"
               text="Novo Pedido"
               onClick={openModal}
             />
-
-            {status === 'Finalizado' && (
-              <>
-                <Button
-                  className="text-[#1A6D12] border border-[#1A6D12] hover:bg-[#ececec] w-36 py-1.5 text-sm"
-                  text="Relatório"
-                />
-              </>
-            )}
           </div>
         </div>
 
         <div className="max-w-full mt-6 mx-auto">
-          <div className="border border-[#1A6D12] rounded-md shadow-sm h-[50vh] lg:h-[70vh] max-h-[100vh]">
+          <div className="border border-[#1A6D12] rounded-md shadow-sm lg:h-[62vh] 2xl:h-[67vh] max-h-[100vh]">
             <div className="w-full h-full overflow-auto">
               <TabelaVaidacao
-            data={filteredData}
-            insertTable={insertTable}
-            status={status}
-            onSave={() => {
-              // recarrega os dados após salvar/deletar
-              window.api
-                .getPedidoProdutosByStatus(status)
-                .then((result) => setData(result))
-                .catch((error) => console.error('Error fetching data:', error))
-            }}
-          />
+                data={filteredData}
+                insertTable={insertTable}
+                status={status}
+                onSave={() => {
+                  // recarrega os dados após salvar/deletar
+                  window.api
+                    .getPedidoProdutosByStatus(status)
+                    .then((result) => setData(result))
+                    .catch((error) => console.error('Error fetching data:', error))
+                }}
+              />
             </div>
           </div>
         </div>

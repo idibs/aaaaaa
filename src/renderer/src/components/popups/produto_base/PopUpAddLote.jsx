@@ -72,7 +72,8 @@ export default function PopupAddLote({ showModal, onClose, insertTable }) {
                           Produto: '',
                           ProdutoNome: '',
                           ProdutoPreco: '',
-                          ProdutoQuantidade: ''
+                          ProdutoQuantidade: '',
+                          ProdutoCompras: ''
                         }))
                       }}
                     >
@@ -88,7 +89,8 @@ export default function PopupAddLote({ showModal, onClose, insertTable }) {
                             Produto: produto.Id,
                             ProdutoNome: produto.Nome,
                             ProdutoPreco: produto.Preço,
-                            ProdutoQuantidade: produto.Quantidade
+                            ProdutoQuantidade: produto.Quantidade,
+                            ProdutoCompras: produto.Compras
                           }))
                           setDropdownOpen(false)
                         }}
@@ -137,25 +139,33 @@ export default function PopupAddLote({ showModal, onClose, insertTable }) {
               onClick={() => {
                 setError('')
 
-                const preco = parseFloat(formValues.Preço)
-                const quantidade = parseFloat(formValues.Quantidade)
-                const precoAntigo = parseFloat(formValues.ProdutoPreco)
-                const quantidadeAntiga = parseFloat(formValues.ProdutoQuantidade)
-                const novaQuantidade = quantidade + quantidadeAntiga
-                const novoPrecoMedio = (preco + precoAntigo) / novaQuantidade
+                const precoTotalNovo = parseFloat(formValues.Preço)
+                const quantidadeNova = parseFloat(formValues.Quantidade)
 
-                if (
-                  isNaN(preco) ||
-                  isNaN(quantidade) ||
-                  isNaN(precoAntigo) ||
-                  isNaN(quantidadeAntiga)
-                ) {
-                  setError('Por favor, insira valores válidos para preço e quantidade.')
-                  return
-                }
+                const precoMedioAntigo = parseFloat(formValues.ProdutoPreco) || 0
+                const estoqueAntigo = parseFloat(formValues.ProdutoQuantidade) || 0
+
+                // preço por kg/unidade do lote novo
+                const precoUnitarioNovo = precoTotalNovo / quantidadeNova
+
+                // novo preço médio correto
+                const novoPrecoMedio =
+                  (estoqueAntigo * precoMedioAntigo + quantidadeNova * precoUnitarioNovo) /
+                  (estoqueAntigo + quantidadeNova)
+
+                // nova quantidade em estoque
+                const novaQuantidade = estoqueAntigo + quantidadeNova
+
+                // caso queira acumular compras:
+                const quantidadeCompradaNova = quantidadeNova
 
                 window.api
-                  .addLote(formValues.Produto, novoPrecoMedio, novaQuantidade)
+                  .addLote(
+                    formValues.Produto,
+                    novoPrecoMedio,
+                    novaQuantidade,
+                    quantidadeCompradaNova
+                  )
                   .then(onClose)
                   .catch((error) => setError(`erro: ${error.message}`))
               }}

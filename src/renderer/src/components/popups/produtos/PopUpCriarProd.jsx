@@ -17,6 +17,7 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria, init
   const [formValues, setFormValues] = useState({}) // <-- persist valores por coluna
   const userDropdownRef = useRef(null)
   const userDropdownRef2 = useRef(null)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     // reset ao abrir/modal ou trocar categoria
@@ -85,7 +86,11 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria, init
                           setUserDropdownOpen(false)
                           setIsProductSelected(false)
                           setSelectedProduct(null) // limpa produto selecionado
-                          setFormValues((prev) => ({ ...prev, Nome: '', Preço: '' }))
+                          setFormValues((prev) => ({
+                            ...prev,
+                            Nome: '',
+                            Preço: ''
+                          }))
                         }}
                       >
                         Limpar seleção
@@ -243,13 +248,23 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria, init
             )}
           </div>
 
+          {error && <p>{error}</p>}
+
           <div className="flex justify-center">
             <Button
               className="text-white bg-[#1A6D12] hover:bg-[#145A0C] w-60"
               text="Salvar"
               onClick={() => {
-                let id
-                isProductSelected ? (id = selectedProduct.Id) : (id = null)
+                let id = null
+
+                if (isProductSelected) {
+                  id = selectedProduct.Id
+                  if (formValues.Quantidade * formValues.Peso > selectedProduct.Quantidade) {
+                    setError('falta de produto em estoque')
+                    return
+                  }
+                }
+
                 formValues.Categoria === 'Cereal'
                   ? window.api
                       .createEnsacado([
@@ -261,7 +276,7 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria, init
                         id
                       ])
                       .then(onClose)
-                      .catch(onClose)
+                      .catch((err) => setError('ocorreu um erro' + err))
                   : window.api
                       .createOutroProduto([
                         formValues.Nome,
@@ -270,11 +285,11 @@ export default function PopupCriarRegistro({ showModal, onClose, categoria, init
                         formValues.Peso,
                         formValues.Código,
                         formValues.Descrição,
-                        formValues.Categoria === 'Ração' ? 1 : 2
+                        formValues.Categoria === 'Ração' ? 1 : 2,
+                        id
                       ])
                       .then(onClose)
-                      .catch(onClose)
-                // TODO: enviar formValues para a API / banco
+                      .catch((err) => setError('ocorreu um erro' + err))
               }}
             />
           </div>

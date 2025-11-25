@@ -108,7 +108,7 @@ const Tabela = ({ data, insertTable, onSave, status }) => {
                           }
 
                           if (item.Valor_total && item.Pagamento) {
-                            window.api.finalizaPedido(item.Id).catch((err) => console.error(err))
+                            window.api.finalizaPedido(item).catch((err) => console.error(err))
                           } else {
                             alert(
                               'Este pedido não possui todos os dados necessários para finalização.'

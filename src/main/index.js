@@ -45,14 +45,15 @@ import {
   editPessoa,
   editCereal,
   editOutroProduto,
-  editCarga
+  editCarga,
+  updateProdutoBaseQuantidade,
+  updateQuantidadeCereal,
+  updateQuantidadeOutroProduto
 } from '../database/functions'
 
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    minWidth: 1000, // largura mínima da janela
-    minHeight: 550, // altura mínima da janela
     title: 'RBS CEREAIS', // título da janela
     titleBarStyle: 'hidden', // estilo da barra de título
     titleBarOverlay: {
@@ -64,7 +65,7 @@ function createWindow() {
     height: 850, // altura da janela
     maximizable: true, // permite maximizar a janela
     minimizable: true, // permite minimizar a janela
-    resizable: true, // permite redimensionar a janela
+    resizable: false, // permite redimensionar a janela
     fullscreenable: true, // permite colocar a janela em tela cheia
     icon: icon, // ícone da janela
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -199,14 +200,22 @@ app.whenReady().then(() => {
     }
   )
 
-  ipcMain.handle('add-lote', async (event, id_produto, novoPreco, novaQuantidade) => {
-    try {
-      const data = await updateProdutoPrecoQuantidade(id_produto, novoPreco, novaQuantidade)
-      return data
-    } catch (error) {
-      throw error
+  ipcMain.handle(
+    'add-lote',
+    async (event, id_produto, novoPreco, novaQuantidade, quantidadeCompradaNova) => {
+      try {
+        const data = await updateProdutoPrecoQuantidade(
+          id_produto,
+          novoPreco,
+          novaQuantidade,
+          quantidadeCompradaNova
+        )
+        return data
+      } catch (error) {
+        throw error
+      }
     }
-  })
+  )
 
   ipcMain.handle('create-produto-base', async (event, produtoBase) => {
     try {
@@ -411,9 +420,11 @@ app.whenReady().then(() => {
     }
   })
 
-  ipcMain.handle('finaliza-pedido', async (event, id) => {
+  ipcMain.handle('finaliza-pedido', async (event, item) => {
     try {
-      const data = await finalizaPedido(id)
+      await finalizaPedido(item.id)
+      const data = { success: true }
+
       return data // ✅ Certifique-se que está retornando
     } catch (error) {
       throw error
@@ -522,7 +533,11 @@ app.whenReady().then(() => {
 
   ipcMain.handle('create-ensacado', async (event, produto) => {
     try {
-      const data = await createEnsacado(produto)
+      await createEnsacado(produto)
+      if (produto[5] != null) {
+        await updateProdutoBaseQuantidade(produto[4] * produto[2], produto[5])
+      }
+      const data = { success: true }
       return data
     } catch (error) {
       throw error

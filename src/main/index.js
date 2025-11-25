@@ -420,11 +420,9 @@ app.whenReady().then(() => {
     }
   })
 
-  ipcMain.handle('finaliza-pedido', async (event, item) => {
+  ipcMain.handle('finaliza-pedido', async (event, id) => {
     try {
-      await finalizaPedido(item.id)
-      const data = { success: true }
-
+      const data = await finalizaPedido(id)
       return data // ✅ Certifique-se que está retornando
     } catch (error) {
       throw error
